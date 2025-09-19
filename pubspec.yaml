@@ -35,6 +35,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   http: ^1.5.0
+  just_audio: ^0.9.36
 
 dev_dependencies:
   flutter_test:
