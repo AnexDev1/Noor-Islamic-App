@@ -9,6 +9,7 @@ import '../../../core/utils/helpers.dart';
 import '../../home/data/prayer_time_api.dart';
 import '../../quran/ui/quran_screen.dart';
 import '../../hadith/ui/hadith_home_screen.dart';
+import '../../azkhar/ui/azkhar_home_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -266,9 +267,11 @@ class _FeaturesGridSection extends StatelessWidget {
               onTap: () => _navigateToFeature(context, 'Hadith'),
             ),
             FeatureCard(
-              title: AppConstants.duaFeature,
+              title: AppConstants.azkharFeatures,
               icon: Icons.favorite,
-              onTap: () => _navigateToFeature(context, 'Dua'),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const AzkharHomeScreen()),
+              ),
             ),
             FeatureCard(
               title: AppConstants.quranFeature,
@@ -298,6 +301,10 @@ class _FeaturesGridSection extends StatelessWidget {
     if (featureName == 'Hadith') {
       Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => const HadithHomeScreen()),
+      );
+    } else if (featureName == 'Azkahr') {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const AzkharHomeScreen()),
       );
     } else {
       AppHelpers.showSnackBar(context, '$featureName feature coming soon!');

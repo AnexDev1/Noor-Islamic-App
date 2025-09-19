@@ -35,6 +35,7 @@ class AppConstants {
   static const String tasbihFeature = 'Tasbih';
   static const String hadithFeature = 'Hadith';
   static const String duaFeature = 'Dua';
+  static const String azkharFeatures = 'Azkhar';
   static const String quranFeature = 'Quran';
   static const String wallpaperFeature = 'Wallpaper';
   static const String donateFeature = 'Donate';
