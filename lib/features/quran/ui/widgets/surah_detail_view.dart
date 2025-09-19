@@ -1,93 +1,113 @@
 import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
-import '../../data/audio_api.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import '../../domain/surah_detail.dart';
 import '../../domain/quran_enc_translation.dart';
 
 class SurahDetailView extends StatefulWidget {
   final SurahDetail surahDetail;
   final List<QuranEncTranslation> translations;
-  final String reciterId;
-  const SurahDetailView({super.key, required this.surahDetail, required this.translations, required this.reciterId});
+  final String reciterId; // Not used for now, only Abdul Baset
+
+  const SurahDetailView({
+    super.key,
+    required this.surahDetail,
+    required this.translations,
+    required this.reciterId,
+  });
 
   @override
   State<SurahDetailView> createState() => _SurahDetailViewState();
 }
 
 class _SurahDetailViewState extends State<SurahDetailView> {
-  Map<int, String> _ayahAudioUrls = {};
-  int? _playingAyahIndex;
+  late AudioPlayer _audioPlayer;
   bool _isPlaying = false;
-  final AudioPlayer _audioPlayer = AudioPlayer();
+  bool _isLoading = false;
+  Duration _position = Duration.zero;
+  Duration _duration = Duration.zero;
+  String? _audioUrl;
 
   @override
   void initState() {
     super.initState();
-    _fetchAllAyahAudio();
+    _audioPlayer = AudioPlayer();
+    _audioPlayer.onPlayerStateChanged.listen((state) {
+      setState(() {
+        _isPlaying = state == PlayerState.playing;
+        _isLoading = false;
+      });
+    });
+    _audioPlayer.onDurationChanged.listen((d) {
+      setState(() {
+        _duration = d;
+      });
+    });
+    _audioPlayer.onPositionChanged.listen((p) {
+      setState(() {
+        _position = p;
+      });
+    });
+    _fetchAudioUrl();
   }
 
   @override
   void didUpdateWidget(covariant SurahDetailView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.reciterId != widget.reciterId || oldWidget.surahDetail.surahNo != widget.surahDetail.surahNo) {
-      _fetchAllAyahAudio();
+    if (oldWidget.reciterId != widget.reciterId ||
+        oldWidget.surahDetail.surahNo != widget.surahDetail.surahNo) {
+      _fetchAudioUrl();
       _audioPlayer.stop();
       setState(() {
-        _playingAyahIndex = null;
+        _position = Duration.zero;
+        _duration = Duration.zero;
         _isPlaying = false;
       });
     }
   }
 
-  @override
-  void dispose() {
-    _audioPlayer.dispose();
-    super.dispose();
-  }
-
-  Future<void> _fetchAllAyahAudio() async {
-    final ayahAudioUrls = <int, String>{};
-    for (int i = 0; i < widget.surahDetail.totalAyah; i++) {
-      final ayahNo = i + 1;
-      try {
-        final audioMap = await AudioApi.fetchAyahAudio(widget.surahDetail.surahNo, ayahNo);
-        if (audioMap.containsKey(widget.reciterId)) {
-          ayahAudioUrls[i] = audioMap[widget.reciterId]['url'] ?? '';
-        }
-      } catch (_) {
-        ayahAudioUrls[i] = '';
-      }
-    }
-    setState(() {
-      _ayahAudioUrls = ayahAudioUrls;
-    });
-  }
-
-  Future<void> _onPlayPause(int index) async {
-    final url = _ayahAudioUrls[index];
-    if (url == null || url.isEmpty) return;
-    if (_playingAyahIndex == index && _isPlaying) {
-      await _audioPlayer.pause();
-      setState(() {
-        _isPlaying = false;
-        _playingAyahIndex = null;
-      });
-    } else {
-      await _audioPlayer.stop();
-      await _audioPlayer.setUrl(url);
-      await _audioPlayer.play();
-      setState(() {
-        _playingAyahIndex = index;
-        _isPlaying = true;
-      });
-      _audioPlayer.playerStateStream.listen((state) {
-        if (state.processingState == ProcessingState.completed) {
+  Future<void> _fetchAudioUrl() async {
+    final reciterId = widget.reciterId;
+    final surahNo = widget.surahDetail.surahNo;
+    final apiUrl =
+        'https://api.quran.com/api/v4/chapter_recitations/$reciterId?chapter_number=$surahNo';
+    try {
+      final response = await http.get(Uri.parse(apiUrl));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final audioFiles = data['audio_files'] as List<dynamic>;
+        if (audioFiles.isNotEmpty) {
           setState(() {
-            _isPlaying = false;
-            _playingAyahIndex = null;
+            _audioUrl = audioFiles[0]['audio_url'] as String?;
+          });
+        } else {
+          setState(() {
+            _audioUrl = null;
           });
         }
+      } else {
+        setState(() {
+          _audioUrl = null;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _audioUrl = null;
       });
+    }
+  }
+
+  Future<void> _onPlayPause() async {
+    if (_isPlaying) {
+      await _audioPlayer.pause();
+    } else {
+      setState(() {
+        _isLoading = true;
+      });
+      if (_audioUrl != null) {
+        await _audioPlayer.play(UrlSource(_audioUrl!));
+      }
     }
   }
 
@@ -96,64 +116,73 @@ class _SurahDetailViewState extends State<SurahDetailView> {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        Text(
-          widget.surahDetail.surahNameArabicLong,
-          style: const TextStyle(fontFamily: 'Amiri', fontSize: 28, fontWeight: FontWeight.bold),
-          textAlign: TextAlign.center,
+        Row(
+          children: [
+            Text(
+              widget.surahDetail.surahNameArabic,
+              style: const TextStyle(fontSize: 28, fontFamily: 'Amiri'),
+            ),
+            const SizedBox(width: 12),
+            IconButton(
+              icon: _isLoading
+                  ? const CircularProgressIndicator()
+                  : Icon(_isPlaying ? Icons.pause : Icons.play_arrow),
+              onPressed: (_isLoading || _audioUrl == null) ? null : _onPlayPause,
+              tooltip: _isPlaying ? 'Pause' : 'Play',
+            ),
+          ],
         ),
-        const SizedBox(height: 8),
-        Text(
-          widget.surahDetail.surahNameTranslation,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'Revelation: ${widget.surahDetail.revelationPlace} | Ayahs: ${widget.surahDetail.totalAyah}',
-          style: const TextStyle(fontSize: 14, color: Colors.grey),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 16),
-        ...List.generate(widget.surahDetail.totalAyah, (i) {
-          final translation = widget.translations.length > i ? widget.translations[i].translation : '';
-          final arabic = widget.translations.length > i && widget.translations[i].arabicText != null
-              ? widget.translations[i].arabicText!
-              : (widget.surahDetail.arabic1.length > i ? widget.surahDetail.arabic1[i] : '');
-          final audioUrl = _ayahAudioUrls[i] ?? '';
-          return Card(
-            margin: const EdgeInsets.symmetric(vertical: 6),
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        if (_audioUrl == null)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 8),
+            child: Text('Audio not available for this reciter.'),
+          ),
+        if (_duration > Duration.zero)
+          Column(
+            children: [
+              Slider(
+                value: _position.inMilliseconds.toDouble(),
+                min: 0,
+                max: _duration.inMilliseconds.toDouble(),
+                onChanged: (value) async {
+                  final seekTo = Duration(milliseconds: value.toInt());
+                  await _audioPlayer.seek(seekTo);
+                },
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    arabic,
-                    style: const TextStyle(fontFamily: 'Amiri', fontSize: 22),
-                    textAlign: TextAlign.right,
-                  ),
-                  const SizedBox(height: 8),
-                  if (translation.isNotEmpty)
-                    Text(
-                      translation,
-                      style: const TextStyle(fontSize: 16, color: Colors.brown),
-                    ),
-                  if (audioUrl.isNotEmpty)
-                    Row(
-                      children: [
-                        IconButton(
-                          icon: Icon(_playingAyahIndex == i && _isPlaying ? Icons.pause : Icons.play_arrow),
-                          onPressed: () => _onPlayPause(i),
-                        ),
-                        const Text('Audio'),
-                      ],
-                    ),
+                  Text(_formatDuration(_position)),
+                  Text(_formatDuration(_duration)),
                 ],
               ),
-            ),
-          );
-        }),
+            ],
+          ),
+        const SizedBox(height: 16),
+        ...widget.translations.map((t) => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  t.arabicText ?? '',
+                  style: const TextStyle(fontSize: 22, fontFamily: 'Amiri'),
+                  textAlign: TextAlign.right,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  t.translation,
+                  style: const TextStyle(fontSize: 16),
+                ),
+                const Divider(),
+              ],
+            )),
       ],
     );
+  }
+
+  String _formatDuration(Duration d) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final minutes = twoDigits(d.inMinutes.remainder(60));
+    final seconds = twoDigits(d.inSeconds.remainder(60));
+    return '$minutes:$seconds';
   }
 }

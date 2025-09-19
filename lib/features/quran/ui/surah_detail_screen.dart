@@ -73,7 +73,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: DropdownButtonFormField<String>(
-              value: _selectedTranslationKey,
+              initialValue: _selectedTranslationKey,
               decoration: const InputDecoration(labelText: 'Translation Language'),
               items: _translationOptions.entries
                   .map((e) => DropdownMenuItem<String>(
@@ -101,7 +101,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: DropdownButtonFormField<String>(
-                  value: _selectedReciterId,
+                  initialValue: _selectedReciterId,
                   decoration: const InputDecoration(labelText: 'Reciter'),
                   items: reciters.entries
                       .map((e) => DropdownMenuItem<String>(

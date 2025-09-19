@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
 import 'core/theme/app_theme.dart';
 import 'navigation/main_navigation.dart';
+import 'package:geolocator/geolocator.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await _ensureLocationPermission();
   runApp(const MyApp());
+}
+
+Future<void> _ensureLocationPermission() async {
+  LocationPermission permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied) {
+    await Geolocator.requestPermission();
+  }
 }
 
 class MyApp extends StatelessWidget {
