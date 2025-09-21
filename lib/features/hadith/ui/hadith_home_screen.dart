@@ -4,7 +4,7 @@ import '../data/books_api.dart';
 import '../domain/book.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
-import 'widgets/modern_hadith_book_list.dart';
+import 'widgets/hadith_book_list.dart';
 import 'book_detail_screen.dart';
 
 class HadithHomeScreen extends StatefulWidget {
@@ -135,7 +135,7 @@ class _HadithHomeScreenState extends State<HadithHomeScreen> with TickerProvider
                 final filteredBooks = _filterBooks(snapshot.data!);
                 return SliverPadding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  sliver: ModernHadithBookList(
+                  sliver: HadithBookList(
                     books: filteredBooks,
                   ),
                 );

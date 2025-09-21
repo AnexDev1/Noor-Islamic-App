@@ -298,11 +298,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
                         style: const TextStyle(color: Colors.white70, fontSize: 14),
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Next prayer: $_nextPrayerName in $_countdownText',
-                      style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
-                    ),
                   ],
                 ),
               ),
@@ -313,6 +308,105 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
             ],
           ),
 
+          const SizedBox(height: 24),
+
+          // Cool Next Prayer Display
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.2),
+                width: 1,
+              ),
+            ),
+            child: Row(
+              children: [
+                // Next Prayer Icon
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.schedule,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 16),
+
+                // Next Prayer Info
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Next Prayer',
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        _nextPrayerName,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Countdown Display
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.white.withValues(alpha: 0.25),
+                        Colors.white.withValues(alpha: 0.15),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Time Left',
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        _countdownText,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
           const SizedBox(height: 20),
 
           // Prayer times grid
@@ -321,7 +415,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
       ),
     );
   }
-
   Widget _buildPrayerTimesGrid(PrayerTimes prayerTimes, PrayerStatus todayStatus) {
     final prayers = [
       {'name': 'Fajr', 'time': prayerTimes.fajr},
@@ -469,21 +562,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
                 children: [
                   Row(
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withAlpha(38),
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: Colors.white.withAlpha(51),
-                            width: 1,
-                          ),
-                        ),
-                        child: const Icon(
-                          Icons.person_outline,
-                          color: Colors.white,
-                          size: 28,
-                        ),
+                      FutureBuilder<String>(
+                        future: UserService.getUserGender(),
+                        builder: (context, genderSnapshot) {
+                          final gender = genderSnapshot.data ?? 'male';
+                          final asset = gender == 'female'
+                              ? 'assets/female.png'
+                              : 'assets/male.png';
+                          return Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withAlpha(38),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: Colors.white.withAlpha(51),
+                                width: 1,
+                              ),
+                            ),
+                            child: Image.asset(
+                              asset,
+                              height: 28,
+                              width: 28,
+                              color: Colors.white,
+                            ),
+                          );
+                        },
                       ),
                       const SizedBox(width: 16),
                       Expanded(
@@ -504,7 +607,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      nameSnapshot.data ?? 'Abdullah',
+                                      nameSnapshot.data ?? 'User',
                                       style: AppTextStyles.displaySmall.copyWith(
                                         color: Colors.white,
                                         fontWeight: FontWeight.w600,
@@ -517,18 +620,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
                           },
                         ),
                       ),
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withAlpha(26),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(
-                          Icons.notifications_outlined,
-                          color: Colors.white,
-                          size: 24,
-                        ),
-                      ),
+
                     ],
                   ),
                 ],

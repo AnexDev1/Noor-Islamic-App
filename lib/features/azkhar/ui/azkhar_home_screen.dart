@@ -4,8 +4,7 @@ import '../data/azkhar_api.dart';
 import '../domain/azkhar_category.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
-import 'widgets/modern_azkhar_category_list.dart';
-import 'azkhar_detail_screen.dart';
+import 'widgets/azkhar_category_list.dart';
 
 class AzkharHomeScreen extends StatefulWidget {
   const AzkharHomeScreen({super.key});
@@ -134,7 +133,7 @@ class _AzkharHomeScreenState extends State<AzkharHomeScreen> with TickerProvider
                 final filteredCategories = _filterCategories(snapshot.data!);
                 return SliverPadding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  sliver: ModernAzkharCategoryList(
+                  sliver: AzkharCategoryList(
                     categories: filteredCategories,
                   ),
                 );
@@ -323,10 +322,10 @@ class _AzkharHomeScreenState extends State<AzkharHomeScreen> with TickerProvider
                 ),
                 child: Column(
                   children: [
-                    Icon(
-                      Icons.category,
-                      color: AppColors.primary,
-                      size: 32,
+                    Image.asset(
+                      'assets/quran.png',
+                      width: 37,
+                      fit: BoxFit.contain,
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -364,10 +363,13 @@ class _AzkharHomeScreenState extends State<AzkharHomeScreen> with TickerProvider
                 ),
                 child: Column(
                   children: [
-                    Icon(
-                      Icons.favorite_border,
-                      color: AppColors.accent,
-                      size: 32,
+                    SizedBox(
+                      width: 32,
+                      height: 32,
+                      child: Image.asset(
+                        'assets/azkhar.png',
+                        fit: BoxFit.contain,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Text(

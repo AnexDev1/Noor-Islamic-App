@@ -27,6 +27,7 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
   late Animation<double> _pulseAnimation;
   late Animation<double> _rotationAnimation;
   bool _isAligned = false;
+  bool _hasShownAlignmentSnackbar = false;
 
   @override
   void initState() {
@@ -78,7 +79,7 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
 
     _fadeController.forward();
     _pulseController.repeat(reverse: true);
-    _rotationController.repeat();
+    // _rotationController.repeat(); // Remove continuous rotation
   }
 
   void _initCompass() {
@@ -104,32 +105,37 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
         setState(() {
           _isAligned = newAlignment;
         });
-        if (_isAligned) {
-          _showAlignmentSuccess();
+        if (_isAligned && !_hasShownAlignmentSnackbar) {
+          // _showAlignmentSuccess();
+          _hasShownAlignmentSnackbar = true;
+          _rotationController.repeat();
+        } else if (!_isAligned) {
+          _hasShownAlignmentSnackbar = false;
+          _rotationController.stop();
         }
       }
     }
   }
 
-  void _showAlignmentSuccess() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.check_circle, color: Colors.white),
-            const SizedBox(width: 12),
-            const Text('Alhamdulillah! You\'re facing the Qibla!'),
-          ],
-        ),
-        backgroundColor: AppColors.success,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        duration: const Duration(seconds: 3),
-      ),
-    );
-  }
+  // void _showAlignmentSuccess() {
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(
+  //       content: Row(
+  //         children: [
+  //           const Icon(Icons.check_circle, color: Colors.white),
+  //           const SizedBox(width: 12),
+  //           const Text('Alhamdulillah! You\'re facing the Qibla!'),
+  //         ],
+  //       ),
+  //       backgroundColor: AppColors.success,
+  //       behavior: SnackBarBehavior.floating,
+  //       shape: RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.circular(12),
+  //       ),
+  //       duration: const Duration(seconds: 3),
+  //     ),
+  //   );
+  // }
 
   @override
   void dispose() {
@@ -219,20 +225,7 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
       pinned: true,
       elevation: 0,
       backgroundColor: Colors.transparent,
-      leading: IconButton(
-        onPressed: () => Navigator.of(context).pop(),
-        icon: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: const Icon(
-            Icons.arrow_back,
-            color: Colors.white,
-          ),
-        ),
-      ),
+
       actions: [
         IconButton(
           onPressed: _initQibla,
@@ -257,8 +250,8 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                AppColors.primary,
                 AppColors.primaryLight,
+                AppColors.primaryDark,
               ],
             ),
             borderRadius: const BorderRadius.only(
@@ -559,8 +552,8 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
                       ),
                     ),
                   ],
-                ),),
-              );
+                ),
+              ),);
           },
         ),
 
@@ -610,51 +603,19 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
           animation: _pulseAnimation,
           builder: (context, child) {
             return Transform.rotate(
-              angle: qiblaAngle * math.pi / 180,
+              angle: (qiblaAngle * math.pi / 180) + math.pi, // Rotated 180 degrees
               child: Transform.scale(
                 scale: _isAligned ? _pulseAnimation.value : 1.0,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Arrow Head
-                    Container(
-                      width: 0,
-                      height: 0,
-                      decoration: const BoxDecoration(),
-                      child: CustomPaint(
-                        size: const Size(20, 30),
-                        painter: ArrowPainter(
-                          color: _isAligned ? AppColors.success : AppColors.primary,
-                        ),
-                      ),
-                    ),
-
-                    // Arrow Body
-                    Container(
-                      width: 6,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            _isAligned ? AppColors.success : AppColors.primary,
-                            (_isAligned ? AppColors.success : AppColors.primary).withValues(alpha: 0.7),
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(3),
-                        boxShadow: [
-                          BoxShadow(
-                            color: (_isAligned ? AppColors.success : AppColors.primary).withValues(alpha: 0.5),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),),
-              );
+                child: SizedBox(
+                  width: 40,
+                  height: 100,
+                  child: Image.asset(
+                    'assets/qibla_indicator.png',
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+            );
           },
         ),
 
@@ -675,7 +636,7 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
           ),
         ),
 
-        // Kaaba Icon
+        // Kaaba Icon (replace with macca.png)
         Positioned(
           top: 40,
           child: Container(
@@ -691,10 +652,13 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
                 ),
               ],
             ),
-            child: Icon(
-              Icons.mosque,
-              color: AppColors.qiblaCard,
-              size: 20,
+            child: SizedBox(
+              width: 32,
+              height: 32,
+              child: Image.asset(
+                'assets/macca.png',
+                fit: BoxFit.contain,
+              ),
             ),
           ),
         ),
@@ -787,29 +751,4 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
       ],
     );
   }
-}
-
-class ArrowPainter extends CustomPainter {
-  final Color color;
-
-  ArrowPainter({required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
-
-    final path = Path()
-      ..moveTo(size.width / 2, 0)
-      ..lineTo(0, size.height)
-      ..lineTo(size.width / 2, size.height * 0.7)
-      ..lineTo(size.width, size.height)
-      ..close();
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

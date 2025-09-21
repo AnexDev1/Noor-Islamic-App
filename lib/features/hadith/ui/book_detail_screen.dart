@@ -6,7 +6,7 @@ import '../domain/book.dart';
 import '../domain/chapter.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
-import 'widgets/modern_chapter_list.dart';
+import 'widgets/chapter_list.dart';
 import 'hadith_list_screen.dart';
 
 class BookDetailScreen extends StatefulWidget {

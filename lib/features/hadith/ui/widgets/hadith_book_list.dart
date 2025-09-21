@@ -4,10 +4,10 @@ import '../book_detail_screen.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 
-class ModernHadithBookList extends StatelessWidget {
+class  HadithBookList extends StatelessWidget {
   final List<HadithBook> books;
 
-  const ModernHadithBookList({
+  const  HadithBookList({
     super.key,
     required this.books,
   });

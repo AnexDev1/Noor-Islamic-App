@@ -211,14 +211,15 @@ class _AboutScreenState extends State<AboutScreen> {
                   _ContactItem(
                     icon: Icons.email,
                     title: 'Email Support',
-                    subtitle: 'support@noorapp.com',
+                    subtitle: 'anwarnasir0970@gmail.com',
                     onTap: () => _launchEmail(),
                   ),
                   _ContactItem(
                     icon: Icons.web,
                     title: 'Website',
-                    subtitle: 'www.noorapp.com',
-                    onTap: () => _launchWebsite(),
+                    subtitle: 'coming soon',
+                    // onTap: () => _launchWebsite(),
+                    onTap: () => (){},
                   ),
                   _ContactItem(
                     icon: Icons.privacy_tip,
@@ -313,7 +314,7 @@ class _AboutScreenState extends State<AboutScreen> {
   Future<void> _launchEmail() async {
     final Uri emailUri = Uri(
       scheme: 'mailto',
-      path: 'support@noorapp.com',
+      path: 'anwarnasir0970@gmail.com',
       query: 'subject=Noor App Support',
     );
 

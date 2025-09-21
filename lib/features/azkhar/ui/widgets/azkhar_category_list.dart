@@ -4,10 +4,10 @@ import '../azkhar_detail_screen.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 
-class ModernAzkharCategoryList extends StatelessWidget {
+class AzkharCategoryList extends StatelessWidget {
   final List<AzkharCategory> categories;
 
-  const ModernAzkharCategoryList({
+  const AzkharCategoryList({
     super.key,
     required this.categories,
   });

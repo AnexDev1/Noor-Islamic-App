@@ -17,7 +17,6 @@ class _HadithDetailScreenState extends State<HadithDetailScreen> with TickerProv
   late Animation<double> _fadeAnimation;
   bool _showArabic = true;
   bool _showEnglish = true;
-  bool _showUrdu = true;
 
   @override
   void initState() {
@@ -164,20 +163,7 @@ class _HadithDetailScreenState extends State<HadithDetailScreen> with TickerProv
                 children: [
                   Row(
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Text(
-                          '${widget.hadith.hadithNumber}',
-                          style: AppTextStyles.heading4.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
+
                       const SizedBox(width: 16),
                       Expanded(
                         child: Column(
@@ -191,12 +177,7 @@ class _HadithDetailScreenState extends State<HadithDetailScreen> with TickerProv
                               ),
                             ),
                             const SizedBox(height: 4),
-                            Text(
-                              'Chapter ${widget.hadith.chapterNumber}',
-                              style: AppTextStyles.bodyMedium.copyWith(
-                                color: Colors.white.withOpacity(0.9),
-                              ),
-                            ),
+
                           ],
                         ),
                       ),
@@ -257,16 +238,6 @@ class _HadithDetailScreenState extends State<HadithDetailScreen> with TickerProv
                   color: AppColors.primary,
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildToggleChip(
-                  label: 'Urdu',
-                  icon: Icons.language,
-                  isActive: _showUrdu,
-                  onTap: () => setState(() => _showUrdu = !_showUrdu),
-                  color: AppColors.secondary,
-                ),
-              ),
             ],
           ),
         ],
@@ -321,77 +292,6 @@ class _HadithDetailScreenState extends State<HadithDetailScreen> with TickerProv
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Hadith Header
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppColors.hadithCard.withOpacity(0.1),
-                  AppColors.accent.withOpacity(0.05),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: AppColors.hadithCard.withOpacity(0.2),
-              ),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppColors.hadithCard.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
-                    Icons.format_quote,
-                    color: AppColors.hadithCard,
-                    size: 32,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Hadith ${widget.hadith.hadithNumber}',
-                        style: AppTextStyles.heading2,
-                      ),
-                      Text(
-                        'Book: ${widget.hadith.bookSlug} • Chapter: ${widget.hadith.chapterNumber}',
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                      if (widget.hadith.status != null) ...[
-                        const SizedBox(height: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: AppColors.success.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            widget.hadith.status!,
-                            style: AppTextStyles.labelSmall.copyWith(
-                              color: AppColors.success,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 32),
-
           // Arabic Text
           if (_showArabic && widget.hadith.arabic != null && widget.hadith.arabic!.isNotEmpty)
             _buildTextSection(
@@ -421,22 +321,6 @@ class _HadithDetailScreenState extends State<HadithDetailScreen> with TickerProv
               borderColor: AppColors.primary.withOpacity(0.2),
               icon: Icons.translate,
               iconColor: AppColors.primary,
-            ),
-
-          // Urdu Translation
-          if (_showUrdu && widget.hadith.urdu != null && widget.hadith.urdu!.isNotEmpty)
-            _buildTextSection(
-              title: 'Urdu Translation',
-              text: widget.hadith.urdu!,
-              style: AppTextStyles.bodyLarge.copyWith(
-                height: 1.8,
-                fontSize: 18,
-              ),
-              isRtl: true,
-              backgroundColor: AppColors.secondary.withOpacity(0.05),
-              borderColor: AppColors.secondary.withOpacity(0.2),
-              icon: Icons.language,
-              iconColor: AppColors.secondary,
             ),
 
           const SizedBox(height: 100),

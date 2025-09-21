@@ -55,32 +55,6 @@ class SettingsScreen extends ConsumerWidget {
 
           const SizedBox(height: 24),
 
-          // App Appearance Section
-          _buildSectionHeader('App Appearance'),
-          _buildSettingsCard([
-            _buildSwitchTile(
-              context: context,
-              ref: ref,
-              title: 'Dark Mode',
-              subtitle: 'Switch between light and dark theme',
-              value: preferences.darkMode,
-              onChanged: () => ref.read(userPreferencesProvider.notifier).toggleDarkMode(),
-              icon: Icons.dark_mode,
-            ),
-            const Divider(height: 1),
-            _buildSwitchTile(
-              context: context,
-              ref: ref,
-              title: 'Show Arabic Text',
-              subtitle: 'Display Arabic text in prayers and Quran',
-              value: preferences.showArabic,
-              onChanged: () => ref.read(userPreferencesProvider.notifier).toggleArabicText(),
-              icon: Icons.translate,
-            ),
-          ]),
-
-          const SizedBox(height: 24),
-
           // Notifications Section
           _buildSectionHeader('Notifications'),
           _buildSettingsCard([

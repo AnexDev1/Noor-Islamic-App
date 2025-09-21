@@ -5,8 +5,8 @@ import '../domain/surah_info.dart';
 import '../audio/audio_player_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
-import 'widgets/modern_surah_list.dart';
 import 'widgets/audio_player_widget.dart';
+import 'widgets/surah_list.dart';
 
 class QuranScreen extends StatefulWidget {
   const QuranScreen({super.key});
@@ -135,7 +135,7 @@ class _QuranScreenState extends State<QuranScreen> with TickerProviderStateMixin
                             return const Center(child: Text('No Surahs found'));
                           }
                           final filteredSurahs = _filterSurahs(snapshot.data!);
-                          return ModernSurahList(
+                          return SurahList(
                             surahs: filteredSurahs,
                             audioService: _audioService,
                           );
