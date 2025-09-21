@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'core/theme/app_theme.dart';
-import 'navigation/main_navigation.dart';
+import 'features/onboarding/ui/splash_screen.dart';
 import 'package:geolocator/geolocator.dart';
 import 'features/quran/audio/audio_player_service.dart';
 
@@ -18,8 +18,6 @@ Future<void> _ensureLocationPermission() async {
   }
 }
 
-
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -28,7 +26,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Noor - Islamic App',
       theme: AppTheme.lightTheme,
-      home: const MainNavigationScreen(),
+      home: const SplashScreen(),
       debugShowCheckedModeBanner: false,
     );
   }

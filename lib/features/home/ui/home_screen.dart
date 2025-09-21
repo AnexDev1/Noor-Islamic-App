@@ -6,8 +6,10 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:shimmer/shimmer.dart';
 import 'dart:convert';
 import 'dart:math';
+import 'package:intl/intl.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/services/user_service.dart';
 import '../../home/data/prayer_time_api.dart';
 import '../../quran/ui/quran_screen.dart';
 import '../../hadith/ui/hadith_home_screen.dart';
@@ -186,36 +188,43 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         child: SlideTransition(
           position: _slideAnimation,
           child: CustomScrollView(
+            physics: const BouncingScrollPhysics(),
             slivers: [
               // Modern App Bar with Profile Header
               _buildModernAppBar(context),
 
               // Main Content
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Inspirational Quote Section
-                      _buildInspirationalSection(),
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    const SizedBox(height: 20),
 
-                      const SizedBox(height: 32),
+                    // Inspirational Quote Section
+                    _buildInspirationalSection(),
 
-                      // Prayer Times Section
-                      _buildPrayerTimesSection(),
+                    const SizedBox(height: 24),
 
-                      const SizedBox(height: 32),
+                    // Next Prayer Card
+                    _buildNextPrayerCard(),
 
-                      // Quick Actions Section
-                      _buildQuickActionsSection(),
+                    const SizedBox(height: 32),
 
-                      const SizedBox(height: 32),
+                    // Prayer Times Section
+                    _buildPrayerTimesSection(),
 
-                      // Islamic Features Grid
-                      _buildFeaturesGrid(),
-                    ],
-                  ),
+                    const SizedBox(height: 32),
+
+                    // Quick Actions Section
+                    _buildQuickActionsSection(),
+
+                    const SizedBox(height: 32),
+
+                    // Islamic Features Grid
+                    _buildFeaturesGrid(),
+
+                    const SizedBox(height: 40),
+                  ]),
                 ),
               ),
             ],
@@ -238,7 +247,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: AppColors.primaryGradient,
+              colors: [AppColors.primary, AppColors.primaryLight],
             ),
             borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(32),
@@ -272,24 +281,34 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       ),
                       const SizedBox(width: 16),
                       Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              AppHelpers.getIslamicGreeting(),
-                              style: AppTextStyles.bodyMedium.copyWith(
-                                color: Colors.white.withOpacity(0.9),
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Abdullah',
-                              style: AppTextStyles.displaySmall.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
+                        child: FutureBuilder<String>(
+                          future: UserService.getIslamicGreeting(),
+                          builder: (context, greetingSnapshot) {
+                            return FutureBuilder<String>(
+                              future: UserService.getUserName(),
+                              builder: (context, nameSnapshot) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      greetingSnapshot.data ?? 'As-salamu Alaykum',
+                                      style: AppTextStyles.bodyMedium.copyWith(
+                                        color: Colors.white.withOpacity(0.9),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      nameSnapshot.data ?? 'Abdullah',
+                                      style: AppTextStyles.displaySmall.copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
                         ),
                       ),
                       Container(
@@ -377,6 +396,123 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             style: AppTextStyles.labelMedium.copyWith(
               color: AppColors.textSecondary,
               fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNextPrayerCard() {
+    // Determine the next prayer time
+    final now = DateTime.now();
+    DateTime? nextPrayerTime;
+    String? nextPrayerName;
+
+    for (var entry in _prayerTimes!.entries) {
+      final prayerName = entry.key;
+      final prayerTime = entry.value;
+
+      final timeParts = prayerTime.split(':');
+      final prayerDateTime = DateTime(now.year, now.month, now.day, int.parse(timeParts[0]), int.parse(timeParts[1]));
+
+      if (prayerDateTime.isAfter(now)) {
+        nextPrayerTime = prayerDateTime;
+        nextPrayerName = prayerName;
+        break;
+      }
+    }
+
+    if (nextPrayerTime == null) {
+      return Container(); // No upcoming prayer found
+    }
+
+    final isCompleted = _prayerStatus[nextPrayerName] ?? false;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.primary.withValues(alpha: 0.1),
+            AppColors.primaryLight.withValues(alpha: 0.05),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: AppColors.primary.withValues(alpha: 0.2),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // Prayer info
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Next Prayer',
+                style: AppTextStyles.labelMedium.copyWith(
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                nextPrayerName!,
+                style: AppTextStyles.heading2.copyWith(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                DateFormat.jm().format(nextPrayerTime),
+                style: AppTextStyles.labelMedium.copyWith(
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+
+          // Action button
+          GestureDetector(
+            onTap: () {
+              // Mark as completed
+              _togglePrayerCompletion(nextPrayerName!, !isCompleted);
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: isCompleted
+                      ? [AppColors.success, AppColors.success.withValues(alpha: 0.8)]
+                      : [AppColors.primary, AppColors.primaryLight],
+                ),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    isCompleted ? Icons.check : Icons.flag,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    isCompleted ? 'Completed' : 'Mark as Done',
+                    style: AppTextStyles.labelMedium.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -881,31 +1017,43 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       {
         'title': 'Holy Quran',
         'subtitle': 'Read & Listen',
-        'icon': Icons.menu_book,
+        'icon': '📖',
+        'gradient': [AppColors.primary, AppColors.primaryLight],
         'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const QuranScreen())),
       },
       {
         'title': 'Hadith',
         'subtitle': 'Prophet\'s Sayings',
-        'icon': Icons.auto_stories,
+        'icon': '📚',
+        'gradient': [AppColors.success, AppColors.success],
         'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const HadithHomeScreen())),
       },
       {
         'title': 'Azkar',
         'subtitle': 'Daily Remembrance',
-        'icon': Icons.favorite,
+        'icon': '🤲',
+        'gradient': [AppColors.accent, AppColors.accentLight],
         'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AzkharHomeScreen())),
       },
       {
         'title': 'Tasbih',
         'subtitle': 'Digital Counter',
-        'icon': Icons.radio_button_checked,
+        'icon': '📿',
+        'gradient': [AppColors.warning, AppColors.warning],
         'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TasbihScreen())),
+      },
+      {
+        'title': 'Qibla',
+        'subtitle': 'Direction Finder',
+        'icon': '🧭',
+        'gradient': [AppColors.secondary, AppColors.secondaryLight],
+        'onTap': () => AppHelpers.showSnackBar(context, 'Qibla feature coming soon!'),
       },
       {
         'title': 'Donate',
         'subtitle': 'Help Others',
-        'icon': Icons.volunteer_activism,
+        'icon': '💝',
+        'gradient': [AppColors.primary, AppColors.primaryLight],
         'onTap': () => AppHelpers.showSnackBar(context, 'Donation feature coming soon!'),
       },
     ];
@@ -917,97 +1065,89 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           'Islamic Features',
           style: AppTextStyles.heading1,
         ),
+
         const SizedBox(height: 16),
-        MasonryGridView.count(
+
+        GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: 2,
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 12,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 16,
+            crossAxisSpacing: 16,
+            childAspectRatio: 1.1,
+          ),
           itemCount: features.length,
           itemBuilder: (context, index) {
             final feature = features[index];
-            // Use consistent theme colors based on index
-            final colors = [
-              AppColors.primary,
-              AppColors.primaryLight,
-              AppColors.accent,
-              AppColors.secondary,
-              AppColors.success,
-            ];
-            final color = colors[index % colors.length];
 
-            return _buildFeatureCard(
-              title: feature['title'] as String,
-              subtitle: feature['subtitle'] as String,
-              icon: feature['icon'] as IconData,
-              color: color,
+            return GestureDetector(
               onTap: feature['onTap'] as VoidCallback,
-              isLarge: index % 3 == 0,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: feature['gradient'] as List<Color>,
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: (feature['gradient'] as List<Color>)[0].withOpacity(0.3),
+                      blurRadius: 12,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Icon
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Center(
+                          child: Text(
+                            feature['icon'] as String,
+                            style: const TextStyle(fontSize: 24),
+                          ),
+                        ),
+                      ),
+
+                      const Spacer(),
+
+                      // Title and subtitle
+                      Text(
+                        feature['title'] as String,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        feature['subtitle'] as String,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.white.withOpacity(0.9),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             );
           },
         ),
       ],
-    );
-  }
-
-  Widget _buildFeatureCard({
-    required String title,
-    required String subtitle,
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-    bool isLarge = false,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        height: isLarge ? 160 : 140,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              color,
-              color.withOpacity(0.8),
-            ],
-          ),
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: color.withOpacity(0.3),
-              blurRadius: 12,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(
-              icon,
-              color: Colors.white,
-              size: 32,
-            ),
-            const Spacer(),
-            Text(
-              title,
-              style: AppTextStyles.heading3.copyWith(
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              subtitle,
-              style: AppTextStyles.bodySmall.copyWith(
-                color: Colors.white.withOpacity(0.9),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

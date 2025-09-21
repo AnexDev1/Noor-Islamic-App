@@ -7,6 +7,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/utils/constants.dart';
 import '../../../core/utils/helpers.dart';
+import '../../../core/services/user_service.dart';
 import '../../quran/ui/quran_screen.dart';
 import '../../hadith/ui/hadith_home_screen.dart';
 import '../../azkhar/ui/azkhar_home_screen.dart';
@@ -15,6 +16,7 @@ import 'settings_screen.dart';
 import 'prayer_stats_screen.dart';
 import 'islamic_calendar_screen.dart';
 import 'about_screen.dart';
+import 'profile_edit_screen.dart';
 
 class MoreScreen extends StatefulWidget {
   const MoreScreen({super.key});
@@ -107,13 +109,6 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
 
                 const SizedBox(height: 24),
 
-                // Islamic Tools Section
-                _SectionHeader(title: 'Islamic Tools'),
-                const SizedBox(height: 12),
-                _IslamicToolsGrid(),
-
-                const SizedBox(height: 24),
-
                 // Analytics & Progress
                 _SectionHeader(title: 'Progress & Analytics'),
                 const SizedBox(height: 12),
@@ -172,43 +167,53 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
           ),
           const SizedBox(width: 16),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'As-salamu Alaykum',
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Abdullah',
-                  style: AppTextStyles.heading2.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: AppColors.success.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        '${_userStats['streak']} day streak',
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.success,
-                          fontWeight: FontWeight.w600,
+            child: FutureBuilder<String>(
+              future: UserService.getIslamicGreeting(),
+              builder: (context, greetingSnapshot) {
+                return FutureBuilder<String>(
+                  future: UserService.getUserName(),
+                  builder: (context, nameSnapshot) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          greetingSnapshot.data ?? 'As-salamu Alaykum',
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                        const SizedBox(height: 4),
+                        Text(
+                          nameSnapshot.data ?? 'Abdullah',
+                          style: AppTextStyles.heading2.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: AppColors.success.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                '${_userStats['streak']} day streak',
+                                style: AppTextStyles.bodySmall.copyWith(
+                                  color: AppColors.success,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
             ),
           ),
           IconButton(
@@ -265,61 +270,6 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _IslamicToolsGrid() {
-    final tools = [
-      {
-        'title': 'Holy Quran',
-        'subtitle': 'Read and listen',
-        'icon': Icons.menu_book,
-        'color': AppColors.primary,
-        'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (context) => const QuranScreen())),
-      },
-      {
-        'title': 'Hadith',
-        'subtitle': 'Prophetic traditions',
-        'icon': Icons.article,
-        'color': AppColors.accent,
-        'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (context) => const HadithHomeScreen())),
-      },
-      {
-        'title': 'Daily Azkhar',
-        'subtitle': 'Morning & evening',
-        'icon': Icons.favorite,
-        'color': AppColors.secondary,
-        'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AzkharHomeScreen())),
-      },
-      {
-        'title': 'Islamic Calendar',
-        'subtitle': 'Hijri dates & events',
-        'icon': Icons.calendar_month,
-        'color': AppColors.primary,
-        'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (context) => const IslamicCalendarScreen())),
-      },
-    ];
-
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        childAspectRatio: 1,
-      ),
-      itemCount: tools.length,
-      itemBuilder: (context, index) {
-        final tool = tools[index];
-        return _ToolCard(
-          title: tool['title'] as String,
-          subtitle: tool['subtitle'] as String,
-          icon: tool['icon'] as IconData,
-          color: tool['color'] as Color,
-          onTap: tool['onTap'] as VoidCallback,
-        );
-      },
-    );
-  }
-
   Widget _AnalyticsSection() {
     return Column(
       children: [
@@ -344,6 +294,15 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
                 fontWeight: FontWeight.w600,
               ),
             ),
+          ),
+        ),
+        _MenuTile(
+          icon: Icons.calendar_month,
+          title: 'Islamic Calendar',
+          subtitle: 'Hijri dates and Islamic events',
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const IslamicCalendarScreen()),
           ),
         ),
       ],
@@ -468,48 +427,6 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _ToolCard({
-    required String title,
-    required String subtitle,
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return CustomCard(
-      onTap: onTap,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Icon(icon, color: color, size: 32),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            title,
-            style: AppTextStyles.bodyMedium.copyWith(
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            subtitle,
-            style: AppTextStyles.bodySmall.copyWith(
-              color: AppColors.textSecondary,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _MenuTile({
     required IconData icon,
     required String title,
@@ -564,44 +481,16 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
     );
   }
 
-  void _editProfile() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Edit Profile'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              decoration: const InputDecoration(
-                labelText: 'Name',
-                hintText: 'Enter your name',
-              ),
-            ),
-            const SizedBox(height: 16),
-            const TextField(
-              decoration: InputDecoration(
-                labelText: 'Location',
-                hintText: 'Enter your city',
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              AppHelpers.showSnackBar(context, 'Profile updated successfully');
-            },
-            child: const Text('Save'),
-          ),
-        ],
-      ),
+  void _editProfile() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const ProfileEditScreen()),
     );
+
+    if (result == true) {
+      // Reload user stats if profile was updated
+      _loadUserStats();
+    }
   }
 
   void _showLocationSettings() {
