@@ -11,7 +11,7 @@ class SurahDetailView extends StatefulWidget {
   final SurahDetail surahDetail;
   final List<QuranEncTranslation> translations;
   final String reciterId;
-  final QuranAudioPlayerService audioService;
+  final SimpleQuranAudioPlayer audioService;
   final String reciterName;
 
   const SurahDetailView({
@@ -83,40 +83,6 @@ class _SurahDetailViewState extends State<SurahDetailView> {
         _isLoadingAudio = false;
       });
     }
-  }
-
-  Future<void> _playAudio() async {
-    if (_audioUrl != null) {
-      await widget.audioService.play(
-        _audioUrl!,
-        widget.surahDetail.surahName,
-        reciterName: widget.reciterName,
-      );
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Surah Header
-          _buildSurahHeader(),
-
-          const SizedBox(height: 24),
-
-          // Audio Player Section
-          _buildAudioSection(),
-
-          const SizedBox(height: 32),
-
-          // Verses Section
-          _buildVersesSection(),
-        ],
-      ),
-    );
   }
 
   Widget _buildSurahHeader() {
@@ -234,132 +200,196 @@ class _SurahDetailViewState extends State<SurahDetailView> {
 
   Widget _buildAudioSection() {
     return Container(
-      width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: AppColors.shadowLight,
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Icon(
-                Icons.headphones,
-                color: AppColors.primary,
-                size: 24,
-              ),
-              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Audio Recitation',
-                      style: AppTextStyles.heading4,
-                    ),
-                    Text(
                       'Reciter: ${widget.reciterName}',
-                      style: AppTextStyles.bodySmall.copyWith(
-                        color: AppColors.textSecondary,
+                      style: AppTextStyles.bodyLarge.copyWith(
+                        fontWeight: FontWeight.w600,
                       ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    ValueListenableBuilder<String>(
+                      valueListenable: widget.audioService.currentSurahName,
+                      builder: (context, surahName, _) {
+                        return Text(
+                          surahName.isNotEmpty ? surahName : 'Not Playing',
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
               ),
+              const SizedBox(width: 16),
+              _buildPlayPauseButton(),
             ],
           ),
-
           const SizedBox(height: 16),
+          _buildAudioProgressBar(),
+        ],
+      ),
+    );
+  }
 
-          // Play Button
-          if (_isLoadingAudio)
-            const Center(child: CircularProgressIndicator())
-          else if (_audioUrl == null)
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.warning.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.warning_amber_outlined,
-                    color: AppColors.warning,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      'Audio not available for this reciter',
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.warning,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )
-          else
-            ValueListenableBuilder<String>(
-              valueListenable: widget.audioService.currentSurahName,
-              builder: (context, currentSurah, child) {
-                final isCurrentSurah = currentSurah == widget.surahDetail.surahName;
+  Widget _buildPlayPauseButton() {
+    return ValueListenableBuilder<String>(
+      valueListenable: widget.audioService.currentSurahName,
+      builder: (context, currentSurah, child) {
+        final isCurrentSurah = currentSurah == widget.surahDetail.surahName;
 
-                return ValueListenableBuilder<bool>(
-                  valueListenable: widget.audioService.isPlaying,
-                  builder: (context, isPlaying, child) {
-                    return ElevatedButton.icon(
-                      onPressed: () {
-                        if (isCurrentSurah && isPlaying) {
-                          widget.audioService.pause();
-                        } else if (isCurrentSurah && !isPlaying) {
-                          widget.audioService.resume();
-                        } else {
-                          _playAudio();
-                        }
-                      },
-                      icon: Icon(
-                        isCurrentSurah && isPlaying
-                            ? Icons.pause
-                            : Icons.play_arrow,
-                        size: 24,
-                      ),
-                      label: Text(
-                        isCurrentSurah && isPlaying
-                            ? 'Pause Recitation'
-                            : isCurrentSurah
-                                ? 'Resume Recitation'
-                                : 'Play Recitation',
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: isCurrentSurah
-                            ? AppColors.accent
-                            : AppColors.primary,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 16,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    );
-                  },
-                );
+        return ValueListenableBuilder<bool>(
+          valueListenable: widget.audioService.isPlaying,
+          builder: (context, isPlaying, child) {
+            return ElevatedButton.icon(
+              onPressed: () {
+                if (isCurrentSurah && isPlaying) {
+                  widget.audioService.pause();
+                } else if (isCurrentSurah && !isPlaying) {
+                  widget.audioService.resume();
+                } else {
+                  _playAudio();
+                }
               },
-            ),
+              icon: Icon(
+                isCurrentSurah && isPlaying
+                    ? Icons.pause
+                    : Icons.play_arrow,
+                size: 24,
+              ),
+              label: Text(
+                isCurrentSurah && isPlaying
+                    ? 'Pause Recitation'
+                    : isCurrentSurah
+                        ? 'Resume Recitation'
+                        : 'Play Recitation',
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: isCurrentSurah
+                    ? AppColors.accent
+                    : AppColors.primary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 16,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildAudioProgressBar() {
+    return ValueListenableBuilder<Duration>(
+      valueListenable: widget.audioService.position,
+      builder: (context, position, _) {
+        return ValueListenableBuilder<Duration>(
+          valueListenable: widget.audioService.duration,
+          builder: (context, duration, _) {
+            return Column(
+              children: [
+                Slider(
+                  value: position.inSeconds.toDouble(),
+                  min: 0.0,
+                  max: duration.inSeconds.toDouble().isNaN ? 0.0 : duration.inSeconds.toDouble(),
+                  onChanged: (value) {
+                    widget.audioService.seek(Duration(seconds: value.toInt()));
+                  },
+                  activeColor: AppColors.primary,
+                  inactiveColor: AppColors.primary.withOpacity(0.3),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        _formatDuration(position),
+                        style: AppTextStyles.bodySmall,
+                      ),
+                      Text(
+                        _formatDuration(duration),
+                        style: AppTextStyles.bodySmall,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  String _formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final hours = duration.inHours;
+    final minutes = twoDigits(duration.inMinutes.remainder(60));
+    final seconds = twoDigits(duration.inSeconds.remainder(60));
+    return [
+      if (hours > 0) hours.toString(),
+      minutes,
+      seconds,
+    ].join(':');
+  }
+
+  Future<void> _playAudio() async {
+    if (_audioUrl != null) {
+      await widget.audioService.play(
+        _audioUrl!,
+        widget.surahDetail.surahName,
+        reciterName: widget.reciterName,
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Surah Header
+          _buildSurahHeader(),
+
+          const SizedBox(height: 24),
+
+          // Audio Player Section
+          _buildAudioSection(),
+
+          const SizedBox(height: 32),
+
+          // Verses Section
+          _buildVersesSection(),
         ],
       ),
     );

@@ -17,7 +17,7 @@ class QuranScreen extends StatefulWidget {
 
 class _QuranScreenState extends State<QuranScreen> with TickerProviderStateMixin {
   late Future<List<SurahInfo>> _surahsFuture;
-  final QuranAudioPlayerService _audioService = QuranAudioPlayerService();
+  final SimpleQuranAudioPlayer _audioService = SimpleQuranAudioPlayer.instance;
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
   String _searchQuery = '';
@@ -27,7 +27,6 @@ class _QuranScreenState extends State<QuranScreen> with TickerProviderStateMixin
   void initState() {
     super.initState();
     _surahsFuture = QuranApi.fetchSurahs();
-    _audioService.init();
 
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 800),

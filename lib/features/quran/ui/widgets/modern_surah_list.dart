@@ -7,7 +7,7 @@ import '../../../../core/theme/app_text_styles.dart';
 
 class ModernSurahList extends StatelessWidget {
   final List<SurahInfo> surahs;
-  final QuranAudioPlayerService audioService;
+  final SimpleQuranAudioPlayer audioService;
 
   const ModernSurahList({
     super.key,

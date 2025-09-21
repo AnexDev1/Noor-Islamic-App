@@ -4,7 +4,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 
 class AudioPlayerWidget extends StatefulWidget {
-  final QuranAudioPlayerService audioService;
+  final SimpleQuranAudioPlayer audioService;
 
   const AudioPlayerWidget({
     super.key,
@@ -81,14 +81,14 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  AppColors.quranCard,
-                  AppColors.quranCard.withOpacity(0.8),
+                  AppColors.primary,
+                  AppColors.primaryLight,
                 ],
               ),
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.quranCard.withOpacity(0.3),
+                  color: AppColors.primary.withOpacity(0.3),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),

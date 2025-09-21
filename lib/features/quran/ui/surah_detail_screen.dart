@@ -23,7 +23,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> with TickerProvid
   late Future<SurahDetail> _surahDetailFuture;
   late Future<List<QuranEncTranslation>> _translationFuture;
   late Future<Map<String, String>> _recitersFuture;
-  final QuranAudioPlayerService _audioService = QuranAudioPlayerService();
+  final SimpleQuranAudioPlayer _audioService = SimpleQuranAudioPlayer.instance;
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
 
@@ -40,7 +40,6 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> with TickerProvid
   @override
   void initState() {
     super.initState();
-    _audioService.init();
     _surahDetailFuture = SurahApi.fetchSurahDetail(widget.surahNo);
     _translationFuture = QuranEncTranslationApi.fetchSurahTranslation(_selectedTranslationKey, widget.surahNo);
     _recitersFuture = RecitersApi.fetchReciters();

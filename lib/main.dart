@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'core/theme/app_theme.dart';
 import 'navigation/main_navigation.dart';
 import 'package:geolocator/geolocator.dart';
+import 'features/quran/audio/audio_player_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +17,8 @@ Future<void> _ensureLocationPermission() async {
     await Geolocator.requestPermission();
   }
 }
+
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

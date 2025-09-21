@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
+import 'package:noor/navigation/main_navigation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/theme/app_colors.dart';
@@ -228,7 +229,9 @@ class _AiSetupScreenState extends State<AiSetupScreen> with TickerProviderStateM
       elevation: 0,
       backgroundColor: Colors.transparent,
       leading: IconButton(
-        onPressed: () => Navigator.of(context).pop(),
+        onPressed: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const MainNavigationScreen()),
+        ),
         icon: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
