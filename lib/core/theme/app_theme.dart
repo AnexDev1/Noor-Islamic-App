@@ -245,10 +245,123 @@ class AppTheme {
 
   // Dark Theme for Future Implementation
   static ThemeData get darkTheme {
-    return lightTheme.copyWith(
+    return ThemeData(
+      useMaterial3: true,
       brightness: Brightness.dark,
-      scaffoldBackgroundColor: AppColors.backgroundDark,
-      // Add dark theme specific customizations
+
+      // Dark Color Scheme
+      colorScheme: ColorScheme.dark(
+        primary: AppColors.primary,
+        onPrimary: Colors.white,
+        primaryContainer: AppColors.primaryDark,
+        onPrimaryContainer: Colors.white,
+        secondary: AppColors.accent,
+        onSecondary: Colors.white,
+        secondaryContainer: AppColors.primaryDark, // Using primaryDark instead of non-existent accentDark
+        onSecondaryContainer: Colors.white,
+        tertiary: AppColors.secondary,
+        onTertiary: Colors.white,
+        surface: const Color(0xFF1A1D23),
+        onSurface: Colors.white,
+        surfaceContainer: const Color(0xFF2D3748),
+        surfaceContainerHighest: const Color(0xFF4A5568),
+        onSurfaceVariant: const Color(0xFFA0AEC0),
+        error: AppColors.error,
+        onError: Colors.white,
+        outline: const Color(0xFF718096),
+        shadow: Colors.black54,
+        // Removed deprecated background and onBackground properties
+      ),
+
+      // Dark App Bar Theme
+      appBarTheme: AppBarTheme(
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 1,
+        surfaceTintColor: const Color(0xFF2D3748),
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        titleTextStyle: AppTextStyles.heading2.copyWith(color: Colors.white),
+        centerTitle: false,
+        titleSpacing: 0,
+      ),
+
+      // Dark Card Theme
+      cardTheme: CardThemeData(
+        color: const Color(0xFF2D3748),
+        elevation: 2,
+        shadowColor: Colors.black54,
+        surfaceTintColor: const Color(0xFF2D3748),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        margin: const EdgeInsets.all(8),
+        clipBehavior: Clip.antiAlias,
+      ),
+
+      // Dark Button Themes
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          foregroundColor: Colors.white,
+          elevation: 2,
+          shadowColor: Colors.black54,
+          surfaceTintColor: AppColors.primaryLight,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          textStyle: AppTextStyles.buttonMedium,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          minimumSize: const Size(88, 48),
+        ),
+      ),
+
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: AppColors.primary,
+          side: const BorderSide(color: AppColors.primary, width: 1.5),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          textStyle: AppTextStyles.buttonMedium.copyWith(color: AppColors.primary),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          minimumSize: const Size(88, 48),
+        ),
+      ),
+
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: AppColors.primary,
+          textStyle: AppTextStyles.buttonMedium.copyWith(color: AppColors.primary),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        ),
+      ),
+
+      // Input Decoration Theme
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: const Color(0xFF2D3748),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFF4A5568)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFF4A5568)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: AppColors.primary, width: 2),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        hintStyle: AppTextStyles.bodyMedium.copyWith(color: const Color(0xFF718096)),
+      ),
+
+      // Scaffold Background
+      scaffoldBackgroundColor: const Color(0xFF111418),
     );
   }
 }

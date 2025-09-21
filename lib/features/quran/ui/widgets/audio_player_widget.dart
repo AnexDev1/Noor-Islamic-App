@@ -74,8 +74,8 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget>
         return SlideTransition(
           position: _slideAnimation,
           child: Container(
-            margin: const EdgeInsets.all(20),
-            padding: const EdgeInsets.all(16),
+            margin: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
@@ -88,7 +88,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget>
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primary.withOpacity(0.3),
+                  color: AppColors.primary.withAlpha(77),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -145,9 +145,9 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget>
                             SliderTheme(
                               data: SliderTheme.of(context).copyWith(
                                 activeTrackColor: Colors.white,
-                                inactiveTrackColor: Colors.white.withOpacity(0.3),
+                                inactiveTrackColor: Colors.white.withAlpha(77),
                                 thumbColor: Colors.white,
-                                overlayColor: Colors.white.withOpacity(0.2),
+                                overlayColor: Colors.white.withAlpha(51),
                                 trackHeight: 3,
                                 thumbShape: const RoundSliderThumbShape(
                                   enabledThumbRadius: 8,
@@ -173,13 +173,13 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget>
                                   Text(
                                     _formatDuration(position),
                                     style: AppTextStyles.bodySmall.copyWith(
-                                      color: Colors.white.withOpacity(0.8),
+                                      color: Colors.white.withAlpha(204),
                                     ),
                                   ),
                                   Text(
                                     _formatDuration(duration),
                                     style: AppTextStyles.bodySmall.copyWith(
-                                      color: Colors.white.withOpacity(0.8),
+                                      color: Colors.white.withAlpha(204),
                                     ),
                                   ),
                                 ],
@@ -218,7 +218,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget>
                       builder: (context, isPlaying, child) {
                         return Container(
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
+                            color: Colors.white.withAlpha(51),
                             borderRadius: BorderRadius.circular(24),
                           ),
                           child: IconButton(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../common_widgets/custom_app_bar.dart';
 import '../../../common_widgets/custom_cards.dart';
@@ -8,40 +8,30 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../core/utils/constants.dart';
 import '../../../core/utils/helpers.dart';
 import '../../../core/services/user_service.dart';
-import '../../quran/ui/quran_screen.dart';
-import '../../hadith/ui/hadith_home_screen.dart';
-import '../../azkhar/ui/azkhar_home_screen.dart';
-import '../../tasbih/ui/tasbih_screen.dart';
+import '../../../core/providers/app_providers.dart';
+import '../../../core/providers/models.dart';
 import 'settings_screen.dart';
 import 'prayer_stats_screen.dart';
 import 'islamic_calendar_screen.dart';
 import 'about_screen.dart';
 import 'profile_edit_screen.dart';
 
-class MoreScreen extends StatefulWidget {
+class MoreScreen extends ConsumerStatefulWidget {
   const MoreScreen({super.key});
 
   @override
-  State<MoreScreen> createState() => _MoreScreenState();
+  ConsumerState<MoreScreen> createState() => _MoreScreenState();
 }
 
-class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
+class _MoreScreenState extends ConsumerState<MoreScreen> with TickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-
-  Map<String, int> _userStats = {
-    'totalPrayers': 0,
-    'quranProgress': 0,
-    'tasbihs': 0,
-    'streak': 0,
-  };
 
   @override
   void initState() {
     super.initState();
     _initAnimations();
-    _loadUserStats();
   }
 
   void _initAnimations() {
@@ -75,18 +65,12 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  Future<void> _loadUserStats() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _userStats['totalPrayers'] = prefs.getInt('total_prayers') ?? 0;
-      _userStats['quranProgress'] = prefs.getInt('quran_progress') ?? 0;
-      _userStats['tasbihs'] = prefs.getInt('total_tasbihs') ?? 0;
-      _userStats['streak'] = prefs.getInt('prayer_streak') ?? 0;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    // Watch providers for real-time data
+    final prayerStats = ref.watch(prayerStatsProvider);
+    final todayStatus = ref.watch(todayPrayerStatusProvider);
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: const CustomAppBar(title: 'More'),
@@ -100,33 +84,33 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // User Profile Header
-                _UserProfileHeader(),
+                _buildUserProfileHeader(prayerStats),
 
                 const SizedBox(height: 24),
 
                 // Quick Stats
-                _QuickStatsSection(),
+                _buildQuickStatsSection(prayerStats, todayStatus),
 
                 const SizedBox(height: 24),
 
                 // Analytics & Progress
-                _SectionHeader(title: 'Progress & Analytics'),
+                _buildSectionHeader('Progress & Analytics'),
                 const SizedBox(height: 12),
-                _AnalyticsSection(),
+                _buildAnalyticsSection(prayerStats),
 
                 const SizedBox(height: 24),
 
                 // Settings & Preferences
-                _SectionHeader(title: 'Settings'),
+                _buildSectionHeader('Settings'),
                 const SizedBox(height: 12),
-                _SettingsSection(),
+                _buildSettingsSection(),
 
                 const SizedBox(height: 24),
 
                 // Support & Community
-                _SectionHeader(title: 'Support & Community'),
+                _buildSectionHeader('Support & Community'),
                 const SizedBox(height: 12),
-                _SupportSection(),
+                _buildSupportSection(),
 
                 const SizedBox(height: 32),
               ],
@@ -137,7 +121,7 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _UserProfileHeader() {
+  Widget _buildUserProfileHeader(PrayerStats prayerStats) {
     return CustomCard(
       child: Row(
         children: [
@@ -153,7 +137,7 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
               borderRadius: BorderRadius.circular(35),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primary.withOpacity(0.3),
+                  color: AppColors.primary.withValues(alpha: 0.3),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -196,11 +180,11 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                               decoration: BoxDecoration(
-                                color: AppColors.success.withOpacity(0.1),
+                                color: AppColors.success.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
-                                '${_userStats['streak']} day streak',
+                                '${prayerStats.currentStreak} day streak',
                                 style: AppTextStyles.bodySmall.copyWith(
                                   color: AppColors.success,
                                   fontWeight: FontWeight.w600,
@@ -225,13 +209,13 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _QuickStatsSection() {
+  Widget _buildQuickStatsSection(PrayerStats prayerStats, PrayerStatus todayStatus) {
     return Row(
       children: [
         Expanded(
-          child: _StatCard(
+          child: _buildStatCard(
             title: 'Prayers',
-            value: _userStats['totalPrayers'].toString(),
+            value: prayerStats.totalPrayers.toString(),
             icon: Icons.mosque,
             color: AppColors.primary,
             onTap: () => Navigator.push(
@@ -241,28 +225,42 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
           ),
         ),
         const SizedBox(width: 12),
+        // Commented out Quran progress since there's no tracking system yet
+        // Expanded(
+        //   child: _buildStatCard(
+        //     title: 'Quran',
+        //     value: '0%', // No tracking system implemented yet
+        //     icon: Icons.menu_book,
+        //     color: AppColors.accent,
+        //     onTap: () => Navigator.push(
+        //       context,
+        //       MaterialPageRoute(builder: (context) => const QuranScreen()),
+        //     ),
+        //   ),
+        // ),
+        // const SizedBox(width: 12),
         Expanded(
-          child: _StatCard(
-            title: 'Quran',
-            value: '${_userStats['quranProgress']}%',
-            icon: Icons.menu_book,
+          child: _buildStatCard(
+            title: 'Today',
+            value: '${todayStatus.completedPrayers}/5',
+            icon: Icons.today,
             color: AppColors.accent,
             onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const QuranScreen()),
+              MaterialPageRoute(builder: (context) => const PrayerStatsScreen()),
             ),
           ),
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: _StatCard(
-            title: 'Tasbih',
-            value: _userStats['tasbihs'].toString(),
-            icon: Icons.analytics,
+          child: _buildStatCard(
+            title: 'Streak',
+            value: '${prayerStats.currentStreak}',
+            icon: Icons.local_fire_department,
             color: AppColors.secondary,
             onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const TasbihScreen()),
+              MaterialPageRoute(builder: (context) => const PrayerStatsScreen()),
             ),
           ),
         ),
@@ -270,10 +268,10 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _AnalyticsSection() {
+  Widget _buildAnalyticsSection(PrayerStats prayerStats) {
     return Column(
       children: [
-        _MenuTile(
+        _buildMenuTile(
           icon: Icons.analytics,
           title: 'Prayer Statistics',
           subtitle: 'Track your prayer performance',
@@ -284,11 +282,11 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
           trailing: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: AppColors.success.withOpacity(0.1),
+              color: AppColors.success.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
-              '${_userStats['streak']} days',
+              '${prayerStats.currentStreak} days',
               style: AppTextStyles.bodySmall.copyWith(
                 color: AppColors.success,
                 fontWeight: FontWeight.w600,
@@ -296,7 +294,7 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
             ),
           ),
         ),
-        _MenuTile(
+        _buildMenuTile(
           icon: Icons.calendar_month,
           title: 'Islamic Calendar',
           subtitle: 'Hijri dates and Islamic events',
@@ -309,10 +307,10 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _SettingsSection() {
+  Widget _buildSettingsSection() {
     return Column(
       children: [
-        _MenuTile(
+        _buildMenuTile(
           icon: Icons.settings,
           title: 'App Settings',
           subtitle: 'Notifications, theme, language',
@@ -321,13 +319,13 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
             MaterialPageRoute(builder: (context) => const SettingsScreen()),
           ),
         ),
-        _MenuTile(
+        _buildMenuTile(
           icon: Icons.location_on,
           title: 'Location Settings',
           subtitle: 'Update prayer location',
           onTap: () => _showLocationSettings(),
         ),
-        _MenuTile(
+        _buildMenuTile(
           icon: Icons.backup,
           title: 'Backup & Sync',
           subtitle: 'Save your progress',
@@ -337,10 +335,10 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _SupportSection() {
+  Widget _buildSupportSection() {
     return Column(
       children: [
-        _MenuTile(
+        _buildMenuTile(
           icon: Icons.star,
           title: 'Rate Noor',
           subtitle: 'Love the app? Rate us!',
@@ -348,23 +346,23 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: List.generate(5, (index) =>
-              Icon(Icons.star, size: 12, color: AppColors.accent.withOpacity(0.6))
+              Icon(Icons.star, size: 12, color: AppColors.accent.withValues(alpha: 0.6))
             ),
           ),
         ),
-        _MenuTile(
+        _buildMenuTile(
           icon: Icons.share,
           title: 'Share with Friends',
           subtitle: 'Spread the word',
           onTap: () => _shareApp(),
         ),
-        _MenuTile(
+        _buildMenuTile(
           icon: Icons.feedback,
           title: 'Feedback',
           subtitle: 'Help us improve',
           onTap: () => _sendFeedback(),
         ),
-        _MenuTile(
+        _buildMenuTile(
           icon: Icons.info,
           title: 'About Noor',
           subtitle: 'App info, privacy & terms',
@@ -377,7 +375,7 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _SectionHeader({required String title}) {
+  Widget _buildSectionHeader(String title) {
     return Text(
       title,
       style: AppTextStyles.heading3.copyWith(
@@ -387,7 +385,7 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _StatCard({
+  Widget _buildStatCard({
     required String title,
     required String value,
     required IconData icon,
@@ -402,7 +400,7 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(icon, color: color, size: 24),
@@ -427,7 +425,7 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _MenuTile({
+  Widget _buildMenuTile({
     required IconData icon,
     required String title,
     required String subtitle,
@@ -444,7 +442,7 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
+                color: AppColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(icon, color: AppColors.primary, size: 20),
@@ -488,8 +486,8 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
     );
 
     if (result == true) {
-      // Reload user stats if profile was updated
-      _loadUserStats();
+      // Refresh prayer stats after profile update
+      ref.read(prayerStatsProvider.notifier).refreshStats();
     }
   }
 
@@ -507,7 +505,9 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              AppHelpers.showSnackBar(context, 'Location updated');
+              // Update location using Riverpod provider
+              ref.read(userLocationProvider.notifier).refreshLocation();
+              AppHelpers.showSnackBar(context, 'Updating location...');
             },
             child: const Text('Update Location'),
           ),

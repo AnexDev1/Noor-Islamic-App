@@ -62,8 +62,8 @@ class ModernChapterList extends StatelessWidget {
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [
-                                AppColors.hadithCard,
-                                AppColors.hadithCard.withOpacity(0.8),
+                                AppColors.primaryLight,
+                                AppColors.primaryDark.withOpacity(0.8),
                               ],
                             ),
                             borderRadius: BorderRadius.circular(20),

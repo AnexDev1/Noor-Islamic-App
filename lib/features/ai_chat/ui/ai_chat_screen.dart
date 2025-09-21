@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../common_widgets/custom_app_bar.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
-import '../../../core/utils/constants.dart';
+import '../../../core/providers/app_providers.dart';
 import '../data/app_context_provider.dart';
-import '../logic/prayer_tracking_service.dart';
 import 'ai_setup_screen.dart';
 
-class AiChatScreen extends StatefulWidget {
+class AiChatScreen extends ConsumerStatefulWidget {
   const AiChatScreen({super.key});
 
   @override
-  State<AiChatScreen> createState() => _AiChatScreenState();
+  ConsumerState<AiChatScreen> createState() => _AiChatScreenState();
 }
 
-class _AiChatScreenState extends State<AiChatScreen> with TickerProviderStateMixin {
+class _AiChatScreenState extends ConsumerState<AiChatScreen> with TickerProviderStateMixin {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final List<ChatMessage> _messages = [];
@@ -26,6 +26,8 @@ class _AiChatScreenState extends State<AiChatScreen> with TickerProviderStateMix
 
   bool _isLoading = false;
   bool _isInitialized = false;
+  bool _isGeneratingWelcome = true; // New flag to track welcome message generation
+  String _loadingStatus = 'Initializing...';
   late AnimationController _typingController;
   late Animation<double> _typingAnimation;
 
@@ -52,61 +54,430 @@ class _AiChatScreenState extends State<AiChatScreen> with TickerProviderStateMix
   }
 
   Future<void> _initializeChat() async {
+    setState(() {
+      _loadingStatus = 'Checking API configuration...';
+    });
+
+    final prefs = await SharedPreferences.getInstance();
+    final apiKey = prefs.getString('gemini_api_key');
+
+    if (apiKey == null || apiKey.isEmpty) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const AiSetupScreen()),
+      );
+      return;
+    }
+
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final apiKey = prefs.getString('gemini_api_key');
-
-      if (apiKey == null || apiKey.isEmpty || apiKey == 'placeholder') {
-        // No valid API key, redirect to setup
-        if (mounted) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => const AiSetupScreen()),
-          );
-        }
-        return;
-      }
-
-      // Initialize Gemini with the actual API key (only once we have a valid key)
-      Gemini.init(apiKey: apiKey);
-
-      // Test the API key by making a simple request
-      await _testApiKey();
-
-      // Update app usage for personalization
-      await AppContextProvider.updateAppUsage();
-
       setState(() {
-        _isInitialized = true;
-        _messages.add(ChatMessage(
-          text: 'السلام عليكم ورحمة الله وبركاته!\n\nWelcome to **Noor** - your personalized Islamic AI Assistant! 🕌\n\nI now have access to your:\n• 📊 Prayer statistics and spiritual journey\n• 🗺️ Location and prayer times\n• ⚙️ App preferences and usage patterns\n• 📱 All Noor app features\n\nThis allows me to provide **highly personalized Islamic guidance** tailored specifically to you!\n\n### Ask me about:\n• Quranic verses and their meanings\n• Hadith and Islamic teachings\n• **Personalized prayer guidance** based on your habits\n• Islamic history and scholars\n• Fiqh (Islamic jurisprudence)\n• Du\'as and supplications\n• **App feature recommendations**\n\nHow may I assist you on your spiritual journey today? 🤲',
-          isUser: false,
-          timestamp: DateTime.now(),
-        ));
+        _loadingStatus = 'Connecting to AI service...';
       });
+
+      Gemini.init(apiKey: apiKey);
+      setState(() => _isInitialized = true);
+
+      // Send welcome message with app context
+      await _sendWelcomeMessage();
     } catch (e) {
-      print('Chat initialization error: $e');
-      _showError('Failed to initialize AI assistant. Please check your API key.');
-      // Redirect to setup screen if initialization fails
-      if (mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const AiSetupScreen()),
-        );
-      }
+      _showError('Failed to initialize AI: ${e.toString()}');
     }
   }
 
-  Future<void> _testApiKey() async {
+  Future<void> _sendWelcomeMessage() async {
     try {
-      final gemini = Gemini.instance;
-      // Make a simple test request to verify the API key works
-      await gemini.prompt(parts: [Part.text('Hello')]);
+      setState(() {
+        _loadingStatus = 'Getting ready... 🕌';
+        _isGeneratingWelcome = true; // Set flag when generating welcome message
+      });
+
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      setState(() {
+        _loadingStatus = 'Fetching your location... 📍';
+      });
+
+      await Future.delayed(const Duration(milliseconds: 800));
+
+      setState(() {
+        _loadingStatus = 'Loading prayer times... ⏰';
+      });
+
+      await Future.delayed(const Duration(milliseconds: 600));
+
+      setState(() {
+        _loadingStatus = 'Analyzing your prayer statistics... 📊';
+      });
+
+      await Future.delayed(const Duration(milliseconds: 700));
+
+      setState(() {
+        _loadingStatus = 'Preparing personalized guidance... 🤖';
+      });
+
+      // Get app context using Riverpod provider
+      final appContext = await AppContextProvider.generateAppContextFromProviders(ref);
+
+      setState(() {
+        _loadingStatus = 'Almost ready... ✨';
+      });
+
+      await Future.delayed(const Duration(milliseconds: 400));
+
+      const welcomePrompt = '''
+As-salamu Alaykum! I'm your Islamic AI assistant in the Noor app. I have access to your app data and can provide personalized Islamic guidance.
+
+Based on your current app usage, how can I help you today? I can:
+- Give prayer reminders and Islamic guidance
+- Answer questions about Islam
+- Suggest app features that might help you
+- Provide personalized advice based on your prayer habits
+- Help with Quranic verses or Hadith
+- Guide you in Islamic practices
+
+What would you like to know or discuss?
+''';
+
+      final response = await Gemini.instance.prompt(parts: [
+        Part.text(appContext + '\n\nUSER PROMPT:\n' + welcomePrompt),
+      ]);
+
+      if (response?.output != null) {
+        _addMessage(ChatMessage(
+          text: response!.output!,
+          isUser: false,
+          timestamp: DateTime.now(),
+        ));
+      }
     } catch (e) {
-      print('API key test failed: $e');
-      // Clear the invalid API key
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove('gemini_api_key');
-      throw Exception('Invalid API key');
+      _addMessage(ChatMessage(
+        text: 'As-salamu Alaykum! I\'m your Islamic AI assistant. How can I help you with your Islamic journey today?',
+        isUser: false,
+        timestamp: DateTime.now(),
+      ));
+    } finally {
+      setState(() {
+        _isGeneratingWelcome = false; // Reset flag after welcome message is generated
+      });
     }
+  }
+
+  Future<void> _sendMessage(String message) async {
+    if (message.trim().isEmpty || !_isInitialized) return;
+
+    // Update app usage
+    ref.read(userPreferencesProvider.notifier).updateLastAppUsage();
+
+    _addMessage(ChatMessage(
+      text: message,
+      isUser: true,
+      timestamp: DateTime.now(),
+    ));
+
+    _messageController.clear();
+    setState(() => _isLoading = true);
+
+    try {
+      // Get updated app context
+      final appContext = await AppContextProvider.generateAppContextFromProviders(ref);
+
+      final response = await Gemini.instance.prompt(parts: [
+        Part.text(appContext + '\n\nUSER QUESTION:\n' + message),
+      ]);
+
+      if (response?.output != null) {
+        _addMessage(ChatMessage(
+          text: response!.output!,
+          isUser: false,
+          timestamp: DateTime.now(),
+        ));
+
+        // Add to chat history for context
+        _chatHistory.add(Content(role: 'user', parts: [Part.text(message)]));
+        _chatHistory.add(Content(role: 'model', parts: [Part.text(response.output!)]));
+      } else {
+        throw Exception('No response received');
+      }
+    } catch (e) {
+      _addMessage(ChatMessage(
+        text: 'I apologize, but I\'m having trouble responding right now. Please try again or check your connection.',
+        isUser: false,
+        timestamp: DateTime.now(),
+      ));
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  void _addMessage(ChatMessage message) {
+    setState(() {
+      _messages.add(message);
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    });
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: AppColors.error,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Show loading screen until both initialization and welcome message generation are complete
+    if (!_isInitialized || _isGeneratingWelcome) {
+      return Scaffold(
+        appBar: const CustomAppBar(title: 'Islamic AI Assistant'),
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                _loadingStatus,
+                style: AppTextStyles.body1.copyWith(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              if (_isGeneratingWelcome)
+                Text(
+                  'Generating personalized response...',
+                  style: AppTextStyles.caption.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return Scaffold(
+      appBar: CustomAppBar(
+        title: 'Islamic AI Assistant',
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () {
+              setState(() {
+                _messages.clear();
+                _chatHistory.clear();
+                _isGeneratingWelcome = true;
+              });
+              _sendWelcomeMessage();
+            },
+          ),
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'clear') {
+                setState(() {
+                  _messages.clear();
+                  _chatHistory.clear();
+                  _isGeneratingWelcome = true;
+                });
+                _sendWelcomeMessage();
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'clear',
+                child: Text('Clear Chat'),
+              ),
+            ],
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          // Messages
+          Expanded(
+            child: ListView.builder(
+              controller: _scrollController,
+              padding: const EdgeInsets.all(16),
+              itemCount: _messages.length + (_isLoading ? 1 : 0),
+              itemBuilder: (context, index) {
+                if (index == _messages.length && _isLoading) {
+                  return _buildTypingIndicator();
+                }
+                return _buildMessageBubble(_messages[index]);
+              },
+            ),
+          ),
+
+          // Input field
+          _buildInputField(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTypingIndicator() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        children: [
+          CircleAvatar(
+            backgroundColor: AppColors.primary,
+            child: const Icon(Icons.android, color: Colors.white, size: 20),
+          ),
+          const SizedBox(width: 12),
+          AnimatedBuilder(
+            animation: _typingAnimation,
+            builder: (context, child) {
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: List.generate(3, (index) {
+                    return Container(
+                      margin: EdgeInsets.only(right: index < 2 ? 4 : 0),
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: _typingAnimation.value),
+                        shape: BoxShape.circle,
+                      ),
+                    );
+                  }),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMessageBubble(ChatMessage message) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (!message.isUser) ...[
+            CircleAvatar(
+              backgroundColor: AppColors.primary,
+              child: const Icon(Icons.android, color: Colors.white, size: 20),
+            ),
+            const SizedBox(width: 12),
+          ],
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: message.isUser ? AppColors.primary : AppColors.surface,
+                borderRadius: BorderRadius.circular(18).copyWith(
+                  bottomLeft: message.isUser ? const Radius.circular(18) : const Radius.circular(4),
+                  bottomRight: message.isUser ? const Radius.circular(4) : const Radius.circular(18),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  MarkdownBody(
+                    data: message.text,
+                    styleSheet: MarkdownStyleSheet(
+                      p: AppTextStyles.body1.copyWith(
+                        color: message.isUser ? Colors.white : AppColors.textPrimary,
+                      ),
+                      strong: AppTextStyles.body1.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: message.isUser ? Colors.white : AppColors.textPrimary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${message.timestamp.hour}:${message.timestamp.minute.toString().padLeft(2, '0')}',
+                    style: AppTextStyles.caption.copyWith(
+                      color: message.isUser ? Colors.white70 : AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          if (message.isUser) ...[
+            const SizedBox(width: 12),
+            CircleAvatar(
+              backgroundColor: AppColors.accent,
+              child: const Icon(Icons.person, color: Colors.white, size: 20),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInputField() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadowLight,
+            blurRadius: 8,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _messageController,
+              decoration: InputDecoration(
+                hintText: 'Ask about Islam, prayers, or app features...',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide: BorderSide.none,
+                ),
+                filled: true,
+                fillColor: AppColors.background,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              ),
+              maxLines: null,
+              textInputAction: TextInputAction.send,
+              onSubmitted: _sendMessage,
+            ),
+          ),
+          const SizedBox(width: 12),
+          FloatingActionButton(
+            mini: true,
+            onPressed: _isLoading ? null : () => _sendMessage(_messageController.text),
+            child: _isLoading
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Icon(Icons.send),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -115,554 +486,6 @@ class _AiChatScreenState extends State<AiChatScreen> with TickerProviderStateMix
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();
-  }
-
-  void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: AppColors.error,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-    );
-  }
-
-  Future<void> _sendMessage() async {
-    final text = _messageController.text.trim();
-    if (text.isEmpty || _isLoading) return;
-
-    // Immediately show the user message and set loading state
-    setState(() {
-      _messages.add(ChatMessage(
-        text: text,
-        isUser: true,
-        timestamp: DateTime.now(),
-      ));
-      _isLoading = true;
-    });
-
-    _messageController.clear();
-    _scrollToBottom();
-
-    try {
-      // Generate Islamic context asynchronously (this was causing the delay)
-      final contextualizedMessage = await _addIslamicContext(text);
-
-      // Add user message to chat history
-      _chatHistory.add(Content(parts: [Part.text(contextualizedMessage)], role: 'user'));
-
-      final gemini = Gemini.instance;
-
-      // Use chat method for conversation continuity
-      final response = await gemini.chat(_chatHistory);
-
-      if (response?.output != null) {
-        final aiResponse = response!.output!;
-
-        // Add AI response to chat history
-        _chatHistory.add(Content(parts: [Part.text(aiResponse)], role: 'model'));
-
-        setState(() {
-          _messages.add(ChatMessage(
-            text: aiResponse,
-            isUser: false,
-            timestamp: DateTime.now(),
-          ));
-        });
-      } else {
-        throw Exception('No response received');
-      }
-    } catch (e) {
-      setState(() {
-        _messages.add(ChatMessage(
-          text: 'I apologize, but I\'m having trouble responding right now. Please check your internet connection and API key, then try again.',
-          isUser: false,
-          timestamp: DateTime.now(),
-        ));
-      });
-      _showError('Failed to get AI response: ${e.toString()}');
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-      _scrollToBottom();
-    }
-  }
-
-  Future<String> _addIslamicContext(String userMessage) async {
-    // Determine if this needs full context or just conversational context
-    final needsFullContext = _shouldIncludeFullContext(userMessage);
-
-    if (needsFullContext) {
-      // Get comprehensive app context for complex questions
-      final appContext = await AppContextProvider.generateAppContext();
-      return _buildFullContext(userMessage, appContext);
-    } else {
-      // Use minimal context for casual conversation
-      return _buildConversationalContext(userMessage);
-    }
-  }
-
-  bool _shouldIncludeFullContext(String message) {
-    final lowercaseMessage = message.toLowerCase();
-
-    // Include full context for specific Islamic topics or app-related questions
-    final fullContextTriggers = [
-      'prayer', 'salah', 'namaz', 'quran', 'hadith', 'fiqh', 'islamic', 'sunnah',
-      'madhab', 'scholar', 'ruling', 'haram', 'halal', 'dua', 'dhikr', 'tasbih',
-      'qibla', 'azkhar', 'app', 'feature', 'how to use', 'help me', 'guidance',
-      'what is', 'explain', 'tell me about', 'teach me', 'verses', 'ayah', 'surah'
-    ];
-
-    // Check if message contains specific Islamic topics
-    for (String trigger in fullContextTriggers) {
-      if (lowercaseMessage.contains(trigger)) {
-        return true;
-      }
-    }
-
-    // Include full context for longer, detailed questions
-    if (message.length > 50) {
-      return true;
-    }
-
-    return false;
-  }
-
-  String _buildFullContext(String userMessage, String appContext) {
-    return '''You are an Islamic assistant in the NOOR Islamic app. Your role is to provide authentic, trusted Islamic knowledge to users. You must base every answer strictly on:
-
-1. The Qur'an (with surah & ayah number if possible)
-2. The authentic Hadith collections (Sahih al-Bukhari, Sahih Muslim, Sunan Abu Dawood, etc.)
-3. The consensus of classical and well-known scholars in Fiqh (with reference if available)
-
-$appContext
-
-⚠️ IMPORTANT GUIDELINES:
-• Never invent rulings, interpretations, or personal opinions
-• If a question has no clear authentic source, say: "This matter requires guidance from a qualified scholar. Please consult a local imam or scholar."
-• Reference specific app features when they can help the user
-• Use the user's prayer statistics to provide personalized encouragement and guidance
-• Consider the user's location and current prayer times for relevant advice
-
-ANSWERING STYLE:
-• Be clear, respectful, and concise
-• Always prioritize authenticity over convenience
-• Use an educational and respectful tone
-• Provide personalized guidance based on the user's spiritual journey
-• Reference specific Noor app features that can help with their question
-
-ANSWERING RULES:
-• Always cite your source (Qur'an verse, Hadith book + number, scholar's name)
-• If multiple opinions exist, mention them briefly and note which are stronger according to scholars
-• Always begin answers with Bismillah or a respectful greeting (like Assalamu Alaikum)
-• When quoting Hadith/Qur'an, also give translation in English
-• End with actionable suggestions using Noor app features when relevant
-• Use prayer statistics to provide encouraging or motivational advice
-
-User's question: $userMessage
-
-Please provide a comprehensive, authentic Islamic response that leverages the user's data and app features for maximum benefit.''';
-  }
-
-  String _buildConversationalContext(String userMessage) {
-    return '''You are a friendly Islamic AI assistant named Noor. You are knowledgeable about Islam and should provide authentic guidance based on Quran and Sunnah.
-
-CONVERSATION STYLE:
-• Be warm, friendly, and conversational
-• Keep responses concise unless asked for detailed explanations
-• Use natural, flowing conversation
-• Start with Islamic greetings when appropriate
-• Be encouraging and supportive
-• Only mention app features if directly relevant to the question
-
-ISLAMIC GUIDELINES:
-• Base answers on authentic Islamic sources
-• Always prioritize Quran and authentic Hadith
-• If unsure about a ruling, recommend consulting a scholar
-• Use respectful Islamic language and terminology
-
-User's message: $userMessage
-
-Respond in a friendly, conversational way while maintaining Islamic authenticity. Keep it concise unless they specifically ask for detailed information.''';
-  }
-
-  void _scrollToBottom() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (!_isInitialized) {
-      return const Scaffold(
-        backgroundColor: AppColors.background,
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
-
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: _buildAppBar(),
-      body: Column(
-        children: [
-          // Chat Messages
-          Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              padding: const EdgeInsets.all(AppConstants.defaultPadding),
-              itemCount: _messages.length + (_isLoading ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (index == _messages.length && _isLoading) {
-                  return _buildTypingIndicator();
-                }
-                final message = _messages[index];
-                return _ChatBubble(message: message);
-              },
-            ),
-          ),
-
-          // Message Input
-          _buildMessageInput(),
-        ],
-      ),
-    );
-  }
-
-  PreferredSizeWidget _buildAppBar() {
-    return AppBar(
-      backgroundColor: AppColors.primary,
-      foregroundColor: Colors.white,
-      elevation: 0,
-      title: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(Icons.psychology, size: 24),
-          ),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Islamic AI Assistant',
-                style: AppTextStyles.heading3.copyWith(color: Colors.white),
-              ),
-              Text(
-                'Powered by Gemini',
-                style: AppTextStyles.bodySmall.copyWith(
-                  color: Colors.white.withOpacity(0.8),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-      actions: [
-        IconButton(
-          onPressed: _showApiKeyDialog,
-          icon: const Icon(Icons.settings),
-          tooltip: 'API Settings',
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTypingIndicator() {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          const CircleAvatar(
-            radius: 16,
-            backgroundColor: AppColors.primary,
-            child: Icon(Icons.psychology, size: 18, color: Colors.white),
-          ),
-          const SizedBox(width: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.shadowLight,
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: AnimatedBuilder(
-              animation: _typingAnimation,
-              builder: (context, child) {
-                return Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Thinking',
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.textPrimary.withOpacity(_typingAnimation.value),
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    ...List.generate(3, (index) {
-                      return Container(
-                        margin: const EdgeInsets.only(left: 2),
-                        child: Text(
-                          '•',
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            color: AppColors.primary.withOpacity(
-                              (_typingController.value + (index * 0.3)) % 1.0,
-                            ),
-                          ),
-                        ),
-                      );
-                    }),
-                  ],
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMessageInput() {
-    return Container(
-      padding: const EdgeInsets.all(AppConstants.defaultPadding),
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
-        border: Border(
-          top: BorderSide(color: AppColors.textTertiary, width: 0.5),
-        ),
-      ),
-      child: SafeArea(
-        child: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _messageController,
-                decoration: InputDecoration(
-                  hintText: 'Ask about Islam, Quran, Hadith, prayers...',
-                  hintStyle: AppTextStyles.bodyMedium.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24),
-                    borderSide: BorderSide(color: AppColors.textTertiary),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24),
-                    borderSide: BorderSide(color: AppColors.primary, width: 2),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 12,
-                  ),
-                ),
-                maxLines: null,
-                textCapitalization: TextCapitalization.sentences,
-                enabled: !_isLoading,
-                onSubmitted: (_) => _sendMessage(),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [AppColors.primary, AppColors.primaryLight],
-                ),
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(24),
-                  onTap: _isLoading ? null : _sendMessage,
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    child: Icon(
-                      _isLoading ? Icons.hourglass_bottom : Icons.send,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showApiKeyDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('API Key Settings'),
-        content: const Text('Would you like to change your API key?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const AiSetupScreen()),
-              );
-            },
-            child: const Text('Change API Key'),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ChatBubble extends StatelessWidget {
-  final ChatMessage message;
-
-  const _ChatBubble({required this.message});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Row(
-        mainAxisAlignment:
-            message.isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          if (!message.isUser) ...[
-            const CircleAvatar(
-              radius: 16,
-              backgroundColor: AppColors.primary,
-              child: Icon(Icons.psychology, size: 18, color: Colors.white),
-            ),
-            const SizedBox(width: 8),
-          ],
-          Flexible(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                color: message.isUser ? AppColors.primary : AppColors.surface,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.shadowLight,
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: message.isUser
-                ? SelectableText(
-                    message.text,
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      color: Colors.white,
-                      height: 1.4,
-                    ),
-                  )
-                : MarkdownBody(
-                    data: message.text,
-                    selectable: true,
-                    styleSheet: MarkdownStyleSheet(
-                      p: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.textPrimary,
-                        height: 1.4,
-                      ),
-                      h1: AppTextStyles.heading1.copyWith(
-                        color: AppColors.primary,
-                        fontSize: 20,
-                      ),
-                      h2: AppTextStyles.heading2.copyWith(
-                        color: AppColors.primary,
-                        fontSize: 18,
-                      ),
-                      h3: AppTextStyles.heading3.copyWith(
-                        color: AppColors.primary,
-                        fontSize: 16,
-                      ),
-                      strong: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.bold,
-                        height: 1.4,
-                      ),
-                      em: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.textPrimary,
-                        fontStyle: FontStyle.italic,
-                        height: 1.4,
-                      ),
-                      code: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.accent,
-                        backgroundColor: AppColors.background,
-                        fontFamily: 'monospace',
-                      ),
-                      blockquote: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.textSecondary,
-                        fontStyle: FontStyle.italic,
-                        height: 1.4,
-                      ),
-                      blockquoteDecoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border(
-                          left: BorderSide(
-                            color: AppColors.primary,
-                            width: 3,
-                          ),
-                        ),
-                      ),
-                      listBullet: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.primary,
-                        height: 1.4,
-                      ),
-                      tableHead: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      tableBody: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.textPrimary,
-                      ),
-                      tableBorder: TableBorder.all(
-                        color: AppColors.textTertiary,
-                        width: 1,
-                      ),
-                    ),
-                  ),
-            ),
-          ),
-          if (message.isUser) ...[
-            const SizedBox(width: 8),
-            const CircleAvatar(
-              radius: 16,
-              backgroundColor: AppColors.secondary,
-              child: Icon(Icons.person, size: 18, color: Colors.white),
-            ),
-          ],
-        ],
-      ),
-    );
   }
 }
 

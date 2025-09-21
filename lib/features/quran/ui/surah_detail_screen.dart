@@ -88,6 +88,9 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> with TickerProvid
     if (id != null && id != _selectedReciterId) {
       setState(() {
         _selectedReciterId = id;
+        // Stop any currently playing audio
+        _audioService.stop();
+        // Rebuild the widget tree to pass the new reciter ID
       });
     }
   }

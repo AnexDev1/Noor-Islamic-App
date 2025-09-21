@@ -1,349 +1,415 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../common_widgets/custom_app_bar.dart';
-import '../../../common_widgets/custom_cards.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
-import '../../../core/utils/constants.dart';
-import '../../../core/utils/helpers.dart';
+import '../../../core/providers/app_providers.dart';
+import '../../../core/providers/models.dart';
 
-class SettingsScreen extends StatefulWidget {
+class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final preferences = ref.watch(userPreferencesProvider);
+    final location = ref.watch(userLocationProvider);
 
-class _SettingsScreenState extends State<SettingsScreen> {
-  bool _notificationsEnabled = true;
-  bool _darkMode = false;
-  String _selectedLanguage = 'English';
-  bool _soundEnabled = true;
-  bool _vibrationEnabled = true;
-  double _fontSize = 16.0;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadSettings();
-  }
-
-  Future<void> _loadSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _notificationsEnabled = prefs.getBool('notifications_enabled') ?? true;
-      _darkMode = prefs.getBool('dark_mode') ?? false;
-      _selectedLanguage = prefs.getString('selected_language') ?? 'English';
-      _soundEnabled = prefs.getBool('sound_enabled') ?? true;
-      _vibrationEnabled = prefs.getBool('vibration_enabled') ?? true;
-      _fontSize = prefs.getDouble('font_size') ?? 16.0;
-    });
-  }
-
-  Future<void> _saveSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('notifications_enabled', _notificationsEnabled);
-    await prefs.setBool('dark_mode', _darkMode);
-    await prefs.setString('selected_language', _selectedLanguage);
-    await prefs.setBool('sound_enabled', _soundEnabled);
-    await prefs.setBool('vibration_enabled', _vibrationEnabled);
-    await prefs.setDouble('font_size', _fontSize);
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: const CustomAppBar(title: 'Settings'),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppConstants.defaultPadding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _SectionHeader(title: 'Notifications'),
-            const SizedBox(height: 8),
-            _SettingSwitch(
-              title: 'Prayer Notifications',
+      body: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          // Prayer Settings Section
+          _buildSectionHeader('Prayer Settings'),
+          _buildSettingsCard([
+            _buildSwitchTile(
+              context: context,
+              ref: ref,
+              title: 'Prayer Reminders',
               subtitle: 'Get notified for prayer times',
-              value: _notificationsEnabled,
-              onChanged: (value) {
-                setState(() => _notificationsEnabled = value);
-                _saveSettings();
-              },
+              value: preferences.prayerReminders,
+              onChanged: () => ref.read(userPreferencesProvider.notifier).togglePrayerReminders(),
+              icon: Icons.notifications,
             ),
-            _SettingSwitch(
-              title: 'Sound',
-              subtitle: 'Play notification sounds',
-              value: _soundEnabled,
-              onChanged: (value) {
-                setState(() => _soundEnabled = value);
-                _saveSettings();
-              },
+            const Divider(height: 1),
+            _buildListTile(
+              context: context,
+              title: 'Madhab Preference',
+              subtitle: preferences.selectedMadhab,
+              icon: Icons.school,
+              onTap: () => _showMadhabSelector(context, ref),
             ),
-            _SettingSwitch(
-              title: 'Vibration',
-              subtitle: 'Vibrate on notifications',
-              value: _vibrationEnabled,
-              onChanged: (value) {
-                setState(() => _vibrationEnabled = value);
-                _saveSettings();
-              },
+            const Divider(height: 1),
+            _buildListTile(
+              context: context,
+              title: 'Location Settings',
+              subtitle: location.when(
+                data: (loc) => '${loc.city}, ${loc.country}',
+                loading: () => 'Loading...',
+                error: (_, __) => 'Location unavailable',
+              ),
+              icon: Icons.location_on,
+              onTap: () => _showLocationDialog(context, ref),
             ),
+          ]),
 
-            const SizedBox(height: 24),
-            _SectionHeader(title: 'Appearance'),
-            const SizedBox(height: 8),
-            _SettingSwitch(
+          const SizedBox(height: 24),
+
+          // App Appearance Section
+          _buildSectionHeader('App Appearance'),
+          _buildSettingsCard([
+            _buildSwitchTile(
+              context: context,
+              ref: ref,
               title: 'Dark Mode',
-              subtitle: 'Use dark theme',
-              value: _darkMode,
-              onChanged: (value) {
-                setState(() => _darkMode = value);
-                _saveSettings();
-                AppHelpers.showSnackBar(context, 'Theme will change on app restart');
-              },
+              subtitle: 'Switch between light and dark theme',
+              value: preferences.darkMode,
+              onChanged: () => ref.read(userPreferencesProvider.notifier).toggleDarkMode(),
+              icon: Icons.dark_mode,
             ),
-            _SettingTile(
-              title: 'Language',
-              subtitle: _selectedLanguage,
-              onTap: () => _showLanguageDialog(),
+            const Divider(height: 1),
+            _buildSwitchTile(
+              context: context,
+              ref: ref,
+              title: 'Show Arabic Text',
+              subtitle: 'Display Arabic text in prayers and Quran',
+              value: preferences.showArabic,
+              onChanged: () => ref.read(userPreferencesProvider.notifier).toggleArabicText(),
+              icon: Icons.translate,
             ),
-            _FontSizeSlider(
-              fontSize: _fontSize,
-              onChanged: (value) {
-                setState(() => _fontSize = value);
-                _saveSettings();
-              },
-            ),
+          ]),
 
-            const SizedBox(height: 24),
-            _SectionHeader(title: 'Data'),
-            const SizedBox(height: 8),
-            _SettingTile(
-              title: 'Clear Cache',
-              subtitle: 'Free up storage space',
-              onTap: () => _clearCache(),
-              trailing: const Icon(Icons.cleaning_services, color: AppColors.warning),
+          const SizedBox(height: 24),
+
+          // Notifications Section
+          _buildSectionHeader('Notifications'),
+          _buildSettingsCard([
+            _buildSwitchTile(
+              context: context,
+              ref: ref,
+              title: 'App Notifications',
+              subtitle: 'Receive notifications from the app',
+              value: preferences.notificationsEnabled,
+              onChanged: () => ref.read(userPreferencesProvider.notifier).toggleNotifications(),
+              icon: Icons.notifications_active,
             ),
-            _SettingTile(
-              title: 'Reset Settings',
-              subtitle: 'Reset all settings to default',
-              onTap: () => _resetSettings(),
-              trailing: const Icon(Icons.restore, color: AppColors.warning),
+          ]),
+
+          const SizedBox(height: 24),
+
+          // Data & Privacy Section
+          _buildSectionHeader('Data & Privacy'),
+          _buildSettingsCard([
+            _buildListTile(
+              context: context,
+              title: 'Refresh Prayer Times',
+              subtitle: 'Update prayer times for current location',
+              icon: Icons.refresh,
+              onTap: () => _refreshPrayerTimes(context, ref),
             ),
-          ],
+            const Divider(height: 1),
+            _buildListTile(
+              context: context,
+              title: 'Reset Prayer Statistics',
+              subtitle: 'Clear all prayer tracking data',
+              icon: Icons.delete_outline,
+              onTap: () => _showResetStatsDialog(context, ref),
+            ),
+            const Divider(height: 1),
+            _buildListTile(
+              context: context,
+              title: 'Update Location',
+              subtitle: 'Refresh your current location',
+              icon: Icons.my_location,
+              onTap: () => _updateLocation(context, ref),
+            ),
+          ]),
+
+          const SizedBox(height: 40),
+
+          // App Info
+          _buildAppInfoCard(preferences),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Text(
+        title,
+        style: AppTextStyles.heading3.copyWith(
+          color: AppColors.primary,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );
   }
 
-  void _showLanguageDialog() {
+  Widget _buildSettingsCard(List<Widget> children) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadowLight,
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(children: children),
+    );
+  }
+
+  Widget _buildSwitchTile({
+    required BuildContext context,
+    required WidgetRef ref,
+    required String title,
+    required String subtitle,
+    required bool value,
+    required VoidCallback onChanged,
+    required IconData icon,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: AppColors.primary),
+      title: Text(title, style: AppTextStyles.bodyLarge),
+      subtitle: Text(subtitle, style: AppTextStyles.caption),
+      trailing: Switch(
+        value: value,
+        onChanged: (_) => onChanged(),
+        thumbColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return AppColors.primary;
+          }
+          return null;
+        }),
+        trackColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return AppColors.primary.withValues(alpha: 0.5);
+          }
+          return null;
+        }),
+      ),
+      onTap: onChanged,
+    );
+  }
+
+  Widget _buildListTile({
+    required BuildContext context,
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: AppColors.primary),
+      title: Text(title, style: AppTextStyles.body1),
+      subtitle: Text(subtitle, style: AppTextStyles.caption),
+      trailing: Icon(Icons.chevron_right, color: AppColors.textSecondary),
+      onTap: onTap,
+    );
+  }
+
+  Widget _buildAppInfoCard(UserPreferences preferences) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadowLight,
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Icon(Icons.mosque, size: 48, color: AppColors.primary),
+          const SizedBox(height: 12),
+          Text(
+            'Noor - Islamic App',
+            style: AppTextStyles.heading2,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Version 1.0.0',
+            style: AppTextStyles.body1.copyWith(color: AppColors.textSecondary),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Last used: ${_formatLastUsage(preferences.lastAppUsage)}',
+            style: AppTextStyles.caption.copyWith(color: AppColors.textSecondary),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showMadhabSelector(BuildContext context, WidgetRef ref) {
+    final madhabs = [
+      'Hanafi',
+      'Maliki',
+      'Shafi\'i',
+      'Hanbali',
+      'Jafari',
+    ];
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Select Language'),
+        title: const Text('Select Madhab'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
-            _LanguageOption('English', 'English'),
-            _LanguageOption('العربية', 'Arabic'),
-            _LanguageOption('اردو', 'Urdu'),
-          ],
+          children: madhabs.map((madhab) {
+            return ListTile(
+              title: Text(madhab),
+              onTap: () {
+                ref.read(userPreferencesProvider.notifier).updateMadhab(madhab);
+                Navigator.pop(context);
+              },
+            );
+          }).toList(),
         ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _LanguageOption(String displayName, String value) {
-    return RadioListTile<String>(
-      title: Text(displayName),
-      value: value,
-      groupValue: _selectedLanguage,
-      onChanged: (value) {
-        setState(() => _selectedLanguage = value!);
-        _saveSettings();
-        Navigator.pop(context);
-        AppHelpers.showSnackBar(context, 'Language changed to $displayName');
-      },
-    );
-  }
-
-  Future<void> _clearCache() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final keys = prefs.getKeys().where((key) => key.startsWith('cache_')).toList();
-      for (final key in keys) {
-        await prefs.remove(key);
-      }
-      AppHelpers.showSnackBar(context, 'Cache cleared successfully');
-    } catch (e) {
-      AppHelpers.showSnackBar(context, 'Error clearing cache');
-    }
-  }
-
-  Future<void> _resetSettings() async {
+  void _showLocationDialog(BuildContext context, WidgetRef ref) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Reset Settings'),
-        content: const Text('Are you sure you want to reset all settings to default?'),
+        title: const Text('Location Settings'),
+        content: const Text(
+          'Your location is used to calculate accurate prayer times. '
+          'You can refresh your location or allow the app to use your current position.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () async {
-              final prefs = await SharedPreferences.getInstance();
-              await prefs.clear();
-              setState(() {
-                _notificationsEnabled = true;
-                _darkMode = false;
-                _selectedLanguage = 'English';
-                _soundEnabled = true;
-                _vibrationEnabled = true;
-                _fontSize = 16.0;
-              });
+            onPressed: () {
               Navigator.pop(context);
-              AppHelpers.showSnackBar(context, 'Settings reset to default');
+              _updateLocation(context, ref);
             },
+            child: const Text('Update Location'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _refreshPrayerTimes(BuildContext context, WidgetRef ref) {
+    ref.read(prayerTimesProvider.notifier).refreshPrayerTimes();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Refreshing prayer times...'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void _updateLocation(BuildContext context, WidgetRef ref) {
+    ref.read(userLocationProvider.notifier).refreshLocation();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Updating location...'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void _showResetStatsDialog(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Reset Statistics'),
+        content: const Text(
+          'This will permanently delete all your prayer tracking data, including streaks and completion history. This action cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _resetStatistics(context, ref);
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: const Text('Reset'),
           ),
         ],
       ),
     );
   }
-}
 
-class _SectionHeader extends StatelessWidget {
-  final String title;
-  const _SectionHeader({required this.title});
+  Future<void> _resetStatistics(BuildContext context, WidgetRef ref) async {
+    try {
+      final prefs = ref.read(sharedPreferencesProvider);
 
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      title,
-      style: AppTextStyles.heading3.copyWith(
-        color: AppColors.primary,
-        fontWeight: FontWeight.bold,
-      ),
-    );
+      // Clear all prayer-related preferences
+      final keysToRemove = prefs.getKeys().where((key) =>
+        key.startsWith('prayer_') ||
+        key.startsWith('total_prayers') ||
+        key.startsWith('longest_streak') ||
+        key.startsWith('last_prayer_time')
+      ).toList();
+
+      for (String key in keysToRemove) {
+        await prefs.remove(key);
+      }
+
+      // Refresh the providers to reflect the changes
+      ref.read(prayerStatsProvider.notifier).refreshStats();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Prayer statistics have been reset'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error resetting statistics: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
-}
 
-class _SettingSwitch extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final bool value;
-  final ValueChanged<bool> onChanged;
+  String _formatLastUsage(String lastUsage) {
+    if (lastUsage == 'First time') return lastUsage;
 
-  const _SettingSwitch({
-    required this.title,
-    required this.subtitle,
-    required this.value,
-    required this.onChanged,
-  });
+    try {
+      final DateTime lastUsed = DateTime.parse(lastUsage);
+      final Duration difference = DateTime.now().difference(lastUsed);
 
-  @override
-  Widget build(BuildContext context) {
-    return CustomCard(
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
-                const SizedBox(height: 4),
-                Text(subtitle, style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
-              ],
-            ),
-          ),
-          Switch(
-            value: value,
-            onChanged: onChanged,
-            activeColor: AppColors.primary,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SettingTile extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
-  final Widget? trailing;
-
-  const _SettingTile({
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-    this.trailing,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomCard(
-      onTap: onTap,
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
-                const SizedBox(height: 4),
-                Text(subtitle, style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
-              ],
-            ),
-          ),
-          trailing ?? const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textSecondary),
-        ],
-      ),
-    );
-  }
-}
-
-class _FontSizeSlider extends StatelessWidget {
-  final double fontSize;
-  final ValueChanged<double> onChanged;
-
-  const _FontSizeSlider({required this.fontSize, required this.onChanged});
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomCard(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Font Size', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
-          const SizedBox(height: 4),
-          Text('Adjust text size', style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              const Text('A', style: TextStyle(fontSize: 12)),
-              Expanded(
-                child: Slider(
-                  value: fontSize,
-                  min: 12.0,
-                  max: 24.0,
-                  divisions: 12,
-                  onChanged: onChanged,
-                  activeColor: AppColors.primary,
-                ),
-              ),
-              const Text('A', style: TextStyle(fontSize: 20)),
-            ],
-          ),
-          Text('Preview: ${fontSize.round()}pt', style: TextStyle(fontSize: fontSize)),
-        ],
-      ),
-    );
+      if (difference.inDays > 0) {
+        return '${difference.inDays} day${difference.inDays > 1 ? 's' : ''} ago';
+      } else if (difference.inHours > 0) {
+        return '${difference.inHours} hour${difference.inHours > 1 ? 's' : ''} ago';
+      } else if (difference.inMinutes > 0) {
+        return '${difference.inMinutes} minute${difference.inMinutes > 1 ? 's' : ''} ago';
+      } else {
+        return 'Just now';
+      }
+    } catch (e) {
+      return lastUsage;
+    }
   }
 }

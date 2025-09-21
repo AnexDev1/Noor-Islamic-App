@@ -166,8 +166,8 @@ class _HadithListScreenState extends State<HadithListScreen> with TickerProvider
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                AppColors.hadithCard,
-                AppColors.hadithCard.withOpacity(0.8),
+                AppColors.primaryLight,
+                AppColors.primaryDark.withOpacity(0.8),
               ],
             ),
             borderRadius: const BorderRadius.only(
@@ -326,8 +326,8 @@ class _HadithListScreenState extends State<HadithListScreen> with TickerProvider
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
-                                  AppColors.hadithCard,
-                                  AppColors.hadithCard.withOpacity(0.8),
+                                  AppColors.primaryLight,
+                                  AppColors.primaryDark.withOpacity(0.8),
                                 ],
                               ),
                               borderRadius: BorderRadius.circular(20),

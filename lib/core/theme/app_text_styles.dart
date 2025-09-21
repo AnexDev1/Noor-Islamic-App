@@ -68,6 +68,14 @@ class AppTextStyles {
     height: 1.6,
   );
 
+  // Add body1 for backward compatibility
+  static TextStyle body1 = GoogleFonts.inter(
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+    color: const Color(0xFF1A1D23),
+    height: 1.6,
+  );
+
   static TextStyle bodyMedium = GoogleFonts.inter(
     fontSize: 14,
     fontWeight: FontWeight.w400,
@@ -134,8 +142,7 @@ class AppTextStyles {
     fontSize: 12,
     fontWeight: FontWeight.w400,
     color: const Color(0xFF718096),
-    height: 1.3,
-    letterSpacing: 0.4,
+    height: 1.4,
   );
 
   static TextStyle overline = GoogleFonts.inter(

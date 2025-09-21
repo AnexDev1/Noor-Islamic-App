@@ -67,94 +67,85 @@ class _QuranScreenState extends State<QuranScreen> with TickerProviderStateMixin
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: FadeTransition(
-        opacity: _fadeAnimation,
-        child: CustomScrollView(
-          slivers: [
-            // Modern App Bar with Search
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Modern App Bar
             _buildModernAppBar(),
-
-            // Audio Player Widget (when active)
-            SliverToBoxAdapter(
-              child: AudioPlayerWidget(audioService: _audioService),
-            ),
-
-            // Main Content
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Search Bar
-                    _buildSearchBar(),
-
-                    const SizedBox(height: 24),
-
-                    // Statistics Cards
-                    _buildStatisticsCards(),
-
-                    const SizedBox(height: 32),
-
-                    // Section Title
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Holy Quran Chapters',
-                          style: AppTextStyles.heading1,
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: AppColors.primary.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            '114 Surahs',
-                            style: AppTextStyles.labelMedium.copyWith(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 16),
-                  ],
-                ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Audio Player Widget (now above search bar)
+                  AudioPlayerWidget(audioService: _audioService),
+                  // Search Bar
+                  SizedBox(height: 5,),
+                  _buildSearchBar(),
+                ],
               ),
             ),
-
-            // Surah List
-            FutureBuilder<List<SurahInfo>>(
-              future: _surahsFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return SliverToBoxAdapter(child: _buildShimmerList());
-                } else if (snapshot.hasError) {
-                  return SliverToBoxAdapter(child: _buildErrorWidget(snapshot.error.toString()));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const SliverToBoxAdapter(
-                    child: Center(child: Text('No Surahs found')),
-                  );
-                }
-
-                final filteredSurahs = _filterSurahs(snapshot.data!);
-                return SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  sliver: ModernSurahList(
-                    surahs: filteredSurahs,
-                    audioService: _audioService,
+            // Main Content Scrollable
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 24),
+                      // Statistics Cards
+                      _buildStatisticsCards(),
+                      const SizedBox(height: 32),
+                      // Section Title
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Holy Quran Chapters',
+                            style: AppTextStyles.heading1,
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withAlpha(26),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              '114 Surahs',
+                              style: AppTextStyles.labelMedium.copyWith(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      // Surah List
+                      FutureBuilder<List<SurahInfo>>(
+                        future: _surahsFuture,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return _buildShimmerList();
+                          } else if (snapshot.hasError) {
+                            return _buildErrorWidget(snapshot.error.toString());
+                          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                            return const Center(child: Text('No Surahs found'));
+                          }
+                          final filteredSurahs = _filterSurahs(snapshot.data!);
+                          return ModernSurahList(
+                            surahs: filteredSurahs,
+                            audioService: _audioService,
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 100),
+                    ],
                   ),
-                );
-              },
-            ),
-
-            // Bottom padding
-            const SliverToBoxAdapter(
-              child: SizedBox(height: 100),
+                ),
+              ),
             ),
           ],
         ),
@@ -163,86 +154,74 @@ class _QuranScreenState extends State<QuranScreen> with TickerProviderStateMixin
   }
 
   Widget _buildModernAppBar() {
-    return SliverAppBar(
-      expandedHeight: 120,
-      floating: false,
-      pinned: true,
-      elevation: 0,
-      backgroundColor: Colors.transparent,
-      flexibleSpace: FlexibleSpaceBar(
-        background: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                AppColors.primary,
-                AppColors.primaryLight,
-              ],
-            ),
-            borderRadius: const BorderRadius.only(
-              bottomLeft: Radius.circular(32),
-              bottomRight: Radius.circular(32),
-            ),
-          ),
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: const Icon(
-                          Icons.menu_book,
-                          color: Colors.white,
-                          size: 28,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Holy Quran',
-                              style: AppTextStyles.displaySmall.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Read, Listen & Reflect',
-                              style: AppTextStyles.bodyMedium.copyWith(
-                                color: Colors.white.withOpacity(0.9),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          // Add bookmark or favorite functionality
-                        },
-                        icon: const Icon(
-                          Icons.bookmark_border,
-                          color: Colors.white,
-                          size: 24,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+    return Container(
+      height: 120,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.primary,
+            AppColors.primaryLight,
+          ],
+        ),
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(32),
+          bottomRight: Radius.circular(32),
+        ),
+      ),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white.withAlpha(38),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Icon(
+                  Icons.menu_book,
+                  color: Colors.white,
+                  size: 28,
+                ),
               ),
-            ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Holy Quran',
+                      style: AppTextStyles.displaySmall.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Read, Listen & Reflect',
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: Colors.white.withAlpha(230),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  // Add bookmark or favorite functionality
+                },
+                icon: const Icon(
+                  Icons.bookmark_border,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -309,13 +288,13 @@ class _QuranScreenState extends State<QuranScreen> with TickerProviderStateMixin
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  AppColors.primary.withOpacity(0.1),
-                  AppColors.primaryLight.withOpacity(0.05),
+                  AppColors.primary.withAlpha(26),
+                  AppColors.primaryLight.withAlpha(13),
                 ],
               ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: AppColors.primary.withOpacity(0.2),
+                color: AppColors.primary.withAlpha(51),
               ),
             ),
             child: Column(
@@ -350,13 +329,13 @@ class _QuranScreenState extends State<QuranScreen> with TickerProviderStateMixin
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  AppColors.accent.withOpacity(0.1),
-                  AppColors.accentLight.withOpacity(0.05),
+                  AppColors.accent.withAlpha(26),
+                  AppColors.accentLight.withAlpha(13),
                 ],
               ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: AppColors.accent.withOpacity(0.2),
+                color: AppColors.accent.withAlpha(51),
               ),
             ),
             child: Column(
@@ -417,10 +396,10 @@ class _QuranScreenState extends State<QuranScreen> with TickerProviderStateMixin
         width: double.infinity,
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: AppColors.error.withOpacity(0.1),
+          color: AppColors.error.withAlpha(26),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: AppColors.error.withOpacity(0.3),
+            color: AppColors.error.withAlpha(77),
           ),
         ),
         child: Column(

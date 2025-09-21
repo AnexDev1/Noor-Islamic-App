@@ -40,6 +40,7 @@ dependencies:
   flutter_compass: ^0.8.1
   shared_preferences: ^2.5.3
   geolocator: ^14.0.2
+  geocoding: ^3.0.0
   google_fonts: ^6.3.1
   flutter_svg: ^2.2.1
   flutter_staggered_grid_view: ^0.7.0
@@ -49,7 +50,8 @@ dependencies:
   url_launcher: ^6.3.2
   flutter_markdown: ^0.7.4+1
   package_info_plus: ^8.0.2
-  intl: ^0.19.0
+  flutter_riverpod: ^2.4.9
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:
@@ -74,9 +76,10 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/icon.png
+    #   - images/a_dot_burr.jpeg
+    #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -103,3 +106,11 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+  # Configure flutter_launcher_icons
+flutter_icons:
+    android: true
+    ios: true
+    image_path: "assets/icon.png"
+    adaptive_icon_background: "#FFFFFF"
+    adaptive_icon_foreground: "assets/icon.png"

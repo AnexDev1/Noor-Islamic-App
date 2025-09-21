@@ -146,8 +146,8 @@ class _HadithDetailScreenState extends State<HadithDetailScreen> with TickerProv
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                AppColors.hadithCard,
-                AppColors.hadithCard.withOpacity(0.8),
+                AppColors.primaryLight,
+                AppColors.primaryDark.withOpacity(0.8),
               ],
             ),
             borderRadius: const BorderRadius.only(

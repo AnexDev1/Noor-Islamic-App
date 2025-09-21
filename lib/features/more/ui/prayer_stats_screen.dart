@@ -1,562 +1,580 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../common_widgets/custom_app_bar.dart';
-import '../../../common_widgets/custom_cards.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
-import '../../../core/utils/constants.dart';
-import 'dart:convert';
+import '../../../core/providers/app_providers.dart';
+import '../../../core/providers/models.dart';
+import 'dart:math' as math;
 
-class PrayerStatsScreen extends StatefulWidget {
+class PrayerStatsScreen extends ConsumerStatefulWidget {
   const PrayerStatsScreen({super.key});
 
   @override
-  State<PrayerStatsScreen> createState() => _PrayerStatsScreenState();
+  ConsumerState<PrayerStatsScreen> createState() => _PrayerStatsScreenState();
 }
 
-class _PrayerStatsScreenState extends State<PrayerStatsScreen> with TickerProviderStateMixin {
-  Map<String, int> _prayerCounts = {};
-  int _totalPrayers = 0;
-  int _currentStreak = 0;
-  int _longestStreak = 0;
-  List<Map<String, dynamic>> _recentActivity = [];
-  late TabController _tabController;
+class _PrayerStatsScreenState extends ConsumerState<PrayerStatsScreen>
+    with TickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-    _loadPrayerStats();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 1200),
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOutCubic,
+    ));
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOutCubic,
+    ));
+
+    _animationController.forward();
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
-  Future<void> _loadPrayerStats() async {
-    final prefs = await SharedPreferences.getInstance();
-    final statsJson = prefs.getString('prayer_stats') ?? '{}';
-    final activityJson = prefs.getString('prayer_activity') ?? '[]';
-
-    setState(() {
-      _prayerCounts = Map<String, int>.from(json.decode(statsJson));
-      _recentActivity = List<Map<String, dynamic>>.from(json.decode(activityJson));
-      _calculateStats();
-    });
-  }
-
-  void _calculateStats() {
-    _totalPrayers = _prayerCounts.values.fold(0, (sum, count) => sum + count);
-    _currentStreak = _calculateCurrentStreak();
-    _longestStreak = _calculateLongestStreak();
-  }
-
-  int _calculateCurrentStreak() {
-    // Calculate current consecutive days of completing all 5 prayers
-    int streak = 0;
-    DateTime today = DateTime.now();
-
-    for (int i = 0; i < 30; i++) {
-      DateTime checkDate = today.subtract(Duration(days: i));
-      String dateKey = '${checkDate.year}-${checkDate.month.toString().padLeft(2, '0')}-${checkDate.day.toString().padLeft(2, '0')}';
-
-      int dailyCount = _recentActivity
-          .where((activity) => activity['date'] == dateKey)
-          .length;
-
-      if (dailyCount == 5) {
-        streak++;
-      } else {
-        break;
-      }
-    }
-    return streak;
-  }
-
-  int _calculateLongestStreak() {
-    // This would be calculated from historical data
-    // For now, return a value based on current streak + some bonus
-    return _currentStreak + (_totalPrayers ~/ 100);
-  }
-
   @override
   Widget build(BuildContext context) {
+    final prayerStats = ref.watch(prayerStatsProvider);
+    final todayStatus = ref.watch(todayPrayerStatusProvider);
+
     return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: const CustomAppBar(title: 'Prayer Statistics'),
-      body: Column(
-        children: [
-          // Stats Overview
-          Container(
-            padding: const EdgeInsets.all(AppConstants.defaultPadding),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _StatCard(
-                    title: 'Total Prayers',
-                    value: _totalPrayers.toString(),
-                    icon: Icons.mosque,
-                    color: AppColors.primary,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _StatCard(
-                    title: 'Current Streak',
-                    value: '$_currentStreak days',
-                    icon: Icons.local_fire_department,
-                    color: AppColors.accent,
-                  ),
-                ),
-              ],
-            ),
-          ),
+      backgroundColor: const Color(0xFFF8FAFC),
+      appBar: _buildAppBar(),
+      body: FadeTransition(
+        opacity: _fadeAnimation,
+        child: SlideTransition(
+          position: _slideAnimation,
+          child: CustomScrollView(
+            slivers: [
+              // Hero Stats Section
+              SliverToBoxAdapter(
+                child: _buildHeroSection(prayerStats, todayStatus),
+              ),
 
-          // Tab Bar
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: AppConstants.defaultPadding),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(25),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: TabBar(
-              controller: _tabController,
-              indicator: BoxDecoration(
-                borderRadius: BorderRadius.circular(25),
+              // Quick Overview Cards
+              SliverToBoxAdapter(
+                child: _buildQuickOverview(prayerStats, todayStatus),
+              ),
+
+              // Prayer Breakdown
+              SliverToBoxAdapter(
+                child: _buildPrayerBreakdown(prayerStats),
+              ),
+
+              // Recent Activity
+              SliverToBoxAdapter(
+                child: _buildRecentActivity(prayerStats),
+              ),
+
+              // Bottom padding
+              const SliverToBoxAdapter(
+                child: SizedBox(height: 20),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  PreferredSizeWidget _buildAppBar() {
+    return AppBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      title: Text(
+        'Prayer Statistics',
+        style: AppTextStyles.heading2.copyWith(
+          fontWeight: FontWeight.w700,
+          color: AppColors.textPrimary,
+        ),
+      ),
+      actions: [
+        Container(
+          margin: const EdgeInsets.only(right: 16),
+          child: IconButton(
+            onPressed: () => ref.read(prayerStatsProvider.notifier).refreshStats(),
+            icon: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary.withAlpha(13), // 0.05 opacity
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: const Icon(
+                Icons.refresh_rounded,
                 color: AppColors.primary,
+                size: 20,
               ),
-              labelColor: Colors.white,
-              unselectedLabelColor: AppColors.textSecondary,
-              tabs: const [
-                Tab(text: 'Overview'),
-                Tab(text: 'Progress'),
-                Tab(text: 'History'),
-              ],
             ),
           ),
-
-          // Tab Content
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                _OverviewTab(),
-                _ProgressTab(),
-                _HistoryTab(),
-              ],
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget _OverviewTab() {
-    final prayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppConstants.defaultPadding),
-      child: Column(
-        children: [
-          // Prayer Breakdown
-          CustomCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Prayer Breakdown',
-                  style: AppTextStyles.heading3.copyWith(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                ...prayers.map((prayer) {
-                  int count = _prayerCounts[prayer] ?? 0;
-                  double percentage = _totalPrayers > 0 ? (count / _totalPrayers) * 100 : 0;
-
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: AppColors.primary.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Icon(
-                            _getPrayerIcon(prayer),
-                            color: AppColors.primary,
-                            size: 20,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(prayer, style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
-                              Text('$count prayers (${percentage.toStringAsFixed(1)}%)',
-                                   style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
-                            ],
-                          ),
-                        ),
-                        Text(
-                          count.toString(),
-                          style: AppTextStyles.heading3.copyWith(color: AppColors.primary),
-                        ),
-                      ],
-                    ),
-                  );
-                }).toList(),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          // Achievement Cards
-          CustomCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Achievements',
-                  style: AppTextStyles.heading3.copyWith(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                _AchievementItem(
-                  icon: Icons.emoji_events,
-                  title: 'Longest Streak',
-                  description: '$_longestStreak consecutive days',
-                  isUnlocked: _longestStreak > 0,
-                ),
-                _AchievementItem(
-                  icon: Icons.star,
-                  title: 'Prayer Warrior',
-                  description: 'Complete 100 prayers',
-                  isUnlocked: _totalPrayers >= 100,
-                ),
-                _AchievementItem(
-                  icon: Icons.local_fire_department,
-                  title: 'Consistent Believer',
-                  description: 'Maintain 7-day streak',
-                  isUnlocked: _currentStreak >= 7,
-                ),
-              ],
-            ),
+  Widget _buildHeroSection(PrayerStats stats, PrayerStatus todayStatus) {
+    return Container(
+      margin: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.primary,
+            AppColors.secondary,
+          ],
+        ),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withAlpha(77), // 0.3 opacity
+            blurRadius: 20,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _ProgressTab() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppConstants.defaultPadding),
       child: Column(
         children: [
-          // Monthly Progress
-          CustomCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'This Month\'s Progress',
-                  style: AppTextStyles.heading3.copyWith(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                _MonthlyProgressChart(),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          // Weekly Goals
-          CustomCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Weekly Goals',
-                  style: AppTextStyles.heading3.copyWith(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                _GoalProgress(
-                  title: 'Daily Prayers',
-                  current: _currentStreak,
-                  target: 7,
-                  unit: 'days',
-                ),
-                _GoalProgress(
-                  title: 'Total Prayers',
-                  current: _totalPrayers % 35,
-                  target: 35,
-                  unit: 'prayers',
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _HistoryTab() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppConstants.defaultPadding),
-      child: Column(
-        children: [
-          if (_recentActivity.isEmpty)
-            const Center(
-              child: Padding(
-                padding: EdgeInsets.all(32),
-                child: Text(
-                  'No prayer history yet.\nStart tracking your prayers!',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            )
-          else
-            ..._recentActivity.reversed.take(20).map((activity) {
-              return CustomCard(
-                padding: const EdgeInsets.all(12),
-                // margin: const EdgeInsets.only(bottom: 8),
-                child: Row(
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: AppColors.success.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(
-                        _getPrayerIcon(activity['prayer']),
-                        color: AppColors.success,
-                        size: 20,
+                    Text(
+                      'Today\'s Progress',
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: AppColors.textOnPrimary,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            activity['prayer'],
-                            style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
-                          ),
-                          Text(
-                            '${activity['date']} at ${activity['time']}',
-                            style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
-                          ),
-                        ],
+                    const SizedBox(height: 8),
+                    Text(
+                      '${todayStatus.completedPrayers}/5',
+                      style: AppTextStyles.displayLarge.copyWith(
+                        color: AppColors.textOnPrimary,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 48,
                       ),
                     ),
-                    const Icon(Icons.check_circle, color: AppColors.success, size: 20),
+                    Text(
+                      'Prayers Completed',
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: AppColors.textOnPrimary,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
                   ],
                 ),
-              );
-            }).toList(),
+              ),
+              _buildCircularProgress(
+                todayStatus.completedPrayers / 5,
+                Colors.white,
+                Colors.white.withOpacity(0.2),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          _buildStreakBadge(stats.currentStreak),
         ],
       ),
     );
   }
 
-  IconData _getPrayerIcon(String prayer) {
-    switch (prayer) {
-      case 'Fajr': return Icons.wb_sunny_outlined;
-      case 'Dhuhr': return Icons.wb_sunny;
-      case 'Asr': return Icons.wb_cloudy;
-      case 'Maghrib': return Icons.brightness_3;
-      case 'Isha': return Icons.nightlight;
-      default: return Icons.mosque;
-    }
+  Widget _buildCircularProgress(double progress, Color activeColor, Color backgroundColor) {
+    return SizedBox(
+      width: 80,
+      height: 80,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          SizedBox(
+            width: 80,
+            height: 80,
+            child: CircularProgressIndicator(
+              value: progress,
+              backgroundColor: backgroundColor,
+              valueColor: AlwaysStoppedAnimation<Color>(activeColor),
+              strokeWidth: 6,
+              strokeCap: StrokeCap.round,
+            ),
+          ),
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: activeColor.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.mosque_outlined,
+              color: activeColor,
+              size: 24,
+            ),
+          ),
+        ],
+      ),
+    );
   }
-}
 
-class _StatCard extends StatelessWidget {
-  final String title;
-  final String value;
-  final IconData icon;
-  final Color color;
+  Widget _buildStreakBadge(int streak) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withOpacity(0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Icons.local_fire_department,
+            color: Color(0xFFFF6B35),
+            size: 20,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            '$streak Day Streak',
+            style: AppTextStyles.body1.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-  const _StatCard({
-    required this.title,
-    required this.value,
-    required this.icon,
-    required this.color,
-  });
+  Widget _buildQuickOverview(PrayerStats stats, PrayerStatus todayStatus) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        children: [
+          Expanded(
+            child: _buildMetricCard(
+              'Total Prayers',
+              '${stats.totalPrayers}',
+              Icons.assessment_outlined,
+              const Color(0xFF10B981),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: _buildMetricCard(
+              'Weekly Rate',
+              '${stats.weeklyCompletionRate.toStringAsFixed(0)}%',
+              Icons.trending_up_outlined,
+              const Color(0xFF3B82F6),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: _buildMetricCard(
+              'Best Streak',
+              '${stats.longestStreak}d',
+              Icons.emoji_events_outlined,
+              const Color(0xFFF59E0B),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    return CustomCard(
+  Widget _buildMetricCard(String title, String value, IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(icon, color: color, size: 24),
+            child: Icon(icon, color: color, size: 20),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Text(
             value,
-            style: AppTextStyles.heading2.copyWith(color: color, fontWeight: FontWeight.bold),
+            style: AppTextStyles.heading3.copyWith(
+              color: const Color(0xFF1A202C),
+              fontWeight: FontWeight.w700,
+            ),
           ),
           Text(
             title,
-            style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+            style: AppTextStyles.caption.copyWith(
+              color: const Color(0xFF6B7280),
+            ),
             textAlign: TextAlign.center,
           ),
         ],
       ),
     );
   }
-}
 
-class _AchievementItem extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String description;
-  final bool isUnlocked;
+  Widget _buildPrayerBreakdown(PrayerStats stats) {
+    final prayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+    final colors = [
+      AppColors.fajr,
+      AppColors.dhuhr,
+      AppColors.asr,
+      AppColors.maghrib,
+      AppColors.isha,
+    ];
 
-  const _AchievementItem({
-    required this.icon,
-    required this.title,
-    required this.description,
-    required this.isUnlocked,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
+    return Container(
+      margin: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withAlpha(13), // 0.05 opacity
+            blurRadius: 15,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: isUnlocked
-                ? AppColors.accent.withOpacity(0.2)
-                : AppColors.textSecondary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(
-              icon,
-              color: isUnlocked ? AppColors.accent : AppColors.textSecondary,
-              size: 20,
+          Text(
+            'Prayer Breakdown',
+            style: AppTextStyles.heading3.copyWith(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: isUnlocked ? AppColors.textPrimary : AppColors.textSecondary,
+          const SizedBox(height: 20),
+          ...prayers.asMap().entries.map((entry) {
+            final index = entry.key;
+            final prayer = entry.value;
+            final count = stats.prayerCounts[prayer] ?? 0;
+            final maxCount = stats.prayerCounts.values.fold(0, math.max);
+            final percentage = maxCount > 0 ? count / maxCount : 0.0;
+
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: colors[index].withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Center(
+                      child: Text(
+                        prayer[0],
+                        style: AppTextStyles.body1.copyWith(
+                          color: colors[index],
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-                Text(
-                  description,
-                  style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.textSecondary,
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              prayer,
+                              style: AppTextStyles.body1.copyWith(
+                                color: const Color(0xFF1A202C),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const Spacer(),
+                            Text(
+                              '$count',
+                              style: AppTextStyles.body1.copyWith(
+                                color: colors[index],
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        LinearProgressIndicator(
+                          value: percentage,
+                          backgroundColor: colors[index].withOpacity(0.1),
+                          valueColor: AlwaysStoppedAnimation<Color>(colors[index]),
+                          minHeight: 4,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          if (isUnlocked)
-            const Icon(Icons.check_circle, color: AppColors.success, size: 20),
+                ],
+              ),
+            );
+          }).toList(),
         ],
       ),
     );
   }
-}
 
-class _MonthlyProgressChart extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildRecentActivity(PrayerStats stats) {
     return Container(
-      height: 200,
-      child: const Center(
-        child: Text(
-          'Progress Chart\n(Visual chart would be implemented here)',
-          textAlign: TextAlign.center,
-          style: TextStyle(color: AppColors.textSecondary),
-        ),
+      margin: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withAlpha(13), // 0.05 opacity
+            blurRadius: 15,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
-    );
-  }
-}
-
-class _GoalProgress extends StatelessWidget {
-  final String title;
-  final int current;
-  final int target;
-  final String unit;
-
-  const _GoalProgress({
-    required this.title,
-    required this.current,
-    required this.target,
-    required this.unit,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    double progress = current / target;
-    if (progress > 1) progress = 1;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(title, style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
-              Text('$current/$target $unit', style: AppTextStyles.bodySmall),
-            ],
+          Text(
+            'Recent Activity',
+            style: AppTextStyles.heading3.copyWith(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.w600,
+            ),
           ),
-          const SizedBox(height: 8),
-          LinearProgressIndicator(
-            value: progress,
-            backgroundColor: AppColors.textSecondary.withOpacity(0.2),
-            valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
-          ),
+          const SizedBox(height: 20),
+          ...stats.recentActivity.take(7).map((activity) {
+            final isComplete = activity.completedPrayers == 5;
+            final completionRate = activity.completedPrayers / 5;
+            final now = DateTime(2025, 9, 21);
+            final diff = now.difference(activity.date).inDays;
+            String dateLabel;
+            if (diff == 0) {
+              dateLabel = 'Today';
+            } else if (diff == 1) {
+              dateLabel = 'Yesterday';
+            } else if (diff > 1 && diff <= 4) {
+              dateLabel = '$diff days ago';
+            } else {
+              dateLabel = '${activity.date.day}/${activity.date.month}/${activity.date.year}';
+            }
+            return Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.surfaceVariant,
+                borderRadius: BorderRadius.circular(12),
+                border: isComplete
+                    ? Border.all(color: AppColors.success.withAlpha(77))
+                    : null,
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: isComplete
+                          ? AppColors.success.withAlpha(25)
+                          : AppColors.primary.withAlpha(25),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(
+                      isComplete ? Icons.check_circle_outline : Icons.radio_button_unchecked,
+                      color: isComplete ? AppColors.success : AppColors.primary,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          dateLabel,
+                          style: AppTextStyles.body1.copyWith(
+                            color: AppColors.textPrimary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        LinearProgressIndicator(
+                          value: completionRate,
+                          backgroundColor: AppColors.surfaceVariant,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            isComplete ? AppColors.success : AppColors.primary,
+                          ),
+                          minHeight: 3,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: isComplete
+                          ? AppColors.success.withAlpha(25)
+                          : AppColors.primary.withAlpha(25),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      '${activity.completedPrayers}/5',
+                      style: AppTextStyles.caption.copyWith(
+                        color: isComplete ? AppColors.success : AppColors.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
         ],
       ),
     );

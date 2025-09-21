@@ -17,150 +17,136 @@ class ModernSurahList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (context, index) {
-          final surah = surahs[index];
-          final surahNumber = index + 1;
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: surahs.length,
+      itemBuilder: (context, index) {
+        final surah = surahs[index];
+        final surahNumber = index + 1;
 
-          return Container(
-            margin: const EdgeInsets.only(bottom: 16),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.shadowLight,
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: InkWell(
-              onTap: () {
-                // Stop current audio before navigating
-                audioService.stop();
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => SurahDetailScreen(
-                      surahNo: surahNumber,
-                      surahName: surah.surahName,
-                    ),
+        return Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.shadowLight,
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: InkWell(
+            onTap: () {
+              // Stop current audio before navigating
+              audioService.stop();
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => SurahDetailScreen(
+                    surahNo: surahNumber,
+                    surahName: surah.surahName,
                   ),
-                );
-              },
-              borderRadius: BorderRadius.circular(20),
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Row(
-                  children: [
-                    // Surah Number Circle
-                    Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            AppColors.primary,
-                            AppColors.primaryLight,
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Center(
-                        child: Text(
-                          surahNumber.toString(),
-                          style: AppTextStyles.heading4.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(width: 16),
-
-                    // Surah Info
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // English and Arabic Names
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  surah.surahName,
-                                  style: AppTextStyles.heading4,
-                                ),
-                              ),
-                              Text(
-                                surah.surahNameArabic,
-                                style: AppTextStyles.arabicMedium.copyWith(
-                                  fontSize: 18,
-                                  color: AppColors.primary,
-                                ),
-                                textDirection: TextDirection.rtl,
-                              ),
-                            ],
-                          ),
-
-                          const SizedBox(height: 4),
-
-                          // Translation and Details
-                          Text(
-                            surah.surahNameTranslation,
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              color: AppColors.textSecondary,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-
-                          const SizedBox(height: 8),
-
-                          // Stats Row
-                          Row(
-                            children: [
-                              _buildStatChip(
-                                icon: Icons.place,
-                                label: surah.revelationPlace,
-                                color: surah.revelationPlace == 'Makkah'
-                                    ? AppColors.accent
-                                    : AppColors.secondary,
-                              ),
-                              const SizedBox(width: 8),
-                              _buildStatChip(
-                                icon: Icons.format_list_numbered,
-                                label: '${surah.totalAyah} verses',
-                                color: AppColors.textTertiary,
-                              ),
-                            ],
-                          ),
+                ),
+              );
+            },
+            borderRadius: BorderRadius.circular(20),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  // Surah Number Circle
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          AppColors.primary,
+                          AppColors.primaryLight,
                         ],
                       ),
+                      borderRadius: BorderRadius.circular(12),
                     ),
+                    child: Center(
+                      child: Text(
+                        surahNumber.toString(),
+                        style: AppTextStyles.heading4.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
 
-                    // Arrow Icon
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(
-                        Icons.arrow_forward_ios,
-                        color: AppColors.primary,
-                        size: 16,
-                      ),
+                  const SizedBox(width: 16),
+
+                  // Surah Info
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // English and Arabic Names
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                surah.surahName,
+                                style: AppTextStyles.heading4,
+                              ),
+                            ),
+                            Text(
+                              surah.surahNameArabic,
+                              style: AppTextStyles.arabicMedium.copyWith(
+                                fontSize: 18,
+                                color: AppColors.primary,
+                              ),
+                              textDirection: TextDirection.rtl,
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 4),
+
+                        // Translation and Details
+                        Text(
+                          surah.surahNameTranslation,
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: AppColors.textSecondary,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+
+                        const SizedBox(height: 8),
+
+                        // Stats Row
+                        Row(
+                          children: [
+                            _buildStatChip(
+                              icon: Icons.place,
+                              label: surah.revelationPlace,
+                              color: surah.revelationPlace == 'Makkah'
+                                  ? AppColors.accent
+                                  : AppColors.secondary,
+                            ),
+                            const SizedBox(width: 8),
+                            _buildStatChip(
+                              icon: Icons.format_list_numbered,
+                              label: '${surah.totalAyah} verses',
+                              color: AppColors.textTertiary,
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          );
-        },
-        childCount: surahs.length,
-      ),
+          ),
+        );
+      },
     );
   }
 
