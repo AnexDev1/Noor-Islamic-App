@@ -5,52 +5,58 @@ import 'package:flutter/foundation.dart';
 class QuranAudioHandler extends BaseAudioHandler with SeekHandler, QueueHandler {
   final AudioPlayer _player = AudioPlayer();
   Duration _currentPosition = Duration.zero;
+  Duration _currentDuration = Duration.zero;
 
   QuranAudioHandler() {
     // Listen to position changes
     _player.onPositionChanged.listen((pos) {
       _currentPosition = pos;
-      playbackState.add(playbackState.value.copyWith(
-        updatePosition: pos,
-      ));
+      _updatePlaybackState();
     });
 
     // Listen to duration changes
     _player.onDurationChanged.listen((duration) {
+      _currentDuration = duration;
       mediaItem.add(mediaItem.value?.copyWith(duration: duration));
+      _updatePlaybackState();
     });
 
     // Listen to player state changes
     _player.onPlayerStateChanged.listen((state) {
-      final isPlaying = state == PlayerState.playing;
-
-      playbackState.add(PlaybackState(
-        controls: [
-          MediaControl.rewind,
-          isPlaying ? MediaControl.pause : MediaControl.play,
-          MediaControl.stop,
-          MediaControl.fastForward,
-        ],
-        systemActions: const {
-          MediaAction.seek,
-          MediaAction.seekForward,
-          MediaAction.seekBackward,
-          MediaAction.stop,
-        },
-        androidCompactActionIndices: const [0, 1, 2, 3],
-        playing: isPlaying,
-        processingState: _mapPlayerState(state),
-        updatePosition: _currentPosition,
-        bufferedPosition: Duration.zero,
-        speed: 1.0,
-        queueIndex: 0,
-      ));
+      _updatePlaybackState();
     });
 
     // Listen to player completion
     _player.onPlayerComplete.listen((_) {
-      stop();
+      _updatePlaybackState();
     });
+  }
+
+  void _updatePlaybackState() {
+    final state = _player.state;
+    final isPlaying = state == PlayerState.playing;
+
+    playbackState.add(PlaybackState(
+      controls: [
+        MediaControl.rewind,
+        isPlaying ? MediaControl.pause : MediaControl.play,
+        MediaControl.stop,
+        MediaControl.fastForward,
+      ],
+      systemActions: const {
+        MediaAction.seek,
+        MediaAction.seekForward,
+        MediaAction.seekBackward,
+        MediaAction.stop,
+      },
+      androidCompactActionIndices: const [0, 1, 2, 3],
+      playing: isPlaying,
+      processingState: _mapPlayerState(state),
+      updatePosition: _currentPosition,
+      bufferedPosition: _currentPosition,
+      speed: 1.0,
+      queueIndex: 0,
+    ));
   }
 
   AudioProcessingState _mapPlayerState(PlayerState state) {
@@ -63,7 +69,7 @@ class QuranAudioHandler extends BaseAudioHandler with SeekHandler, QueueHandler 
         return AudioProcessingState.ready;
       case PlayerState.completed:
         return AudioProcessingState.completed;
-      default:
+      case PlayerState.disposed:
         return AudioProcessingState.idle;
     }
   }
@@ -81,11 +87,15 @@ class QuranAudioHandler extends BaseAudioHandler with SeekHandler, QueueHandler 
         title: surahName,
         artist: reciterName,
         album: 'Holy Quran',
-        artUri: Uri.parse('android.resource://com.noor.app/drawable/quran_cover'),
-        duration: null, // Will be updated when duration is available
+        duration: _currentDuration > Duration.zero ? _currentDuration : null,
         extras: {
           'url': url,
         },
+      ));
+
+      // Update state to loading
+      playbackState.add(playbackState.value.copyWith(
+        processingState: AudioProcessingState.loading,
       ));
 
       // Start playback
@@ -143,6 +153,9 @@ class QuranAudioHandler extends BaseAudioHandler with SeekHandler, QueueHandler 
         bufferedPosition: Duration.zero,
         speed: 1.0,
       ));
+
+      _currentPosition = Duration.zero;
+      _currentDuration = Duration.zero;
     } catch (e) {
       debugPrint('Error in stop: $e');
     }
@@ -152,6 +165,7 @@ class QuranAudioHandler extends BaseAudioHandler with SeekHandler, QueueHandler 
   Future<void> seek(Duration position) async {
     try {
       await _player.seek(position);
+      _currentPosition = position;
     } catch (e) {
       debugPrint('Error in seek: $e');
     }
@@ -165,7 +179,7 @@ class QuranAudioHandler extends BaseAudioHandler with SeekHandler, QueueHandler 
 
   @override
   Future<void> fastForward() async {
-    final duration = mediaItem.value?.duration ?? Duration.zero;
+    final duration = _currentDuration;
     final newPosition = _currentPosition + const Duration(seconds: 10);
     await seek(newPosition > duration ? duration : newPosition);
   }
@@ -180,5 +194,9 @@ class QuranAudioHandler extends BaseAudioHandler with SeekHandler, QueueHandler 
   Future<void> onNotificationDeleted() async {
     // Stop playback when notification is dismissed
     await stop();
+  }
+
+  void dispose() async {
+    await _player.dispose();
   }
 }

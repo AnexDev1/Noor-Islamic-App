@@ -13,51 +13,68 @@ class QuranAudioPlayerService {
   ValueNotifier<Duration> position = ValueNotifier(Duration.zero);
   ValueNotifier<Duration> duration = ValueNotifier(Duration.zero);
   ValueNotifier<String> currentSurahName = ValueNotifier('');
+  ValueNotifier<String> currentReciter = ValueNotifier('');
   ValueNotifier<bool> isLoading = ValueNotifier(false);
+  ValueNotifier<bool> hasError = ValueNotifier(false);
 
   String? currentUrl;
 
   Future<void> init() async {
     if (_audioHandler == null) {
-      _audioHandler = await AudioService.init(
-        builder: () => QuranAudioHandler(),
-        config: const AudioServiceConfig(
-          androidNotificationChannelId: 'com.noor.quran.audio',
-          androidNotificationChannelName: 'Noor - Quran Audio',
-          androidNotificationOngoing: true,
-          androidShowNotificationBadge: true,
-          androidNotificationClickStartsActivity: true,
-          androidNotificationIcon: 'drawable/ic_notification',
-          fastForwardInterval: Duration(seconds: 10),
-          rewindInterval: Duration(seconds: 10),
-        ),
-      );
+      try {
+        _audioHandler = await AudioService.init(
+          builder: () => QuranAudioHandler(),
+          config: const AudioServiceConfig(
+            androidNotificationChannelId: 'com.noor.quran.audio',
+            androidNotificationChannelName: 'Noor - Quran Audio',
+            androidNotificationOngoing: true,
+            androidShowNotificationBadge: true,
+            androidNotificationClickStartsActivity: true,
+            androidNotificationIcon: 'drawable/ic_notification',
+            fastForwardInterval: Duration(seconds: 10),
+            rewindInterval: Duration(seconds: 10),
+          ),
+        );
 
-      // Listen to audio handler state changes
-      _audioHandler!.playbackState.listen((state) {
-        isPlaying.value = state.playing;
-        position.value = state.updatePosition;
-        isLoading.value = state.processingState == AudioProcessingState.loading ||
-                         state.processingState == AudioProcessingState.buffering;
-      });
+        // Listen to audio handler state changes
+        _audioHandler!.playbackState.listen((state) {
+          isPlaying.value = state.playing;
+          position.value = state.updatePosition;
+          isLoading.value = state.processingState == AudioProcessingState.loading ||
+                           state.processingState == AudioProcessingState.buffering;
+          hasError.value = state.processingState == AudioProcessingState.error;
+        });
 
-      _audioHandler!.mediaItem.listen((item) {
-        duration.value = item?.duration ?? Duration.zero;
-        currentSurahName.value = item?.title ?? '';
-      });
+        _audioHandler!.mediaItem.listen((item) {
+          if (item != null) {
+            duration.value = item.duration ?? Duration.zero;
+            currentSurahName.value = item.title ?? '';
+            currentReciter.value = item.artist ?? '';
+          } else {
+            // Clear all values when mediaItem is null
+            duration.value = Duration.zero;
+            currentSurahName.value = '';
+            currentReciter.value = '';
+            position.value = Duration.zero;
+            isPlaying.value = false;
+            isLoading.value = false;
+          }
+        });
+      } catch (e) {
+        debugPrint('Error initializing audio service: $e');
+        hasError.value = true;
+      }
     }
   }
 
   Future<void> play(String url, String surahName, {String? reciterName}) async {
     try {
-      // Stop current audio first to prevent multiple streams
-      await stop();
+      await init(); // Ensure service is initialized
 
       isLoading.value = true;
+      hasError.value = false;
       currentUrl = url;
-      currentSurahName.value = surahName;
 
-      // Call playMedia with the correct 3 parameters
       final handler = _audioHandler as QuranAudioHandler?;
       if (handler != null) {
         await handler.playMedia(
@@ -65,23 +82,41 @@ class QuranAudioPlayerService {
           surahName,
           reciterName ?? 'Abdul Baset Abdul Samad'
         );
+      } else {
+        throw Exception('Audio handler not initialized');
       }
     } catch (e) {
       isLoading.value = false;
+      hasError.value = true;
       debugPrint('Error playing audio: $e');
     }
   }
 
   Future<void> pause() async {
-    await _audioHandler?.pause();
+    try {
+      await _audioHandler?.pause();
+    } catch (e) {
+      debugPrint('Error pausing audio: $e');
+      hasError.value = true;
+    }
   }
 
   Future<void> resume() async {
-    await _audioHandler?.play();
+    try {
+      await _audioHandler?.play();
+    } catch (e) {
+      debugPrint('Error resuming audio: $e');
+      hasError.value = true;
+    }
   }
 
   Future<void> seek(Duration position) async {
-    await _audioHandler?.seek(position);
+    try {
+      await _audioHandler?.seek(position);
+    } catch (e) {
+      debugPrint('Error seeking audio: $e');
+      hasError.value = true;
+    }
   }
 
   Future<void> seekForward() async {
@@ -98,14 +133,16 @@ class QuranAudioPlayerService {
   }
 
   Future<void> stop() async {
-    await _audioHandler?.stop();
-    currentUrl = null;
-    currentSurahName.value = '';
-    position.value = Duration.zero;
-    duration.value = Duration.zero;
-    isPlaying.value = false;
-    isLoading.value = false;
+    try {
+      await _audioHandler?.stop();
+      currentUrl = null;
+      // Note: ValueNotifiers will be updated via mediaItem listener
+    } catch (e) {
+      debugPrint('Error stopping audio: $e');
+    }
   }
+
+  bool get isInitialized => _audioHandler != null;
 
   void dispose() {
     stop();
