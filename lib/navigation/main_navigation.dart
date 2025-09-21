@@ -25,23 +25,23 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   final List<NavigationItem> _navigationItems = [
     NavigationItem(
-      icon: Icons.home_outlined,
-      activeIcon: Icons.home,
+      icon: Image.asset('assets/masjid.png', height: 24, color: AppColors.textTertiary),
+      activeIcon: Image.asset('assets/masjid.png', height: 24, color: AppColors.primary),
       label: 'Home',
     ),
     NavigationItem(
-      icon: Icons.explore_outlined,
-      activeIcon: Icons.explore,
+      icon: Image.asset('assets/qibla.png', height: 24, color: AppColors.textTertiary),
+      activeIcon: Image.asset('assets/qibla.png', height: 24, color: AppColors.primary),
       label: 'Qibla',
     ),
     NavigationItem(
-      icon: Icons.chat_bubble_outline,
-      activeIcon: Icons.chat_bubble,
+      icon: Image.asset('assets/chat.png', height: 24, color: AppColors.textTertiary),
+      activeIcon: Image.asset('assets/chat.png', height: 24, color: AppColors.primary),
       label: 'AI Chat',
     ),
     NavigationItem(
-      icon: Icons.grid_view_outlined,
-      activeIcon: Icons.grid_view,
+      icon: Image.asset('assets/more.png', height: 24, color: AppColors.textTertiary),
+      activeIcon: Image.asset('assets/more.png', height: 24, color: AppColors.primary),
       label: 'More',
     ),
   ];
@@ -91,13 +91,15 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                                   : Colors.transparent,
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: Icon(
-                              isActive ? item.activeIcon : item.icon,
-                              size: 24,
-                              color: isActive
-                                  ? AppColors.primary
-                                  : AppColors.textTertiary,
-                            ),
+                            child: item.icon is Widget || item.activeIcon is Widget
+                              ? (isActive ? item.activeIcon : item.icon)
+                              : Icon(
+                                  isActive ? item.activeIcon : item.icon,
+                                  size: 24,
+                                  color: isActive
+                                      ? AppColors.primary
+                                      : AppColors.textTertiary,
+                                ),
                           ),
                           const SizedBox(height: 4),
                           Text(
@@ -126,8 +128,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 }
 
 class NavigationItem {
-  final IconData icon;
-  final IconData activeIcon;
+  final dynamic icon; // IconData or Widget
+  final dynamic activeIcon; // IconData or Widget
   final String label;
 
   NavigationItem({

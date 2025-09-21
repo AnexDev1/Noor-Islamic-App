@@ -52,6 +52,9 @@ dependencies:
   package_info_plus: ^8.0.2
   flutter_riverpod: ^2.4.9
   intl: ^0.20.2
+  heroicons: ^0.11.0
+  fui_kit: ^2.0.2
+  hijri_calendar: ^1.0.7+7
 
 dev_dependencies:
   flutter_test:
@@ -77,9 +80,15 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/
+    - assets/prayer.png
+    - assets/today-progress.png
+    - assets/quran.png
+    - assets/azkhar.png
+    - assets/tasbih.png
     - assets/icon.png
-    #   - images/a_dot_burr.jpeg
-    #   - images/a_dot_ham.jpeg
+    - assets/masjid.png
+    - assets/qibla.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

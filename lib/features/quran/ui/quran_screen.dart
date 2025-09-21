@@ -299,11 +299,7 @@ class _QuranScreenState extends State<QuranScreen> with TickerProviderStateMixin
             ),
             child: Column(
               children: [
-                Icon(
-                  Icons.book,
-                  color: AppColors.primary,
-                  size: 32,
-                ),
+                Image.asset('assets/quran.png', height: 37, color: Colors.black),
                 const SizedBox(height: 8),
                 Text(
                   '114',

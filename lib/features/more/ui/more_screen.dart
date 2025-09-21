@@ -125,29 +125,38 @@ class _MoreScreenState extends ConsumerState<MoreScreen> with TickerProviderStat
     return CustomCard(
       child: Row(
         children: [
-          Container(
-            width: 70,
-            height: 70,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [AppColors.primary, AppColors.primaryLight],
-              ),
-              borderRadius: BorderRadius.circular(35),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.3),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
+          FutureBuilder<String>(
+            future: UserService.getUserGender(),
+            builder: (context, genderSnapshot) {
+              String gender = (genderSnapshot.data ?? 'Male').toLowerCase();
+              String asset = gender == 'female' ? 'assets/female.png' : 'assets/male.png';
+              return Container(
+                width: 70,
+                height: 70,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [AppColors.primary, AppColors.primaryLight],
+                  ),
+                  borderRadius: BorderRadius.circular(18), // Rounded square
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withValues(alpha: 0.3),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            child: const Icon(
-              Icons.person,
-              size: 35,
-              color: Colors.white,
-            ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(18),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.asset(asset, fit: BoxFit.cover, color: Colors.white,),
+                  ),
+                ),
+              );
+            },
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -173,25 +182,6 @@ class _MoreScreenState extends ConsumerState<MoreScreen> with TickerProviderStat
                             fontWeight: FontWeight.bold,
                             color: AppColors.textPrimary,
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: AppColors.success.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                '${prayerStats.currentStreak} day streak',
-                                style: AppTextStyles.bodySmall.copyWith(
-                                  color: AppColors.success,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ],
                         ),
                       ],
                     );
@@ -392,6 +382,16 @@ class _MoreScreenState extends ConsumerState<MoreScreen> with TickerProviderStat
     required Color color,
     required VoidCallback onTap,
   }) {
+    Widget iconWidget;
+    if (icon == Icons.mosque) {
+      iconWidget = Image.asset('assets/masjid.png', height: 24, color: color);
+    } else if (icon == Icons.today) {
+      iconWidget = Image.asset('assets/prayer.png', height: 24, color: color);
+    } else if (icon == Icons.local_fire_department) {
+      iconWidget = Image.asset('assets/streak.png', height: 24, color: color);
+    } else {
+      iconWidget = Icon(icon, color: color, size: 24);
+    }
     return CustomCard(
       onTap: onTap,
       child: Column(
@@ -403,7 +403,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen> with TickerProviderStat
               color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: color, size: 24),
+            child: iconWidget,
           ),
           const SizedBox(height: 8),
           Text(
@@ -426,7 +426,8 @@ class _MoreScreenState extends ConsumerState<MoreScreen> with TickerProviderStat
   }
 
   Widget _buildMenuTile({
-    required IconData icon,
+    IconData? icon,
+    Widget? iconWidget,
     required String title,
     required String subtitle,
     required VoidCallback onTap,
@@ -445,7 +446,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen> with TickerProviderStat
                 color: AppColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(icon, color: AppColors.primary, size: 20),
+              child: iconWidget ?? (icon != null ? Icon(icon, color: AppColors.primary, size: 20) : null),
             ),
             const SizedBox(width: 16),
             Expanded(

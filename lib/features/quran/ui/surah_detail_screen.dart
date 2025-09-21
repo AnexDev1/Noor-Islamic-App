@@ -282,7 +282,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> with TickerProvid
             value: _selectedTranslationKey,
             options: _translationOptions,
             onChanged: _onTranslationChanged,
-            icon: Icons.translate,
+            iconWidget: Image.asset('assets/translation.png', height: 20, color: AppColors.primary),
           ),
 
           const SizedBox(height: 16),
@@ -300,7 +300,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> with TickerProvid
                 value: _selectedReciterId,
                 options: snapshot.data!,
                 onChanged: _onReciterChanged,
-                icon: Icons.record_voice_over,
+                iconWidget: Image.asset('assets/reciter.png', height: 20, color: AppColors.primary),
               );
             },
           ),
@@ -314,18 +314,21 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> with TickerProvid
     required String value,
     required Map<String, String> options,
     required Function(String?) onChanged,
-    required IconData icon,
+    Widget? iconWidget,
+    IconData? icon,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Icon(
-              icon,
-              color: AppColors.primary,
-              size: 20,
-            ),
+            if (iconWidget != null) iconWidget
+            else if (icon != null)
+              Icon(
+                icon,
+                color: AppColors.primary,
+                size: 20,
+              ),
             const SizedBox(width: 8),
             Text(
               label,

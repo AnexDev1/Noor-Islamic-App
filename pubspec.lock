@@ -264,6 +264,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  fui_kit:
+    dependency: "direct main"
+    description:
+      name: fui_kit
+      sha256: "7433643d1fe2c438078c21b7c7e38fb822d16076a6aae99d5ff3806928880884"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.2"
   geoclue:
     dependency: transitive
     description:
@@ -376,6 +384,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.8"
+  heroicons:
+    dependency: "direct main"
+    description:
+      name: heroicons
+      sha256: "4da0ce23d7c25b35390cb6cf485e33b959e811541e9d9cb33a1fceb3d6705f0c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.11.0"
+  hijri_calendar:
+    dependency: "direct main"
+    description:
+      name: hijri_calendar
+      sha256: "5b99f8924b738cb7156fff2c679a261cecf4214c324f2529255afb3a9ccfea58"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.7+7"
   http:
     dependency: "direct main"
     description:

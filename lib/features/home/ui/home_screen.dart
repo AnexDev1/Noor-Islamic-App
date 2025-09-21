@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:noor/features/qibla/ui/qibla_screen.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:shimmer/shimmer.dart';
+import 'dart:async';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/services/user_service.dart';
@@ -26,6 +26,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
   late AnimationController _slideController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
+  Timer? _countdownTimer;
+  Duration _timeUntilNextPrayer = Duration.zero;
+  String _countdownText = '';
+  String _nextPrayerName = '';
+  PrayerTimes? _currentPrayerTimes;
 
   @override
   void initState() {
@@ -72,7 +77,66 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
   void dispose() {
     _fadeController.dispose();
     _slideController.dispose();
+    _countdownTimer?.cancel();
     super.dispose();
+  }
+
+  void _startCountdown(PrayerTimes prayerTimes) {
+    _currentPrayerTimes = prayerTimes;
+    _updateCountdown();
+    _countdownTimer?.cancel();
+    _countdownTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      _updateCountdown();
+      if (_timeUntilNextPrayer.inSeconds <= 0) {
+        _countdownTimer?.cancel();
+      }
+      setState(() {});
+    });
+  }
+
+  void _updateCountdown() {
+    if (_currentPrayerTimes == null) return;
+    final now = DateTime.now();
+    final prayerNames = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+    final prayerTimesList = [
+      _parsePrayerTime(_currentPrayerTimes!.fajr),
+      _parsePrayerTime(_currentPrayerTimes!.dhuhr),
+      _parsePrayerTime(_currentPrayerTimes!.asr),
+      _parsePrayerTime(_currentPrayerTimes!.maghrib),
+      _parsePrayerTime(_currentPrayerTimes!.isha),
+    ];
+    DateTime? nextPrayer;
+    String nextPrayerName = '';
+    for (int i = 0; i < prayerTimesList.length; i++) {
+      if (prayerTimesList[i].isAfter(now)) {
+        nextPrayer = prayerTimesList[i];
+        nextPrayerName = prayerNames[i];
+        break;
+      }
+    }
+    if (nextPrayer == null) {
+      // If all prayers passed, show until Fajr tomorrow
+      nextPrayer = prayerTimesList[0].add(const Duration(days: 1));
+      nextPrayerName = prayerNames[0];
+    }
+    _timeUntilNextPrayer = nextPrayer.difference(now);
+    _countdownText = _formatDuration(_timeUntilNextPrayer);
+    _nextPrayerName = nextPrayerName;
+  }
+
+  DateTime _parsePrayerTime(String timeStr) {
+    final now = DateTime.now();
+    final parts = timeStr.split(":");
+    final hour = int.parse(parts[0]);
+    final minute = int.parse(parts[1]);
+    return DateTime(now.year, now.month, now.day, hour, minute);
+  }
+
+  String _formatDuration(Duration duration) {
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes % 60;
+    final seconds = duration.inSeconds % 60;
+    return "${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
   }
 
   @override
@@ -129,7 +193,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
     return prayerTimesAsync.when(
       loading: () => _buildLoadingPrayerCard(),
       error: (error, stack) => _buildErrorPrayerCard(error.toString()),
-      data: (prayerTimes) => _buildPrayerTimesContent(prayerTimes, todayStatus, locationAsync),
+      data: (prayerTimes) {
+        _startCountdown(prayerTimes);
+        return _buildPrayerTimesContent(prayerTimes, todayStatus, locationAsync);
+      },
     );
   }
 
@@ -213,7 +280,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
           // Header with location
           Row(
             children: [
-              const Icon(Icons.access_time, color: Colors.white, size: 24),
+              Image.asset('assets/prayer.png', height: 28, color: Colors.white),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -230,6 +297,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
                         '${location.city}, ${location.country}',
                         style: const TextStyle(color: Colors.white70, fontSize: 14),
                       ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Next prayer: $_nextPrayerName in $_countdownText',
+                      style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
                     ),
                   ],
                 ),
@@ -331,7 +403,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
         children: [
           Row(
             children: [
-              Icon(Icons.trending_up, color: AppColors.primary, size: 24),
+              Image.asset('assets/today-progress.png', height: 24, color: Colors.black),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
@@ -472,7 +544,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
     final features = [
       {
         'title': 'Quran',
-        'icon': Icons.book_outlined,
+        'icon': 'assets/quran.png',
         'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const QuranScreen())),
       },
       {
@@ -482,19 +554,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
       },
       {
         'title': 'Azkhar',
-        'icon': Icons.shield_outlined,
+        'icon': 'assets/azkhar.png',
         'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AzkharHomeScreen())),
       },
       {
         'title': 'Tasbih',
-        'icon': Icons.watch_later_outlined,
+        'icon': 'assets/tasbih.png',
         'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TasbihScreen())),
       },
-      {
-        'title': 'Qibla',
-        'icon': Icons.explore_outlined,
-        'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const QiblaScreen())),
-      },
+
     ];
 
     return Column(
@@ -544,11 +612,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Icon(
-                        feature['icon'] as IconData,
-                        color: Colors.white,
-                        size: 32,
-                      ),
+                      feature['icon'] is String
+                        ? Image.asset(feature['icon'] as String, height: 32, color: Colors.white)
+                        : Icon(feature['icon'] as IconData, color: Colors.white, size: 32),
                       Text(
                         feature['title'] as String,
                         style: AppTextStyles.heading3.copyWith(

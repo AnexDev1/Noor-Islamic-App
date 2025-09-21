@@ -45,6 +45,10 @@ class _PrayerStatsScreenState extends ConsumerState<PrayerStatsScreen>
     ));
 
     _animationController.forward();
+    // Always refresh stats when page is opened
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(prayerStatsProvider.notifier).refreshStats();
+    });
   }
 
   @override
@@ -61,37 +65,43 @@ class _PrayerStatsScreenState extends ConsumerState<PrayerStatsScreen>
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: _buildAppBar(),
-      body: FadeTransition(
-        opacity: _fadeAnimation,
-        child: SlideTransition(
-          position: _slideAnimation,
-          child: CustomScrollView(
-            slivers: [
-              // Hero Stats Section
-              SliverToBoxAdapter(
-                child: _buildHeroSection(prayerStats, todayStatus),
-              ),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await ref.read(prayerStatsProvider.notifier).refreshStats();
+        },
+        child: FadeTransition(
+          opacity: _fadeAnimation,
+          child: SlideTransition(
+            position: _slideAnimation,
+            child: CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                // Hero Stats Section
+                SliverToBoxAdapter(
+                  child: _buildHeroSection(prayerStats, todayStatus),
+                ),
 
-              // Quick Overview Cards
-              SliverToBoxAdapter(
-                child: _buildQuickOverview(prayerStats, todayStatus),
-              ),
+                // Quick Overview Cards
+                SliverToBoxAdapter(
+                  child: _buildQuickOverview(prayerStats, todayStatus),
+                ),
 
-              // Prayer Breakdown
-              SliverToBoxAdapter(
-                child: _buildPrayerBreakdown(prayerStats),
-              ),
+                // Prayer Breakdown
+                SliverToBoxAdapter(
+                  child: _buildPrayerBreakdown(prayerStats),
+                ),
 
-              // Recent Activity
-              SliverToBoxAdapter(
-                child: _buildRecentActivity(prayerStats),
-              ),
+                // Recent Activity
+                SliverToBoxAdapter(
+                  child: _buildRecentActivity(prayerStats),
+                ),
 
-              // Bottom padding
-              const SliverToBoxAdapter(
-                child: SizedBox(height: 20),
-              ),
-            ],
+                // Bottom padding
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: 20),
+                ),
+              ],
+            ),
           ),
         ),
       ),
