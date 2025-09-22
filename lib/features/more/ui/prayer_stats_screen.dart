@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import '../../../common_widgets/custom_app_bar.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -65,7 +66,11 @@ class _PrayerStatsScreenState extends ConsumerState<PrayerStatsScreen>
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: _buildAppBar(),
-      body: RefreshIndicator(
+      body: LiquidPullToRefresh(
+        animSpeedFactor: 3,
+        color: AppColors.primary,
+        backgroundColor: AppColors.surface,
+        showChildOpacityTransition: true,
         onRefresh: () async {
           await ref.read(prayerStatsProvider.notifier).refreshStats();
         },
@@ -158,8 +163,8 @@ class _PrayerStatsScreenState extends ConsumerState<PrayerStatsScreen>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.primary,
-            AppColors.secondary,
+            AppColors.primaryLight,
+            AppColors.primaryDark,
           ],
         ),
         borderRadius: BorderRadius.circular(24),
@@ -266,10 +271,11 @@ class _PrayerStatsScreenState extends ConsumerState<PrayerStatsScreen>
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
-            Icons.local_fire_department,
-            color: Color(0xFFFF6B35),
-            size: 20,
+          Image.asset(
+            'assets/streak.png',
+            width: 20,
+            height: 20,
+            color: Colors.red,
           ),
           const SizedBox(width: 8),
           Text(
@@ -366,13 +372,8 @@ class _PrayerStatsScreenState extends ConsumerState<PrayerStatsScreen>
 
   Widget _buildPrayerBreakdown(PrayerStats stats) {
     final prayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-    final colors = [
-      AppColors.fajr,
-      AppColors.dhuhr,
-      AppColors.asr,
-      AppColors.maghrib,
-      AppColors.isha,
-    ];
+    // Use a single theme color for all breakdown items
+    final themeColor = AppColors.primary;
 
     return Container(
       margin: const EdgeInsets.all(20),
@@ -414,14 +415,14 @@ class _PrayerStatsScreenState extends ConsumerState<PrayerStatsScreen>
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: colors[index].withOpacity(0.1),
+                      color: themeColor.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Center(
                       child: Text(
                         prayer[0],
                         style: AppTextStyles.body1.copyWith(
-                          color: colors[index],
+                          color: themeColor,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -445,7 +446,7 @@ class _PrayerStatsScreenState extends ConsumerState<PrayerStatsScreen>
                             Text(
                               '$count',
                               style: AppTextStyles.body1.copyWith(
-                                color: colors[index],
+                                color: themeColor,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -454,8 +455,8 @@ class _PrayerStatsScreenState extends ConsumerState<PrayerStatsScreen>
                         const SizedBox(height: 6),
                         LinearProgressIndicator(
                           value: percentage,
-                          backgroundColor: colors[index].withOpacity(0.1),
-                          valueColor: AlwaysStoppedAnimation<Color>(colors[index]),
+                          backgroundColor: themeColor.withOpacity(0.1),
+                          valueColor: AlwaysStoppedAnimation<Color>(themeColor),
                           minHeight: 4,
                           borderRadius: BorderRadius.circular(2),
                         ),
@@ -500,7 +501,7 @@ class _PrayerStatsScreenState extends ConsumerState<PrayerStatsScreen>
           ...stats.recentActivity.take(7).map((activity) {
             final isComplete = activity.completedPrayers == 5;
             final completionRate = activity.completedPrayers / 5;
-            final now = DateTime(2025, 9, 21);
+            final now = DateTime.now();
             final diff = now.difference(activity.date).inDays;
             String dateLabel;
             if (diff == 0) {

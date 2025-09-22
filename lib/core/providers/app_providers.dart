@@ -239,24 +239,72 @@ class TodayPrayerStatusNotifier extends StateNotifier<PrayerStatus> {
 
   Future<void> togglePrayer(String prayerName) async {
     final currentStatus = state.dailyPrayers[prayerName] ?? false;
+    final newStatus = !currentStatus;
     final newPrayers = Map<String, bool>.from(state.dailyPrayers);
-    newPrayers[prayerName] = !currentStatus;
+    newPrayers[prayerName] = newStatus;
 
     state = state.copyWith(dailyPrayers: newPrayers);
 
     // Save to preferences
-    final todayKey = _formatDate(state.date);
-    await _prefs.setBool('prayer_${prayerName.toLowerCase()}_$todayKey', !currentStatus);
+    final today = state.date;
+    final todayKey = _formatDate(today);
+    await _prefs.setBool('prayer_${prayerName.toLowerCase()}_$todayKey', newStatus);
 
-    // Update total prayers count if prayer was completed
-    if (!currentStatus) {
+    // Update total prayers count
+    if (newStatus) {
       final totalPrayers = _prefs.getInt('total_prayers_completed') ?? 0;
       await _prefs.setInt('total_prayers_completed', totalPrayers + 1);
       await _prefs.setString('last_prayer_time', DateTime.now().toIso8601String());
     } else {
-      // If unchecking, decrease total count
       final totalPrayers = _prefs.getInt('total_prayers_completed') ?? 0;
       await _prefs.setInt('total_prayers_completed', (totalPrayers - 1).clamp(0, double.infinity).toInt());
+    }
+
+    // --- Professional Streak Logic ---
+    await _updateStreak(today: today);
+  }
+
+  Future<void> _updateStreak({required DateTime today}) async {
+    final todayKey = _formatDate(today);
+    final lastIncrementDate = _prefs.getString('last_streak_increment_date');
+
+    final allTodayCompleted = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha']
+        .every((p) => _prefs.getBool('prayer_${p.toLowerCase()}_$todayKey') ?? false);
+
+    if (allTodayCompleted) {
+      // Only increment if we haven't already incremented for today
+      if (lastIncrementDate != todayKey) {
+        final yesterday = today.subtract(const Duration(days: 1));
+        final yesterdayKey = _formatDate(yesterday);
+        final allYesterdayCompleted = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha']
+            .every((p) => _prefs.getBool('prayer_${p.toLowerCase()}_$yesterdayKey') ?? false);
+
+        int currentStreak = _prefs.getInt('prayer_streak') ?? 0;
+        int newStreak = allYesterdayCompleted ? currentStreak + 1 : 1;
+
+        await _prefs.setInt('prayer_streak', newStreak);
+        await _prefs.setString('last_streak_increment_date', todayKey);
+
+        // Update longest streak
+        final longestStreak = _prefs.getInt('longest_streak') ?? 0;
+        if (newStreak > longestStreak) {
+          await _prefs.setInt('longest_streak', newStreak);
+        }
+      }
+    } else {
+      // If the day is no longer complete, check if we need to reverse a previous increment
+      if (lastIncrementDate == todayKey) {
+        int currentStreak = _prefs.getInt('prayer_streak') ?? 0;
+        int longestStreak = _prefs.getInt('longest_streak') ?? 0;
+
+        // If the current streak was the longest, decrement longest streak as well
+        if (currentStreak == longestStreak) {
+          await _prefs.setInt('longest_streak', (longestStreak - 1).clamp(0, 999999));
+        }
+
+        await _prefs.setInt('prayer_streak', (currentStreak - 1).clamp(0, 999999));
+        await _prefs.remove('last_streak_increment_date');
+      }
     }
   }
 
@@ -291,21 +339,21 @@ class PrayerStatsNotifier extends StateNotifier<PrayerStats> {
       'Isha': _prefs.getInt('prayer_count_isha') ?? 0,
     };
 
-    // Calculate streaks and weekly completion rate
-    final currentStreak = await _calculateCurrentStreak();
-    final longestStreak = _prefs.getInt('longest_streak') ?? currentStreak;
+    // Use persisted streak value for display
+    final persistedStreak = _prefs.getInt('prayer_streak') ?? 0;
+    final longestStreak = _prefs.getInt('longest_streak') ?? persistedStreak;
     final weeklyCompletionRate = await _calculateWeeklyCompletionRate();
     final recentActivity = await _getRecentActivity();
 
     // Update longest streak if current is higher
-    if (currentStreak > longestStreak) {
-      await _prefs.setInt('longest_streak', currentStreak);
+    if (persistedStreak > longestStreak) {
+      await _prefs.setInt('longest_streak', persistedStreak);
     }
 
     state = PrayerStats(
       totalPrayers: totalPrayers,
-      currentStreak: currentStreak,
-      longestStreak: longestStreak > currentStreak ? longestStreak : currentStreak,
+      currentStreak: persistedStreak,
+      longestStreak: longestStreak > persistedStreak ? longestStreak : persistedStreak,
       prayerCounts: prayerCounts,
       weeklyCompletionRate: weeklyCompletionRate,
       lastPrayerTime: lastPrayerTime,
@@ -316,6 +364,7 @@ class PrayerStatsNotifier extends StateNotifier<PrayerStats> {
   Future<int> _calculateCurrentStreak() async {
     final today = DateTime.now();
     int streak = 0;
+    bool missedDay = false;
 
     for (int i = 0; i < 365; i++) {
       final date = today.subtract(Duration(days: i));
@@ -331,10 +380,14 @@ class PrayerStatsNotifier extends StateNotifier<PrayerStats> {
       if (dailyCount >= 5) { // All 5 prayers completed
         streak++;
       } else {
+        // Only reset if a full day is missed
+        missedDay = true;
         break;
       }
     }
 
+    // Persist streak value
+    await _prefs.setInt('prayer_streak', streak);
     return streak;
   }
 

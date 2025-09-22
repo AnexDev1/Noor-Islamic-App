@@ -55,6 +55,7 @@ dependencies:
   heroicons: ^0.11.0
   fui_kit: ^2.0.2
   hijri_calendar: ^1.0.7+7
+  liquid_pull_to_refresh: ^3.0.1
 
 dev_dependencies:
   flutter_test:

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import '../../../common_widgets/custom_app_bar.dart';
 import '../../../common_widgets/custom_cards.dart';
 import '../../../core/theme/app_colors.dart';
@@ -67,51 +68,43 @@ class _MoreScreenState extends ConsumerState<MoreScreen> with TickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    // Watch providers for real-time data
     final prayerStats = ref.watch(prayerStatsProvider);
     final todayStatus = ref.watch(todayPrayerStatusProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: const CustomAppBar(title: 'More'),
-      body: FadeTransition(
-        opacity: _fadeAnimation,
-        child: SlideTransition(
-          position: _slideAnimation,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(AppConstants.defaultPadding),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      body: LiquidPullToRefresh(
+        animSpeedFactor: 3,
+        color: AppColors.primary,
+        backgroundColor: AppColors.surface,
+        showChildOpacityTransition: true,
+        onRefresh: () async {
+          await ref.read(prayerStatsProvider.notifier).refreshStats();
+        },
+        child: FadeTransition(
+          opacity: _fadeAnimation,
+          child: SlideTransition(
+            position: _slideAnimation,
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(AppConstants.defaultPadding),
               children: [
-                // User Profile Header
                 _buildUserProfileHeader(prayerStats),
-
                 const SizedBox(height: 24),
-
-                // Quick Stats
                 _buildQuickStatsSection(prayerStats, todayStatus),
-
                 const SizedBox(height: 24),
-
-                // Analytics & Progress
                 _buildSectionHeader('Progress & Analytics'),
                 const SizedBox(height: 12),
                 _buildAnalyticsSection(prayerStats),
-
                 const SizedBox(height: 24),
-
-                // Settings & Preferences
                 _buildSectionHeader('Settings'),
                 const SizedBox(height: 12),
                 _buildSettingsSection(),
-
                 const SizedBox(height: 24),
-
-                // Support & Community
                 _buildSectionHeader('Support & Community'),
                 const SizedBox(height: 12),
                 _buildSupportSection(),
-
                 const SizedBox(height: 32),
               ],
             ),

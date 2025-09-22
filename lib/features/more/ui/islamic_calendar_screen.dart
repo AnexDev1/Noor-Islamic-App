@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hijri_calendar/hijri_calendar.dart';
 import '../../../common_widgets/custom_app_bar.dart';
 import '../../../common_widgets/custom_cards.dart';
@@ -29,10 +28,7 @@ class _IslamicCalendarScreenState extends State<IslamicCalendarScreen> {
     {'date': '1-1', 'name': 'Islamic New Year', 'description': 'Beginning of the Hijri calendar'},
     {'date': '10-1', 'name': 'Day of Ashura', 'description': 'Day of fasting and remembrance'},
     {'date': '12-3', 'name': 'Mawlid al-Nabi', 'description': 'Birth of Prophet Muhammad (PBUH)'},
-    {'date': '27-7', 'name': 'Isra and Mi\'raj', 'description': 'Night Journey of the Prophet'},
-    {'date': '15-8', 'name': 'Lailat al-Bara\'at', 'description': 'Night of Forgiveness'},
     {'date': '1-9', 'name': 'Start of Ramadan', 'description': 'Beginning of the holy month'},
-    {'date': '27-9', 'name': 'Lailat al-Qadr', 'description': 'Night of Power'},
     {'date': '1-10', 'name': 'Eid al-Fitr', 'description': 'Festival of Breaking the Fast'},
     {'date': '9-12', 'name': 'Day of Arafat', 'description': 'Day of Hajj pilgrimage'},
     {'date': '10-12', 'name': 'Eid al-Adha', 'description': 'Festival of Sacrifice'},

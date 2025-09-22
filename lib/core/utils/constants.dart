@@ -16,8 +16,8 @@ class AppConstants {
   static const Duration longAnimation = Duration(milliseconds: 600);
 
   // Grid Settings
-  static const int homeGridColumns = 3; // Increased columns for compact grid
-  static const double homeGridSpacing = 8.0; // Reduced spacing for compact grid
+  static const int homeGridColumns = 3;
+  static const double homeGridSpacing = 8.0;
 
   // Carousel Settings
   static const Duration carouselAutoPlayDuration = Duration(seconds: 4);
@@ -38,5 +38,4 @@ class AppConstants {
   static const String azkharFeatures = 'Azkhar';
   static const String quranFeature = 'Quran';
   static const String wallpaperFeature = 'Wallpaper';
-  static const String donateFeature = 'Donate';
 }
