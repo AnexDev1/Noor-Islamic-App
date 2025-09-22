@@ -25,11 +25,11 @@
 
 ## 📸 Screenshots
 
-| Home Screen | Quran | Qibla |
-| :---: | :---: | :---: |
-| <img src="assets/home.png" alt="Home Screen" width="200"/> | <img src="assets/quran.png" alt="Quran Screen" width="200"/> | <img src="assets/qibla.png" alt="Qibla Screen" width="200"/> |
-| Prayer Stats | AI Chat |
-| <img src="assets/prayer.stats.png" alt="Prayer Stats Screen" width="200"/> | <img src="assets/aichat.png" alt="AI Chat Screen" width="200"/> |
+|                                Home Screen                                 |                              Quran                              |                            Qibla                             |
+|:--------------------------------------------------------------------------:|:---------------------------------------------------------------:|:------------------------------------------------------------:|
+|         <img src="assets/home.jpg" alt="Home Screen" width="200"/>         |  <img src="assets/quran.jpg" alt="Quran Screen" width="200"/>   | <img src="assets/qibla.jpg" alt="Qibla Screen" width="200"/> |
+|                                Prayer Stats                                |                             AI Chat                             |
+| <img src="assets/prayer.stats.jpg" alt="Prayer Stats Screen" width="200"/> | <img src="assets/aichat.jpg" alt="AI Chat Screen" width="200"/> |
 
 ## 🚀 Getting Started
 
