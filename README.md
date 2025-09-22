@@ -25,13 +25,11 @@
 
 ## 📸 Screenshots
 
-| Home Screen | Prayer Times | Qibla |
+| Home Screen | Quran | Qibla |
 | :---: | :---: | :---: |
-| `Screenshot placeholder` | `Screenshot placeholder` | `Screenshot placeholder` |
-| **Quran** | **Prayer Stats** | **AI Chat** |
-| `Screenshot placeholder` | `Screenshot placeholder` | `Screenshot placeholder` |
-
-*Note: You will need to replace the `Screenshot placeholder` text with actual images of your app.*
+| <img src="assets/home.png" alt="Home Screen" width="200"/> | <img src="assets/quran.png" alt="Quran Screen" width="200"/> | <img src="assets/qibla.png" alt="Qibla Screen" width="200"/> |
+| Prayer Stats | AI Chat |
+| <img src="assets/prayer.stats.png" alt="Prayer Stats Screen" width="200"/> | <img src="assets/aichat.png" alt="AI Chat Screen" width="200"/> |
 
 ## 🚀 Getting Started
 
@@ -89,6 +87,6 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## 📧 Contact
 
-Your Name - [@n3x0dev](https://twitter.com/n3x0dev) - anwarnasir0970@gmail.com
+ Anexon - [@n3x0dev](https://twitter.com/n3x0dev) - anwarnasir0970@gmail.com
 
 Project Link: [https://github.com/anexdev1/noor](https://github.com/anexdev1/noor)
