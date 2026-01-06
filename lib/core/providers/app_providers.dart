@@ -28,13 +28,18 @@ class UserLocationNotifier extends StateNotifier<AsyncValue<UserLocation>> {
       final cachedCountry = _prefs.getString('user_country');
       final cachedTimestamp = _prefs.getInt('location_timestamp');
 
-      if (cachedLat != null && cachedLon != null && cachedCity != null && cachedCountry != null) {
+      if (cachedLat != null &&
+          cachedLon != null &&
+          cachedCity != null &&
+          cachedCountry != null) {
         final location = UserLocation(
           latitude: cachedLat,
           longitude: cachedLon,
           city: cachedCity,
           country: cachedCountry,
-          lastUpdated: DateTime.fromMillisecondsSinceEpoch(cachedTimestamp ?? 0),
+          lastUpdated: DateTime.fromMillisecondsSinceEpoch(
+            cachedTimestamp ?? 0,
+          ),
         );
         state = AsyncValue.data(location);
       }
@@ -53,7 +58,8 @@ class UserLocationNotifier extends StateNotifier<AsyncValue<UserLocation>> {
         permission = await Geolocator.requestPermission();
       }
 
-      if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
         // Use Mecca as fallback
         final fallbackLocation = UserLocation(
           latitude: 21.4225,
@@ -77,7 +83,7 @@ class UserLocationNotifier extends StateNotifier<AsyncValue<UserLocation>> {
       // Reverse geocode to get city and country
       List<Placemark> placemarks = await placemarkFromCoordinates(
         position.latitude,
-        position.longitude
+        position.longitude,
       );
 
       final placemark = placemarks.isNotEmpty ? placemarks.first : null;
@@ -98,7 +104,10 @@ class UserLocationNotifier extends StateNotifier<AsyncValue<UserLocation>> {
       await _prefs.setDouble('user_lon', position.longitude);
       await _prefs.setString('user_city', city);
       await _prefs.setString('user_country', country);
-      await _prefs.setInt('location_timestamp', DateTime.now().millisecondsSinceEpoch);
+      await _prefs.setInt(
+        'location_timestamp',
+        DateTime.now().millisecondsSinceEpoch,
+      );
 
       state = AsyncValue.data(location);
     } catch (e) {
@@ -123,10 +132,13 @@ class UserLocationNotifier extends StateNotifier<AsyncValue<UserLocation>> {
   }
 }
 
-final userLocationProvider = StateNotifierProvider<UserLocationNotifier, AsyncValue<UserLocation>>((ref) {
-  final prefs = ref.watch(sharedPreferencesProvider);
-  return UserLocationNotifier(prefs);
-});
+final userLocationProvider =
+    StateNotifierProvider<UserLocationNotifier, AsyncValue<UserLocation>>((
+      ref,
+    ) {
+      final prefs = ref.watch(sharedPreferencesProvider);
+      return UserLocationNotifier(prefs);
+    });
 
 // Prayer Times Provider
 class PrayerTimesNotifier extends StateNotifier<AsyncValue<PrayerTimes>> {
@@ -147,7 +159,10 @@ class PrayerTimesNotifier extends StateNotifier<AsyncValue<PrayerTimes>> {
         final timesMap = Map<String, String>.from(json.decode(cachedTimes));
         final cachedLat = _prefs.getDouble('prayer_times_lat');
         final cachedLon = _prefs.getDouble('prayer_times_lon');
-        final isUsingFallback = _prefs.getBool('prayer_times_fallback') ?? false;
+        final isUsingFallback =
+            _prefs.getBool('prayer_times_fallback') ?? false;
+        final isUsingApiFallback =
+            _prefs.getBool('prayer_times_api_fallback') ?? false;
 
         final prayerTimes = PrayerTimes.fromMap(
           timesMap,
@@ -155,6 +170,7 @@ class PrayerTimesNotifier extends StateNotifier<AsyncValue<PrayerTimes>> {
           latitude: cachedLat,
           longitude: cachedLon,
           isUsingFallbackLocation: isUsingFallback,
+          isUsingFallbackPrayerTimes: isUsingApiFallback,
         );
 
         state = AsyncValue.data(prayerTimes);
@@ -162,7 +178,9 @@ class PrayerTimesNotifier extends StateNotifier<AsyncValue<PrayerTimes>> {
         // Check if we need to refresh (if it's a new day)
         final lastUpdate = DateTime.fromMillisecondsSinceEpoch(cachedTimestamp);
         final now = DateTime.now();
-        if (lastUpdate.day != now.day || lastUpdate.month != now.month || lastUpdate.year != now.year) {
+        if (lastUpdate.day != now.day ||
+            lastUpdate.month != now.month ||
+            lastUpdate.year != now.year) {
           await refreshPrayerTimes();
         }
       } else {
@@ -183,25 +201,30 @@ class PrayerTimesNotifier extends StateNotifier<AsyncValue<PrayerTimes>> {
       final location = _ref.read(userLocationProvider).value;
       if (location == null) throw Exception('No location available');
 
-      final timesMap = await PrayerTimeApi.fetchPrayerTimes(
+      final result = await PrayerTimeApi.fetchPrayerTimes(
         lat: location.latitude,
         lon: location.longitude,
       );
 
       final prayerTimes = PrayerTimes.fromMap(
-        timesMap,
+        result.times,
         lastUpdated: DateTime.now(),
         latitude: location.latitude,
         longitude: location.longitude,
         isUsingFallbackLocation: location.isUsingFallback,
+        isUsingFallbackPrayerTimes: result.isUsingFallback,
       );
 
       // Cache the prayer times
-      await _prefs.setString('prayer_times', json.encode(timesMap));
-      await _prefs.setInt('prayer_times_timestamp', DateTime.now().millisecondsSinceEpoch);
+      await _prefs.setString('prayer_times', json.encode(result.times));
+      await _prefs.setInt(
+        'prayer_times_timestamp',
+        DateTime.now().millisecondsSinceEpoch,
+      );
       await _prefs.setDouble('prayer_times_lat', location.latitude);
       await _prefs.setDouble('prayer_times_lon', location.longitude);
       await _prefs.setBool('prayer_times_fallback', location.isUsingFallback);
+      await _prefs.setBool('prayer_times_api_fallback', result.isUsingFallback);
 
       state = AsyncValue.data(prayerTimes);
     } catch (e) {
@@ -210,13 +233,15 @@ class PrayerTimesNotifier extends StateNotifier<AsyncValue<PrayerTimes>> {
   }
 }
 
-final prayerTimesProvider = StateNotifierProvider<PrayerTimesNotifier, AsyncValue<PrayerTimes>>((ref) {
-  return PrayerTimesNotifier(ref);
-});
+final prayerTimesProvider =
+    StateNotifierProvider<PrayerTimesNotifier, AsyncValue<PrayerTimes>>((ref) {
+      return PrayerTimesNotifier(ref);
+    });
 
 // Prayer Status Provider (Today's Prayer Tracking)
 class TodayPrayerStatusNotifier extends StateNotifier<PrayerStatus> {
-  TodayPrayerStatusNotifier(this._prefs) : super(PrayerStatus.empty(DateTime.now())) {
+  TodayPrayerStatusNotifier(this._prefs)
+    : super(PrayerStatus.empty(DateTime.now())) {
     _loadTodayStatus();
   }
 
@@ -248,16 +273,25 @@ class TodayPrayerStatusNotifier extends StateNotifier<PrayerStatus> {
     // Save to preferences
     final today = state.date;
     final todayKey = _formatDate(today);
-    await _prefs.setBool('prayer_${prayerName.toLowerCase()}_$todayKey', newStatus);
+    await _prefs.setBool(
+      'prayer_${prayerName.toLowerCase()}_$todayKey',
+      newStatus,
+    );
 
     // Update total prayers count
     if (newStatus) {
       final totalPrayers = _prefs.getInt('total_prayers_completed') ?? 0;
       await _prefs.setInt('total_prayers_completed', totalPrayers + 1);
-      await _prefs.setString('last_prayer_time', DateTime.now().toIso8601String());
+      await _prefs.setString(
+        'last_prayer_time',
+        DateTime.now().toIso8601String(),
+      );
     } else {
       final totalPrayers = _prefs.getInt('total_prayers_completed') ?? 0;
-      await _prefs.setInt('total_prayers_completed', (totalPrayers - 1).clamp(0, double.infinity).toInt());
+      await _prefs.setInt(
+        'total_prayers_completed',
+        (totalPrayers - 1).clamp(0, double.infinity).toInt(),
+      );
     }
 
     // --- Professional Streak Logic ---
@@ -268,16 +302,21 @@ class TodayPrayerStatusNotifier extends StateNotifier<PrayerStatus> {
     final todayKey = _formatDate(today);
     final lastIncrementDate = _prefs.getString('last_streak_increment_date');
 
-    final allTodayCompleted = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha']
-        .every((p) => _prefs.getBool('prayer_${p.toLowerCase()}_$todayKey') ?? false);
+    final allTodayCompleted = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'].every(
+      (p) => _prefs.getBool('prayer_${p.toLowerCase()}_$todayKey') ?? false,
+    );
 
     if (allTodayCompleted) {
       // Only increment if we haven't already incremented for today
       if (lastIncrementDate != todayKey) {
         final yesterday = today.subtract(const Duration(days: 1));
         final yesterdayKey = _formatDate(yesterday);
-        final allYesterdayCompleted = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha']
-            .every((p) => _prefs.getBool('prayer_${p.toLowerCase()}_$yesterdayKey') ?? false);
+        final allYesterdayCompleted =
+            ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'].every(
+              (p) =>
+                  _prefs.getBool('prayer_${p.toLowerCase()}_$yesterdayKey') ??
+                  false,
+            );
 
         int currentStreak = _prefs.getInt('prayer_streak') ?? 0;
         int newStreak = allYesterdayCompleted ? currentStreak + 1 : 1;
@@ -299,10 +338,16 @@ class TodayPrayerStatusNotifier extends StateNotifier<PrayerStatus> {
 
         // If the current streak was the longest, decrement longest streak as well
         if (currentStreak == longestStreak) {
-          await _prefs.setInt('longest_streak', (longestStreak - 1).clamp(0, 999999));
+          await _prefs.setInt(
+            'longest_streak',
+            (longestStreak - 1).clamp(0, 999999),
+          );
         }
 
-        await _prefs.setInt('prayer_streak', (currentStreak - 1).clamp(0, 999999));
+        await _prefs.setInt(
+          'prayer_streak',
+          (currentStreak - 1).clamp(0, 999999),
+        );
         await _prefs.remove('last_streak_increment_date');
       }
     }
@@ -313,10 +358,11 @@ class TodayPrayerStatusNotifier extends StateNotifier<PrayerStatus> {
   }
 }
 
-final todayPrayerStatusProvider = StateNotifierProvider<TodayPrayerStatusNotifier, PrayerStatus>((ref) {
-  final prefs = ref.watch(sharedPreferencesProvider);
-  return TodayPrayerStatusNotifier(prefs);
-});
+final todayPrayerStatusProvider =
+    StateNotifierProvider<TodayPrayerStatusNotifier, PrayerStatus>((ref) {
+      final prefs = ref.watch(sharedPreferencesProvider);
+      return TodayPrayerStatusNotifier(prefs);
+    });
 
 // Prayer Statistics Provider
 class PrayerStatsNotifier extends StateNotifier<PrayerStats> {
@@ -353,7 +399,9 @@ class PrayerStatsNotifier extends StateNotifier<PrayerStats> {
     state = PrayerStats(
       totalPrayers: totalPrayers,
       currentStreak: persistedStreak,
-      longestStreak: longestStreak > persistedStreak ? longestStreak : persistedStreak,
+      longestStreak: longestStreak > persistedStreak
+          ? longestStreak
+          : persistedStreak,
       prayerCounts: prayerCounts,
       weeklyCompletionRate: weeklyCompletionRate,
       lastPrayerTime: lastPrayerTime,
@@ -377,7 +425,8 @@ class PrayerStatsNotifier extends StateNotifier<PrayerStats> {
         }
       }
 
-      if (dailyCount >= 5) { // All 5 prayers completed
+      if (dailyCount >= 5) {
+        // All 5 prayers completed
         streak++;
       } else {
         // Only reset if a full day is missed
@@ -414,7 +463,8 @@ class PrayerStatsNotifier extends StateNotifier<PrayerStats> {
     final today = DateTime.now();
     List<PrayerStatus> activity = [];
 
-    for (int i = 0; i < 30; i++) { // Last 30 days
+    for (int i = 0; i < 30; i++) {
+      // Last 30 days
       final date = today.subtract(Duration(days: i));
       final dateKey = _formatDate(date);
 
@@ -441,10 +491,11 @@ class PrayerStatsNotifier extends StateNotifier<PrayerStats> {
   }
 }
 
-final prayerStatsProvider = StateNotifierProvider<PrayerStatsNotifier, PrayerStats>((ref) {
-  final prefs = ref.watch(sharedPreferencesProvider);
-  return PrayerStatsNotifier(prefs);
-});
+final prayerStatsProvider =
+    StateNotifierProvider<PrayerStatsNotifier, PrayerStats>((ref) {
+      final prefs = ref.watch(sharedPreferencesProvider);
+      return PrayerStatsNotifier(prefs);
+    });
 
 // User Preferences Provider
 class UserPreferencesNotifier extends StateNotifier<UserPreferences> {
@@ -459,7 +510,8 @@ class UserPreferencesNotifier extends StateNotifier<UserPreferences> {
     final prayerReminders = _prefs.getBool('prayer_reminders') ?? true;
     final showArabic = _prefs.getBool('show_arabic') ?? true;
     final darkMode = _prefs.getBool('dark_mode') ?? false;
-    final notificationsEnabled = _prefs.getBool('notifications_enabled') ?? true;
+    final notificationsEnabled =
+        _prefs.getBool('notifications_enabled') ?? true;
     final lastAppUsage = _prefs.getString('last_app_usage') ?? 'First time';
 
     state = UserPreferences(
@@ -504,10 +556,11 @@ class UserPreferencesNotifier extends StateNotifier<UserPreferences> {
   }
 }
 
-final userPreferencesProvider = StateNotifierProvider<UserPreferencesNotifier, UserPreferences>((ref) {
-  final prefs = ref.watch(sharedPreferencesProvider);
-  return UserPreferencesNotifier(prefs);
-});
+final userPreferencesProvider =
+    StateNotifierProvider<UserPreferencesNotifier, UserPreferences>((ref) {
+      final prefs = ref.watch(sharedPreferencesProvider);
+      return UserPreferencesNotifier(prefs);
+    });
 
 // Combined App Context Provider for AI
 final appContextProvider = FutureProvider<String>((ref) async {

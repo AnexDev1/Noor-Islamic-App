@@ -21,7 +21,8 @@ class HomeScreen extends ConsumerStatefulWidget {
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStateMixin {
+class _HomeScreenState extends ConsumerState<HomeScreen>
+    with TickerProviderStateMixin {
   late AnimationController _fadeController;
   late AnimationController _slideController;
   late Animation<double> _fadeAnimation;
@@ -53,21 +54,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
+    );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _slideController,
-      curve: Curves.easeOutCubic,
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
+        );
 
     _fadeController.forward();
     _slideController.forward();
@@ -166,7 +160,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
                     const SizedBox(height: 20),
 
                     // Prayer Times Card
-                    _buildPrayerTimesCard(prayerTimesAsync, todayPrayerStatus, locationAsync),
+                    _buildPrayerTimesCard(
+                      prayerTimesAsync,
+                      todayPrayerStatus,
+                      locationAsync,
+                    ),
 
                     const SizedBox(height: 24),
 
@@ -189,13 +187,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
     );
   }
 
-  Widget _buildPrayerTimesCard(AsyncValue<PrayerTimes> prayerTimesAsync, PrayerStatus todayStatus, AsyncValue<UserLocation> locationAsync) {
+  Widget _buildPrayerTimesCard(
+    AsyncValue<PrayerTimes> prayerTimesAsync,
+    PrayerStatus todayStatus,
+    AsyncValue<UserLocation> locationAsync,
+  ) {
     return prayerTimesAsync.when(
       loading: () => _buildLoadingPrayerCard(),
       error: (error, stack) => _buildErrorPrayerCard(error.toString()),
       data: (prayerTimes) {
         _startCountdown(prayerTimes);
-        return _buildPrayerTimesContent(prayerTimes, todayStatus, locationAsync);
+        return _buildPrayerTimesContent(
+          prayerTimes,
+          todayStatus,
+          locationAsync,
+        );
       },
     );
   }
@@ -246,8 +252,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
               style: AppTextStyles.heading3.copyWith(color: Colors.white),
             ),
             const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                error,
+                style: const TextStyle(color: Colors.white70, fontSize: 12),
+                textAlign: TextAlign.center,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            const SizedBox(height: 8),
             ElevatedButton(
-              onPressed: () => ref.read(prayerTimesProvider.notifier).refreshPrayerTimes(),
+              onPressed: () =>
+                  ref.read(prayerTimesProvider.notifier).refreshPrayerTimes(),
               child: const Text('Retry'),
             ),
           ],
@@ -256,7 +274,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
     );
   }
 
-  Widget _buildPrayerTimesContent(PrayerTimes prayerTimes, PrayerStatus todayStatus, AsyncValue<UserLocation> locationAsync) {
+  Widget _buildPrayerTimesContent(
+    PrayerTimes prayerTimes,
+    PrayerStatus todayStatus,
+    AsyncValue<UserLocation> locationAsync,
+  ) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -288,21 +310,46 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
                   children: [
                     Text(
                       'Prayer Times',
-                      style: AppTextStyles.heading2.copyWith(color: Colors.white),
+                      style: AppTextStyles.heading2.copyWith(
+                        color: Colors.white,
+                      ),
                     ),
                     locationAsync.when(
-                      loading: () => const Text('Loading location...', style: TextStyle(color: Colors.white70)),
-                      error: (_, __) => const Text('Location unavailable', style: TextStyle(color: Colors.white70)),
-                      data: (location) => Text(
-                        '${location.city}, ${location.country}',
-                        style: const TextStyle(color: Colors.white70, fontSize: 14),
+                      loading: () => const Text(
+                        'Loading location...',
+                        style: TextStyle(color: Colors.white70),
+                      ),
+                      error: (_, __) => const Text(
+                        'Location unavailable',
+                        style: TextStyle(color: Colors.white70),
+                      ),
+                      data: (location) => Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${location.city}, ${location.country}',
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 14,
+                            ),
+                          ),
+                          if (prayerTimes.isUsingFallbackPrayerTimes)
+                            const Text(
+                              'Using default times (offline)',
+                              style: TextStyle(
+                                color: Colors.white60,
+                                fontSize: 10,
+                              ),
+                            ),
+                        ],
                       ),
                     ),
                   ],
                 ),
               ),
               IconButton(
-                onPressed: () => ref.read(prayerTimesProvider.notifier).refreshPrayerTimes(),
+                onPressed: () =>
+                    ref.read(prayerTimesProvider.notifier).refreshPrayerTimes(),
                 icon: const Icon(Icons.refresh, color: Colors.white),
               ),
             ],
@@ -366,7 +413,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
 
                 // Countdown Display
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
@@ -415,7 +465,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
       ),
     );
   }
-  Widget _buildPrayerTimesGrid(PrayerTimes prayerTimes, PrayerStatus todayStatus) {
+
+  Widget _buildPrayerTimesGrid(
+    PrayerTimes prayerTimes,
+    PrayerStatus todayStatus,
+  ) {
     final prayers = [
       {'name': 'Fajr', 'time': prayerTimes.fajr},
       {'name': 'Dhuhr', 'time': prayerTimes.dhuhr},
@@ -437,13 +491,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
         final isCompleted = todayStatus.dailyPrayers[prayer['name']] ?? false;
 
         return GestureDetector(
-          onTap: () => ref.read(todayPrayerStatusProvider.notifier).togglePrayer(prayer['name']!),
+          onTap: () => ref
+              .read(todayPrayerStatusProvider.notifier)
+              .togglePrayer(prayer['name']!),
           child: Container(
             margin: const EdgeInsets.all(2),
             decoration: BoxDecoration(
-              color: isCompleted ? Colors.green.withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.2),
+              color: isCompleted
+                  ? Colors.green.withValues(alpha: 0.3)
+                  : Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
-              border: isCompleted ? Border.all(color: Colors.green, width: 2) : null,
+              border: isCompleted
+                  ? Border.all(color: Colors.green, width: 2)
+                  : null,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -461,10 +521,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
                 const SizedBox(height: 4),
                 Text(
                   prayer['time']!,
-                  style: const TextStyle(
-                    color: Colors.white70,
-                    fontSize: 10,
-                  ),
+                  style: const TextStyle(color: Colors.white70, fontSize: 10),
                 ),
               ],
             ),
@@ -496,17 +553,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
         children: [
           Row(
             children: [
-              Image.asset('assets/today-progress.png', height: 24, color: Colors.black),
+              Image.asset(
+                'assets/today-progress.png',
+                height: 24,
+                color: Colors.black,
+              ),
               const SizedBox(width: 12),
               Expanded(
-                child: Text(
-                  'Today\'s Progress',
-                  style: AppTextStyles.heading3,
-                ),
+                child: Text('Today\'s Progress', style: AppTextStyles.heading3),
               ),
               Text(
                 '$completedPrayers/5',
-                style: AppTextStyles.heading3.copyWith(color: AppColors.primary),
+                style: AppTextStyles.heading3.copyWith(
+                  color: AppColors.primary,
+                ),
               ),
             ],
           ),
@@ -520,12 +580,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
           const SizedBox(height: 12),
           Text(
             completedPrayers == 5
-              ? '🎉 Alhamdulillah! All prayers completed today!'
-              : completedPrayers == 0
+                ? '🎉 Alhamdulillah! All prayers completed today!'
+                : completedPrayers == 0
                 ? 'Start your day with prayer'
                 : 'Keep going! ${5 - completedPrayers} prayers remaining',
             style: AppTextStyles.body1.copyWith(
-              color: completedPrayers == 5 ? Colors.green : AppColors.textSecondary,
+              color: completedPrayers == 5
+                  ? Colors.green
+                  : AppColors.textSecondary,
             ),
           ),
         ],
@@ -600,7 +662,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      greetingSnapshot.data ?? 'As-salamu Alaykum',
+                                      greetingSnapshot.data ??
+                                          'As-salamu Alaykum',
                                       style: AppTextStyles.bodyMedium.copyWith(
                                         color: Colors.white.withAlpha(230),
                                       ),
@@ -608,10 +671,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
                                     const SizedBox(height: 4),
                                     Text(
                                       nameSnapshot.data ?? 'User',
-                                      style: AppTextStyles.displaySmall.copyWith(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                      ),
+                                      style: AppTextStyles.displaySmall
+                                          .copyWith(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                     ),
                                   ],
                                 );
@@ -620,7 +684,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
                           },
                         ),
                       ),
-
                     ],
                   ),
                 ],
@@ -637,37 +700,47 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
       {
         'title': 'Quran',
         'icon': 'assets/quran.png',
-        'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const QuranScreen())),
+        'onTap': () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const QuranScreen()),
+        ),
       },
       {
         'title': 'Hadith',
         'icon': Icons.format_quote_outlined,
-        'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const HadithHomeScreen())),
+        'onTap': () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const HadithHomeScreen()),
+        ),
       },
       {
         'title': 'Azkhar',
         'icon': 'assets/azkhar.png',
-        'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AzkharHomeScreen())),
+        'onTap': () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const AzkharHomeScreen()),
+        ),
       },
       {
         'title': 'Tasbih',
         'icon': 'assets/tasbih.png',
-        'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TasbihScreen())),
+        'onTap': () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const TasbihScreen()),
+        ),
       },
-
     ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Explore Noor',
-          style: AppTextStyles.heading1,
-        ),
+        Text('Explore Noor', style: AppTextStyles.heading1),
         const SizedBox(height: 8),
         Text(
           'Discover all the features of the app',
-          style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+          style: AppTextStyles.bodyMedium.copyWith(
+            color: AppColors.textSecondary,
+          ),
         ),
         const SizedBox(height: 24),
         StaggeredGrid.count(
@@ -705,8 +778,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       feature['icon'] is String
-                        ? Image.asset(feature['icon'] as String, height: 32, color: Colors.white)
-                        : Icon(feature['icon'] as IconData, color: Colors.white, size: 32),
+                          ? Image.asset(
+                              feature['icon'] as String,
+                              height: 32,
+                              color: Colors.white,
+                            )
+                          : Icon(
+                              feature['icon'] as IconData,
+                              color: Colors.white,
+                              size: 32,
+                            ),
                       Text(
                         feature['title'] as String,
                         style: AppTextStyles.heading3.copyWith(

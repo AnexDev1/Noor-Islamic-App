@@ -9,6 +9,7 @@ class PrayerTimes {
   final double? latitude;
   final double? longitude;
   final bool isUsingFallbackLocation;
+  final bool isUsingFallbackPrayerTimes;
 
   const PrayerTimes({
     required this.fajr,
@@ -20,6 +21,7 @@ class PrayerTimes {
     this.latitude,
     this.longitude,
     this.isUsingFallbackLocation = false,
+    this.isUsingFallbackPrayerTimes = false,
   });
 
   Map<String, String> toMap() {
@@ -42,6 +44,7 @@ class PrayerTimes {
     double? latitude,
     double? longitude,
     bool? isUsingFallbackLocation,
+    bool? isUsingFallbackPrayerTimes,
   }) {
     return PrayerTimes(
       fajr: fajr ?? this.fajr,
@@ -52,15 +55,20 @@ class PrayerTimes {
       lastUpdated: lastUpdated ?? this.lastUpdated,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
-      isUsingFallbackLocation: isUsingFallbackLocation ?? this.isUsingFallbackLocation,
+      isUsingFallbackLocation:
+          isUsingFallbackLocation ?? this.isUsingFallbackLocation,
+      isUsingFallbackPrayerTimes:
+          isUsingFallbackPrayerTimes ?? this.isUsingFallbackPrayerTimes,
     );
   }
 
-  static PrayerTimes fromMap(Map<String, String> map, {
+  static PrayerTimes fromMap(
+    Map<String, String> map, {
     DateTime? lastUpdated,
     double? latitude,
     double? longitude,
     bool isUsingFallbackLocation = false,
+    bool isUsingFallbackPrayerTimes = false,
   }) {
     return PrayerTimes(
       fajr: map['Fajr'] ?? '',
@@ -72,6 +80,7 @@ class PrayerTimes {
       latitude: latitude,
       longitude: longitude,
       isUsingFallbackLocation: isUsingFallbackLocation,
+      isUsingFallbackPrayerTimes: isUsingFallbackPrayerTimes,
     );
   }
 }
@@ -80,22 +89,17 @@ class PrayerStatus {
   final Map<String, bool> dailyPrayers;
   final DateTime date;
 
-  const PrayerStatus({
-    required this.dailyPrayers,
-    required this.date,
-  });
+  const PrayerStatus({required this.dailyPrayers, required this.date});
 
-  PrayerStatus copyWith({
-    Map<String, bool>? dailyPrayers,
-    DateTime? date,
-  }) {
+  PrayerStatus copyWith({Map<String, bool>? dailyPrayers, DateTime? date}) {
     return PrayerStatus(
       dailyPrayers: dailyPrayers ?? Map.from(this.dailyPrayers),
       date: date ?? this.date,
     );
   }
 
-  int get completedPrayers => dailyPrayers.values.where((completed) => completed).length;
+  int get completedPrayers =>
+      dailyPrayers.values.where((completed) => completed).length;
 
   bool get isComplete => completedPrayers == 5;
 
@@ -157,13 +161,7 @@ class PrayerStats {
       totalPrayers: 0,
       currentStreak: 0,
       longestStreak: 0,
-      prayerCounts: {
-        'Fajr': 0,
-        'Dhuhr': 0,
-        'Asr': 0,
-        'Maghrib': 0,
-        'Isha': 0,
-      },
+      prayerCounts: {'Fajr': 0, 'Dhuhr': 0, 'Asr': 0, 'Maghrib': 0, 'Isha': 0},
       weeklyCompletionRate: 0.0,
       lastPrayerTime: 'Never',
       recentActivity: [],
