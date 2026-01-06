@@ -42,12 +42,12 @@ class PrayerTimeApi {
           if (data['code'] == 200 && data['status'] == 'OK') {
             final timings = data['data']['timings'] as Map<String, dynamic>;
             // Only keep the main prayers
-            final timesMap = {
-              'Fajr': timings['Fajr'] ?? '',
-              'Dhuhr': timings['Dhuhr'] ?? '',
-              'Asr': timings['Asr'] ?? '',
-              'Maghrib': timings['Maghrib'] ?? '',
-              'Isha': timings['Isha'] ?? '',
+            final Map<String, String> timesMap = {
+              'Fajr': (timings['Fajr'] ?? '').toString(),
+              'Dhuhr': (timings['Dhuhr'] ?? '').toString(),
+              'Asr': (timings['Asr'] ?? '').toString(),
+              'Maghrib': (timings['Maghrib'] ?? '').toString(),
+              'Isha': (timings['Isha'] ?? '').toString(),
             };
             return PrayerTimesResult(timesMap, false);
           } else {

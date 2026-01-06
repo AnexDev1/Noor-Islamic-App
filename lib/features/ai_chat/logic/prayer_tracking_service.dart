@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../data/app_context_provider.dart';
 
 class PrayerTrackingService {
-  static const List<String> _prayerNames = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+  static const List<String> _prayerNames = [
+    'Fajr',
+    'Dhuhr',
+    'Asr',
+    'Maghrib',
+    'Isha',
+  ];
 
   // Show prayer completion dialog
-  static Future<void> showPrayerCompletionDialog(BuildContext context, String prayerName) async {
+  static Future<void> showPrayerCompletionDialog(
+    BuildContext context,
+    String prayerName,
+  ) async {
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -36,7 +44,6 @@ class PrayerTrackingService {
           ),
           ElevatedButton.icon(
             onPressed: () async {
-              await AppContextProvider.markPrayerCompleted(prayerName);
               Navigator.pop(context);
               _showCompletionFeedback(context, prayerName);
             },
@@ -81,7 +88,8 @@ class PrayerTrackingService {
 
     Map<String, bool> status = {};
     for (String prayer in _prayerNames) {
-      status[prayer] = prefs.getBool('prayer_${prayer.toLowerCase()}_$todayKey') ?? false;
+      status[prayer] =
+          prefs.getBool('prayer_${prayer.toLowerCase()}_$todayKey') ?? false;
     }
 
     return status;
@@ -97,7 +105,8 @@ class PrayerTrackingService {
     int todayCount = 0;
     Map<String, bool> todayStatus = {};
     for (String prayer in _prayerNames) {
-      bool completed = prefs.getBool('prayer_${prayer.toLowerCase()}_$todayKey') ?? false;
+      bool completed =
+          prefs.getBool('prayer_${prayer.toLowerCase()}_$todayKey') ?? false;
       todayStatus[prayer] = completed;
       if (completed) todayCount++;
     }
@@ -174,7 +183,8 @@ class PrayerTrackingService {
                     return ActionChip(
                       avatar: const Icon(Icons.add_circle_outline, size: 18),
                       label: Text(prayer),
-                      onPressed: () => showPrayerCompletionDialog(context, prayer),
+                      onPressed: () =>
+                          showPrayerCompletionDialog(context, prayer),
                     );
                   }).toList(),
                 ),
@@ -266,10 +276,7 @@ class PrayerTrackingService {
             value,
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
-          Text(
-            label,
-            style: const TextStyle(fontSize: 12),
-          ),
+          Text(label, style: const TextStyle(fontSize: 12)),
         ],
       ),
     );

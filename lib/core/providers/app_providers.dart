@@ -564,90 +564,310 @@ final userPreferencesProvider =
 
 // Combined App Context Provider for AI
 final appContextProvider = FutureProvider<String>((ref) async {
-  final prayerTimes = ref.watch(prayerTimesProvider);
+  // Get all provider states
+  final prayerTimesAsync = ref.watch(prayerTimesProvider);
   final todayStatus = ref.watch(todayPrayerStatusProvider);
   final stats = ref.watch(prayerStatsProvider);
-  final location = ref.watch(userLocationProvider);
+  final locationAsync = ref.watch(userLocationProvider);
   final preferences = ref.watch(userPreferencesProvider);
 
-  return _generateAppContext(
-    prayerTimes: prayerTimes.value,
+  // Get current location and prayer times
+  final locationInfo = await _getDetailedLocationInfo();
+  final prayerTimeInfo = await _getPrayerTimeInfo(locationAsync);
+
+  return _generateEnhancedAppContext(
+    prayerTimes: prayerTimesAsync.value,
     todayStatus: todayStatus,
     stats: stats,
-    location: location.value,
+    location: locationAsync.value,
     preferences: preferences,
+    detailedLocation: locationInfo,
+    prayerTimeDetails: prayerTimeInfo,
   );
 });
 
-String _generateAppContext({
+String _generateEnhancedAppContext({
   PrayerTimes? prayerTimes,
   required PrayerStatus todayStatus,
   required PrayerStats stats,
   UserLocation? location,
   required UserPreferences preferences,
+  required Map<String, dynamic> detailedLocation,
+  required Map<String, dynamic> prayerTimeDetails,
 }) {
   final currentTime = DateTime.now();
 
   return '''
-=== NOOR ISLAMIC APP CONTEXT ===
+=== NOOR ISLAMIC APP - COMPREHENSIVE USER CONTEXT ===
 
-📱 APP FEATURES AVAILABLE:
-• 🕌 Prayer Times - Accurate prayer times based on location with multiple calculation methods
-• 📖 Quran - Complete Quran with translations and audio recitation
-• 📚 Hadith - Collection of authentic Hadith from major books
-• 🤲 Azkhar - Daily dhikr and supplications with counters
-• 📿 Tasbih - Digital prayer beads for dhikr counting
-• 🧭 Qibla - Accurate Qibla direction finder using compass
-• 🤖 Islamic AI Assistant - Knowledgeable Islamic guidance (current feature)
-• 🏠 Home Dashboard - Overview of daily Islamic activities
-• ⚙️ More Settings - App customization and Islamic tools
+📱 APP FEATURES & CAPABILITIES:
+• 🕌 Prayer Times - Location-based accurate prayer times with multiple calculation methods
+• 📖 Quran - Complete Quran with translations, audio recitation, and bookmarks
+• 📚 Hadith - Authentic Hadith collection from major books (Bukhari, Muslim, etc.)
+• 🤲 Azkhar - Daily dhikr and supplications with counters and reminders
+• 📿 Tasbih - Digital prayer beads for dhikr counting with different formulas
+• 🧭 Qibla - Accurate Qibla direction finder using compass and GPS
+• 🤖 Islamic AI Assistant - Personalized Islamic guidance (YOU - current feature)
+• 🏠 Home Dashboard - Comprehensive overview of daily Islamic activities
+• ⚙️ Settings - Complete app customization and Islamic calculation preferences
+• 📊 Prayer Statistics - Detailed tracking, streaks, and progress analytics
 
-👤 USER STATISTICS:
-Today's Prayers: ${todayStatus.completedPrayers}/5
-• Fajr: ${todayStatus.dailyPrayers['Fajr']! ? '✅' : '❌'}
-• Dhuhr: ${todayStatus.dailyPrayers['Dhuhr']! ? '✅' : '❌'}
-• Asr: ${todayStatus.dailyPrayers['Asr']! ? '✅' : '❌'}
-• Maghrib: ${todayStatus.dailyPrayers['Maghrib']! ? '✅' : '❌'}
-• Isha: ${todayStatus.dailyPrayers['Isha']! ? '✅' : '❌'}
+🕐 CURRENT TIME & DATE: ${_formatDateTime(currentTime)}
 
-Weekly Completion Rate: ${stats.weeklyCompletionRate.toStringAsFixed(1)}%
-Total Prayers Completed: ${stats.totalPrayers}
-Current Streak: ${stats.currentStreak} days
-Longest Streak: ${stats.longestStreak} days
-Last Prayer Logged: ${stats.lastPrayerTime}
+📍 USER LOCATION (DETAILED):
+${detailedLocation['isUsingFallback'] ? '⚠️ Using Fallback Location:' : '📍 Current Location:'}
+• City: ${detailedLocation['city']}
+• Country: ${detailedLocation['country']}
+${detailedLocation['state'] != '' ? '• State/Region: ${detailedLocation['state']}' : ''}
+• Coordinates: ${detailedLocation['coordinates']}
+${!detailedLocation['isUsingFallback'] ? '• Altitude: ${detailedLocation['altitude']}' : ''}
+• Location Accuracy: ${detailedLocation['accuracy']}
+${detailedLocation['street'] != '' ? '• Street: ${detailedLocation['street']}' : ''}
 
-🕐 CURRENT TIME: ${_formatDateTime(currentTime)}
-📍 LOCATION INFO: ${location != null ? '${location.city}, ${location.country}' : 'Location unavailable'}
+🕌 PRAYER TIMES & STATUS:
+${prayerTimeDetails['error'] != null ? 'Error: ${prayerTimeDetails['error']}' : '''
+📅 Today's Prayer Schedule (${prayerTimeDetails['location']}):
+• Fajr: ${prayerTimeDetails['times']['Fajr']} ${todayStatus.dailyPrayers['Fajr']! ? '✅ COMPLETED' : '❌ PENDING'}
+• Dhuhr: ${prayerTimeDetails['times']['Dhuhr']} ${todayStatus.dailyPrayers['Dhuhr']! ? '✅ COMPLETED' : '❌ PENDING'}
+• Asr: ${prayerTimeDetails['times']['Asr']} ${todayStatus.dailyPrayers['Asr']! ? '✅ COMPLETED' : '❌ PENDING'}
+• Maghrib: ${prayerTimeDetails['times']['Maghrib']} ${todayStatus.dailyPrayers['Maghrib']! ? '✅ COMPLETED' : '❌ PENDING'}
+• Isha: ${prayerTimeDetails['times']['Isha']} ${todayStatus.dailyPrayers['Isha']! ? '✅ COMPLETED' : '❌ PENDING'}
 
-${prayerTimes != null ? '''
-Today's Prayer Times:
-• Fajr: ${prayerTimes.fajr}
-• Dhuhr: ${prayerTimes.dhuhr}
-• Asr: ${prayerTimes.asr}
-• Maghrib: ${prayerTimes.maghrib}
-• Isha: ${prayerTimes.isha}
-''' : 'Prayer times unavailable'}
+⏰ Current Time: ${prayerTimeDetails['currentTime']}
+⏭️ Next Prayer: ${prayerTimeDetails['nextPrayer']}
+📍 Prayer Location: ${prayerTimeDetails['location']}
+'''}
 
-⚙️ USER PREFERENCES:
-• Madhab Preference: ${preferences.selectedMadhab}
-• Prayer Reminders: ${preferences.prayerReminders ? 'Enabled' : 'Disabled'}
-• Arabic Text Display: ${preferences.showArabic ? 'Enabled' : 'Disabled'}
-• Dark Mode: ${preferences.darkMode ? 'Enabled' : 'Disabled'}
-• Notifications: ${preferences.notificationsEnabled ? 'Enabled' : 'Disabled'}
-• Last App Usage: ${preferences.lastAppUsage}
+📊 COMPREHENSIVE PRAYER STATISTICS:
+📈 Today's Progress: ${todayStatus.completedPrayers}/5 prayers (${(todayStatus.completedPrayers / 5 * 100).toStringAsFixed(1)}%)
+${todayStatus.completedPrayers == 5
+      ? '🎉 ALHAMDULILLAH! All prayers completed today!'
+      : todayStatus.completedPrayers == 0
+      ? '🔔 No prayers logged today - start your spiritual journey!'
+      : '⚡ ${5 - todayStatus.completedPrayers} prayers remaining today'}
 
-🎯 PERSONALIZATION INSTRUCTIONS:
-- Reference specific app features when relevant
-- Provide personalized Islamic guidance based on user's prayer habits
-- Suggest app features that can help with user's questions
-- Use prayer statistics to give encouraging or motivational advice
-- Consider time of day for relevant Islamic practices
-- Adapt advice based on user's location and prayer times
+🔥 Current Streak: ${stats.currentStreak} days
+🏆 Longest Streak: ${stats.longestStreak} days
+📅 Weekly Completion: ${stats.weeklyCompletionRate.toStringAsFixed(1)}% (${(stats.weeklyCompletionRate * 0.35).toStringAsFixed(0)}/35 prayers)
+📈 Total Prayers Completed: ${stats.totalPrayers}
+🕐 Last Prayer Logged: ${stats.lastPrayerTime}
 
-This context should inform your Islamic guidance to be more helpful and personalized.
+📊 Prayer Breakdown (Individual Counts):
+• Fajr: ${stats.prayerCounts['Fajr']} prayers
+• Dhuhr: ${stats.prayerCounts['Dhuhr']} prayers
+• Asr: ${stats.prayerCounts['Asr']} prayers
+• Maghrib: ${stats.prayerCounts['Maghrib']} prayers
+• Isha: ${stats.prayerCounts['Isha']} prayers
+
+⚙️ USER PREFERENCES & CONFIGURATION:
+• 📚 Selected Madhab: ${preferences.selectedMadhab}
+• 🔔 Prayer Reminders: ${preferences.prayerReminders ? 'ENABLED' : 'DISABLED'}
+• 📱 App Notifications: ${preferences.notificationsEnabled ? 'ENABLED' : 'DISABLED'}
+• 🌙 Dark Mode: ${preferences.darkMode ? 'ENABLED (Dark Theme)' : 'DISABLED (Light Theme)'}
+• 📅 Last App Usage: ${_formatLastUsage(preferences.lastAppUsage)}
+
+🎯 AI ASSISTANT CAPABILITIES & PERSONALIZATION:
+Based on the user's data, you can provide:
+
+📊 STATISTICS QUERIES: When user asks about their progress, streaks, or prayer habits
+📍 LOCATION SERVICES: Current location, prayer times for their area, Qibla direction
+🕐 TIME-AWARE GUIDANCE: Contextual advice based on current prayer time and completion status
+📈 PROGRESS TRACKING: Motivational insights based on their streaks and completion rates
+⚙️ APP GUIDANCE: Help with app features, settings, and Islamic calculation methods
+🕌 PERSONALIZED ISLAMIC ADVICE: Tailored to their madhab preference and prayer patterns
+
+RESPONSE GUIDELINES:
+- Use specific statistics when discussing progress or achievements
+- Reference their exact location and prayer times when relevant
+- Acknowledge their current streak and provide encouragement
+- Suggest app features that align with their preferences and usage patterns
+- Consider their madhab preference when giving Islamic guidance
+- Be aware of their current prayer completion status for contextual advice
+- Use their location for relevant Islamic guidance (Qibla, local Islamic events, etc.)
+
+This comprehensive context enables you to provide highly personalized Islamic guidance and app assistance.
 ''';
 }
 
+// Get detailed location information using geocoding
+Future<Map<String, dynamic>> _getDetailedLocationInfo() async {
+  try {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      return {
+        'city': 'Mecca',
+        'country': 'Saudi Arabia',
+        'coordinates': '21.4225, 39.8262',
+        'timezone': 'Asia/Riyadh',
+        'isUsingFallback': true,
+        'accuracy': 'Fallback Location',
+      };
+    }
+
+    Position position = await Geolocator.getCurrentPosition(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 100,
+      ),
+    );
+
+    // Get detailed address information
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+      position.latitude,
+      position.longitude,
+    );
+
+    final placemark = placemarks.isNotEmpty ? placemarks.first : null;
+
+    return {
+      'city': placemark?.locality ?? 'Unknown City',
+      'country': placemark?.country ?? 'Unknown Country',
+      'state': placemark?.administrativeArea ?? '',
+      'postalCode': placemark?.postalCode ?? '',
+      'street': placemark?.street ?? '',
+      'coordinates':
+          '${position.latitude.toStringAsFixed(4)}, ${position.longitude.toStringAsFixed(4)}',
+      'altitude': '${position.altitude.toStringAsFixed(1)}m',
+      'accuracy': '±${position.accuracy.toStringAsFixed(1)}m',
+      'isUsingFallback': false,
+      'timestamp': DateTime.now().toIso8601String(),
+    };
+  } catch (e) {
+    return {
+      'city': 'Location unavailable',
+      'country': 'Unknown',
+      'error': e.toString(),
+      'isUsingFallback': true,
+      'accuracy': 'Error getting location',
+    };
+  }
+}
+
+// Get comprehensive prayer time information
+Future<Map<String, dynamic>> _getPrayerTimeInfo(
+  AsyncValue<UserLocation> locationAsync,
+) async {
+  try {
+    if (!locationAsync.hasValue) {
+      return {'error': 'Location not available'};
+    }
+
+    final location = locationAsync.value!;
+    final prayerTimesResult = await PrayerTimeApi.fetchPrayerTimes(
+      lat: location.latitude,
+      lon: location.longitude,
+    );
+
+    final now = DateTime.now();
+    final currentTime =
+        '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+
+    // Determine next prayer
+    String nextPrayer = _getNextPrayer(prayerTimesResult.times, currentTime);
+
+    return {
+      'times': prayerTimesResult.times,
+      'location': '${location.city}, ${location.country}',
+      'coordinates': '${location.latitude}, ${location.longitude}',
+      'currentTime': currentTime,
+      'nextPrayer': nextPrayer,
+      'isUsingFallback': prayerTimesResult.isUsingFallback,
+      'lastUpdated': location.lastUpdated.toIso8601String(),
+    };
+  } catch (e) {
+    return {'error': 'Could not fetch prayer times: ${e.toString()}'};
+  }
+}
+
+// Determine the next prayer based on current time
+String _getNextPrayer(Map<String, String> prayerTimes, String currentTime) {
+  final now = _timeToMinutes(currentTime);
+  final prayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+
+  for (String prayer in prayers) {
+    final prayerTime = _timeToMinutes(prayerTimes[prayer] ?? '00:00');
+    if (now < prayerTime) {
+      return prayer;
+    }
+  }
+  return 'Fajr (tomorrow)'; // If past Isha, next is Fajr
+}
+
+int _timeToMinutes(String time) {
+  final parts = time.split(':');
+  if (parts.length != 2) return 0;
+  final hours = int.tryParse(parts[0]) ?? 0;
+  final minutes = int.tryParse(parts[1]) ?? 0;
+  return hours * 60 + minutes;
+}
+
+// Fallback context when providers are unavailable
+String _generateFallbackContext() {
+  return '''
+=== NOOR ISLAMIC APP - BASIC CONTEXT ===
+
+📱 I'm your Islamic AI assistant in the Noor app. While I couldn't access all your data at the moment, I can still help you with:
+
+🕌 Islamic guidance and questions about faith
+📖 Quran verses and interpretations
+📚 Hadith and Islamic teachings
+🤲 Prayer guidance and Islamic practices
+🧭 General Islamic advice and support
+
+Please let me know how I can assist you with your Islamic journey today!
+''';
+}
+
+String _formatLastUsage(String lastUsage) {
+  if (lastUsage == 'First time') return 'First time user';
+
+  try {
+    final DateTime lastUsed = DateTime.parse(lastUsage);
+    final Duration difference = DateTime.now().difference(lastUsed);
+
+    if (difference.inDays > 0) {
+      return '${difference.inDays} day${difference.inDays > 1 ? 's' : ''} ago';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours} hour${difference.inHours > 1 ? 's' : ''} ago';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes} minute${difference.inMinutes > 1 ? 's' : ''} ago';
+    } else {
+      return 'Just now';
+    }
+  } catch (e) {
+    return lastUsage;
+  }
+}
+
 String _formatDateTime(DateTime dateTime) {
-  return '${dateTime.day}/${dateTime.month}/${dateTime.year} at ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
+  final weekdays = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
+  ];
+  final months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+
+  return '${weekdays[dateTime.weekday - 1]}, ${months[dateTime.month - 1]} ${dateTime.day}, ${dateTime.year} at ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
 }

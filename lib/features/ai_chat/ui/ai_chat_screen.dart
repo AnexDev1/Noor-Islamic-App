@@ -8,7 +8,6 @@ import '../../../common_widgets/custom_app_bar.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/providers/app_providers.dart';
-import '../data/app_context_provider.dart';
 import 'ai_setup_screen.dart';
 
 class AiChatScreen extends ConsumerStatefulWidget {
@@ -18,7 +17,8 @@ class AiChatScreen extends ConsumerStatefulWidget {
   ConsumerState<AiChatScreen> createState() => _AiChatScreenState();
 }
 
-class _AiChatScreenState extends ConsumerState<AiChatScreen> with TickerProviderStateMixin {
+class _AiChatScreenState extends ConsumerState<AiChatScreen>
+    with TickerProviderStateMixin {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final List<ChatMessage> _messages = [];
@@ -26,7 +26,8 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> with TickerProvider
 
   bool _isLoading = false;
   bool _isInitialized = false;
-  bool _isGeneratingWelcome = true; // New flag to track welcome message generation
+  bool _isGeneratingWelcome =
+      true; // New flag to track welcome message generation
   String _loadingStatus = 'Initializing...';
   late AnimationController _typingController;
   late Animation<double> _typingAnimation;
@@ -44,13 +45,9 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> with TickerProvider
       vsync: this,
     )..repeat(reverse: true);
 
-    _typingAnimation = Tween<double>(
-      begin: 0.3,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _typingController,
-      curve: Curves.easeInOut,
-    ));
+    _typingAnimation = Tween<double>(begin: 0.3, end: 1.0).animate(
+      CurvedAnimation(parent: _typingController, curve: Curves.easeInOut),
+    );
   }
 
   Future<void> _initializeChat() async {
@@ -116,7 +113,7 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> with TickerProvider
       });
 
       // Get app context using Riverpod provider
-      final appContext = await AppContextProvider.generateAppContextFromProviders(ref);
+      final appContext = await ref.read(appContextProvider.future);
 
       setState(() {
         _loadingStatus = 'Almost ready... ✨';
@@ -138,26 +135,32 @@ Based on your current app usage, how can I help you today? I can:
 What would you like to know or discuss?
 ''';
 
-      final response = await Gemini.instance.prompt(parts: [
-        Part.text(appContext + '\n\nUSER PROMPT:\n' + welcomePrompt),
-      ]);
+      final response = await Gemini.instance.prompt(
+        parts: [Part.text(appContext + '\n\nUSER PROMPT:\n' + welcomePrompt)],
+      );
 
       if (response?.output != null) {
-        _addMessage(ChatMessage(
-          text: response!.output!,
-          isUser: false,
-          timestamp: DateTime.now(),
-        ));
+        _addMessage(
+          ChatMessage(
+            text: response!.output!,
+            isUser: false,
+            timestamp: DateTime.now(),
+          ),
+        );
       }
     } catch (e) {
-      _addMessage(ChatMessage(
-        text: 'As-salamu Alaykum! I\'m your Islamic AI assistant. How can I help you with your Islamic journey today?',
-        isUser: false,
-        timestamp: DateTime.now(),
-      ));
+      _addMessage(
+        ChatMessage(
+          text:
+              'As-salamu Alaykum! I\'m your Islamic AI assistant. How can I help you with your Islamic journey today?',
+          isUser: false,
+          timestamp: DateTime.now(),
+        ),
+      );
     } finally {
       setState(() {
-        _isGeneratingWelcome = false; // Reset flag after welcome message is generated
+        _isGeneratingWelcome =
+            false; // Reset flag after welcome message is generated
       });
     }
   }
@@ -168,42 +171,47 @@ What would you like to know or discuss?
     // Update app usage
     ref.read(userPreferencesProvider.notifier).updateLastAppUsage();
 
-    _addMessage(ChatMessage(
-      text: message,
-      isUser: true,
-      timestamp: DateTime.now(),
-    ));
+    _addMessage(
+      ChatMessage(text: message, isUser: true, timestamp: DateTime.now()),
+    );
 
     _messageController.clear();
     setState(() => _isLoading = true);
 
     try {
       // Get updated app context
-      final appContext = await AppContextProvider.generateAppContextFromProviders(ref);
+      final appContext = await ref.read(appContextProvider.future);
 
-      final response = await Gemini.instance.prompt(parts: [
-        Part.text(appContext + '\n\nUSER QUESTION:\n' + message),
-      ]);
+      final response = await Gemini.instance.prompt(
+        parts: [Part.text(appContext + '\n\nUSER QUESTION:\n' + message)],
+      );
 
       if (response?.output != null) {
-        _addMessage(ChatMessage(
-          text: response!.output!,
-          isUser: false,
-          timestamp: DateTime.now(),
-        ));
+        _addMessage(
+          ChatMessage(
+            text: response!.output!,
+            isUser: false,
+            timestamp: DateTime.now(),
+          ),
+        );
 
         // Add to chat history for context
         _chatHistory.add(Content(role: 'user', parts: [Part.text(message)]));
-        _chatHistory.add(Content(role: 'model', parts: [Part.text(response.output!)]));
+        _chatHistory.add(
+          Content(role: 'model', parts: [Part.text(response.output!)]),
+        );
       } else {
         throw Exception('No response received');
       }
     } catch (e) {
-      _addMessage(ChatMessage(
-        text: 'I apologize, but I\'m having trouble responding right now. Please try again or check your connection.',
-        isUser: false,
-        timestamp: DateTime.now(),
-      ));
+      _addMessage(
+        ChatMessage(
+          text:
+              'I apologize, but I\'m having trouble responding right now. Please try again or check your connection.',
+          isUser: false,
+          timestamp: DateTime.now(),
+        ),
+      );
     } finally {
       setState(() => _isLoading = false);
     }
@@ -225,10 +233,7 @@ What would you like to know or discuss?
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: AppColors.error,
-      ),
+      SnackBar(content: Text(message), backgroundColor: AppColors.error),
     );
   }
 
@@ -296,10 +301,7 @@ What would you like to know or discuss?
               }
             },
             itemBuilder: (context) => [
-              const PopupMenuItem(
-                value: 'clear',
-                child: Text('Clear Chat'),
-              ),
+              const PopupMenuItem(value: 'clear', child: Text('Clear Chat')),
             ],
           ),
         ],
@@ -342,7 +344,10 @@ What would you like to know or discuss?
             animation: _typingAnimation,
             builder: (context, child) {
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.surface,
                   borderRadius: BorderRadius.circular(18),
@@ -355,7 +360,9 @@ What would you like to know or discuss?
                       width: 8,
                       height: 8,
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: _typingAnimation.value),
+                        color: AppColors.primary.withValues(
+                          alpha: _typingAnimation.value,
+                        ),
                         shape: BoxShape.circle,
                       ),
                     );
@@ -388,8 +395,12 @@ What would you like to know or discuss?
               decoration: BoxDecoration(
                 color: message.isUser ? AppColors.primary : AppColors.surface,
                 borderRadius: BorderRadius.circular(18).copyWith(
-                  bottomLeft: message.isUser ? const Radius.circular(18) : const Radius.circular(4),
-                  bottomRight: message.isUser ? const Radius.circular(4) : const Radius.circular(18),
+                  bottomLeft: message.isUser
+                      ? const Radius.circular(18)
+                      : const Radius.circular(4),
+                  bottomRight: message.isUser
+                      ? const Radius.circular(4)
+                      : const Radius.circular(18),
                 ),
               ),
               child: Column(
@@ -399,11 +410,15 @@ What would you like to know or discuss?
                     data: message.text,
                     styleSheet: MarkdownStyleSheet(
                       p: AppTextStyles.body1.copyWith(
-                        color: message.isUser ? Colors.white : AppColors.textPrimary,
+                        color: message.isUser
+                            ? Colors.white
+                            : AppColors.textPrimary,
                       ),
                       strong: AppTextStyles.body1.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: message.isUser ? Colors.white : AppColors.textPrimary,
+                        color: message.isUser
+                            ? Colors.white
+                            : AppColors.textPrimary,
                       ),
                     ),
                   ),
@@ -411,7 +426,9 @@ What would you like to know or discuss?
                   Text(
                     '${message.timestamp.hour}:${message.timestamp.minute.toString().padLeft(2, '0')}',
                     style: AppTextStyles.caption.copyWith(
-                      color: message.isUser ? Colors.white70 : AppColors.textSecondary,
+                      color: message.isUser
+                          ? Colors.white70
+                          : AppColors.textSecondary,
                     ),
                   ),
                 ],
@@ -456,7 +473,10 @@ What would you like to know or discuss?
                 ),
                 filled: true,
                 fillColor: AppColors.background,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
               ),
               maxLines: null,
               textInputAction: TextInputAction.send,
@@ -466,14 +486,16 @@ What would you like to know or discuss?
           const SizedBox(width: 12),
           FloatingActionButton(
             mini: true,
-            onPressed: _isLoading ? null : () => _sendMessage(_messageController.text),
+            onPressed: _isLoading
+                ? null
+                : () => _sendMessage(_messageController.text),
             child: _isLoading
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Icon(Icons.send),
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.send),
           ),
         ],
       ),
