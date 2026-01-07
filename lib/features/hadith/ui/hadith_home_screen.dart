@@ -4,6 +4,7 @@ import '../data/books_api.dart';
 import '../domain/book.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/utils/helpers.dart';
 import 'widgets/hadith_book_list.dart';
 import 'book_detail_screen.dart';
 
@@ -14,7 +15,8 @@ class HadithHomeScreen extends StatefulWidget {
   State<HadithHomeScreen> createState() => _HadithHomeScreenState();
 }
 
-class _HadithHomeScreenState extends State<HadithHomeScreen> with TickerProviderStateMixin {
+class _HadithHomeScreenState extends State<HadithHomeScreen>
+    with TickerProviderStateMixin {
   late Future<List<HadithBook>> _booksFuture;
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
@@ -31,13 +33,9 @@ class _HadithHomeScreenState extends State<HadithHomeScreen> with TickerProvider
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
+    );
 
     _fadeController.forward();
   }
@@ -54,7 +52,8 @@ class _HadithHomeScreenState extends State<HadithHomeScreen> with TickerProvider
 
     return books.where((book) {
       return book.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          (book.writer?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false) ||
+          (book.writer?.toLowerCase().contains(_searchQuery.toLowerCase()) ??
+              false) ||
           book.slug.toLowerCase().contains(_searchQuery.toLowerCase());
     }).toList();
   }
@@ -96,7 +95,10 @@ class _HadithHomeScreenState extends State<HadithHomeScreen> with TickerProvider
                           style: AppTextStyles.heading1,
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.primary.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(20),
@@ -125,7 +127,11 @@ class _HadithHomeScreenState extends State<HadithHomeScreen> with TickerProvider
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return SliverToBoxAdapter(child: _buildShimmerList());
                 } else if (snapshot.hasError) {
-                  return SliverToBoxAdapter(child: _buildErrorWidget(snapshot.error.toString()));
+                  return SliverToBoxAdapter(
+                    child: _buildErrorWidget(
+                      AppHelpers.sanitizeError(snapshot.error),
+                    ),
+                  );
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return const SliverToBoxAdapter(
                     child: Center(child: Text('No Hadith books found')),
@@ -135,17 +141,13 @@ class _HadithHomeScreenState extends State<HadithHomeScreen> with TickerProvider
                 final filteredBooks = _filterBooks(snapshot.data!);
                 return SliverPadding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  sliver: HadithBookList(
-                    books: filteredBooks,
-                  ),
+                  sliver: HadithBookList(books: filteredBooks),
                 );
               },
             ),
 
             // Bottom padding
-            const SliverToBoxAdapter(
-              child: SizedBox(height: 100),
-            ),
+            const SliverToBoxAdapter(child: SizedBox(height: 100)),
           ],
         ),
       ),
@@ -165,10 +167,7 @@ class _HadithHomeScreenState extends State<HadithHomeScreen> with TickerProvider
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                AppColors.primary,
-                AppColors.primaryLight,
-              ],
+              colors: [AppColors.primary, AppColors.primaryLight],
             ),
             borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(32),
@@ -264,10 +263,7 @@ class _HadithHomeScreenState extends State<HadithHomeScreen> with TickerProvider
           hintStyle: AppTextStyles.bodyMedium.copyWith(
             color: AppColors.textTertiary,
           ),
-          prefixIcon: Icon(
-            Icons.search,
-            color: AppColors.textSecondary,
-          ),
+          prefixIcon: Icon(Icons.search, color: AppColors.textSecondary),
           suffixIcon: _searchQuery.isNotEmpty
               ? IconButton(
                   onPressed: () {
@@ -276,14 +272,14 @@ class _HadithHomeScreenState extends State<HadithHomeScreen> with TickerProvider
                       _searchQuery = '';
                     });
                   },
-                  icon: Icon(
-                    Icons.clear,
-                    color: AppColors.textSecondary,
-                  ),
+                  icon: Icon(Icons.clear, color: AppColors.textSecondary),
                 )
               : null,
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 16,
+          ),
         ),
         style: AppTextStyles.bodyMedium,
       ),
@@ -317,9 +313,7 @@ class _HadithHomeScreenState extends State<HadithHomeScreen> with TickerProvider
                     ],
                   ),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: AppColors.primary.withOpacity(0.2),
-                  ),
+                  border: Border.all(color: AppColors.primary.withOpacity(0.2)),
                 ),
                 child: Column(
                   children: [
@@ -358,17 +352,11 @@ class _HadithHomeScreenState extends State<HadithHomeScreen> with TickerProvider
                     ],
                   ),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: AppColors.accent.withOpacity(0.2),
-                  ),
+                  border: Border.all(color: AppColors.accent.withOpacity(0.2)),
                 ),
                 child: Column(
                   children: [
-                    Icon(
-                      Icons.format_quote,
-                      color: AppColors.accent,
-                      size: 32,
-                    ),
+                    Icon(Icons.format_quote, color: AppColors.accent, size: 32),
                     const SizedBox(height: 8),
                     Text(
                       totalHadiths > 0 ? totalHadiths.toString() : '---',
@@ -424,23 +412,15 @@ class _HadithHomeScreenState extends State<HadithHomeScreen> with TickerProvider
         decoration: BoxDecoration(
           color: AppColors.error.withOpacity(0.1),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: AppColors.error.withOpacity(0.3),
-          ),
+          border: Border.all(color: AppColors.error.withOpacity(0.3)),
         ),
         child: Column(
           children: [
-            Icon(
-              Icons.error_outline,
-              color: AppColors.error,
-              size: 48,
-            ),
+            Icon(Icons.error_outline, color: AppColors.error, size: 48),
             const SizedBox(height: 16),
             Text(
               'Failed to load Hadith collections',
-              style: AppTextStyles.heading4.copyWith(
-                color: AppColors.error,
-              ),
+              style: AppTextStyles.heading4.copyWith(color: AppColors.error),
             ),
             const SizedBox(height: 8),
             Text(

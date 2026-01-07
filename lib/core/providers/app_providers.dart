@@ -1,9 +1,11 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'dart:convert';
 import '../../features/home/data/prayer_time_api.dart';
+import '../services/adhan_notification_service.dart';
 import 'models.dart';
 
 // Shared Preferences Provider
@@ -175,6 +177,9 @@ class PrayerTimesNotifier extends StateNotifier<AsyncValue<PrayerTimes>> {
 
         state = AsyncValue.data(prayerTimes);
 
+        // Schedule notifications for today's prayer times
+        await _scheduleNotifications(prayerTimes);
+
         // Check if we need to refresh (if it's a new day)
         final lastUpdate = DateTime.fromMillisecondsSinceEpoch(cachedTimestamp);
         final now = DateTime.now();
@@ -227,8 +232,22 @@ class PrayerTimesNotifier extends StateNotifier<AsyncValue<PrayerTimes>> {
       await _prefs.setBool('prayer_times_api_fallback', result.isUsingFallback);
 
       state = AsyncValue.data(prayerTimes);
+
+      // Schedule notifications for today's prayer times
+      await _scheduleNotifications(prayerTimes);
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
+    }
+  }
+
+  Future<void> _scheduleNotifications(PrayerTimes prayerTimes) async {
+    try {
+      await AdhanNotificationService.scheduleDailyPrayerNotifications(
+        prayerTimes,
+      );
+    } catch (e) {
+      // Silently fail - notifications are not critical
+      debugPrint('Failed to schedule notifications: $e');
     }
   }
 }
@@ -871,3 +890,50 @@ String _formatDateTime(DateTime dateTime) {
 
   return '${weekdays[dateTime.weekday - 1]}, ${months[dateTime.month - 1]} ${dateTime.day}, ${dateTime.year} at ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
 }
+
+// Locale Provider for app localization
+class LocaleNotifier extends StateNotifier<Locale> {
+  LocaleNotifier(this._prefs) : super(const Locale('en')) {
+    _loadSavedLocale();
+  }
+
+  final SharedPreferences _prefs;
+
+  void _loadSavedLocale() {
+    final savedLocale = _prefs.getString('app_locale');
+    if (savedLocale != null) {
+      state = Locale(savedLocale);
+    }
+  }
+
+  Future<void> setLocale(Locale locale) async {
+    state = locale;
+    await _prefs.setString('app_locale', locale.languageCode);
+  }
+
+  // Get display name for a locale
+  String getLocaleName(Locale locale) {
+    switch (locale.languageCode) {
+      case 'en':
+        return 'English';
+      case 'am':
+        return 'አማርኛ'; // Amharic
+      case 'om':
+        return 'Afaan Oromoo';
+      default:
+        return locale.languageCode;
+    }
+  }
+}
+
+final localeProvider = StateNotifierProvider<LocaleNotifier, Locale>((ref) {
+  final prefs = ref.watch(sharedPreferencesProvider);
+  return LocaleNotifier(prefs);
+});
+
+// Supported locales list
+final supportedLocales = [
+  const Locale('en'),
+  const Locale('am'),
+  const Locale('om'),
+];

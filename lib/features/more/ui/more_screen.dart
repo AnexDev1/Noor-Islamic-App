@@ -12,7 +12,6 @@ import '../../../core/services/user_service.dart';
 import '../../../core/providers/app_providers.dart';
 import '../../../core/providers/models.dart';
 import 'settings_screen.dart';
-import 'prayer_stats_screen.dart';
 import 'islamic_calendar_screen.dart';
 import 'about_screen.dart';
 import 'profile_edit_screen.dart';
@@ -24,7 +23,8 @@ class MoreScreen extends ConsumerStatefulWidget {
   ConsumerState<MoreScreen> createState() => _MoreScreenState();
 }
 
-class _MoreScreenState extends ConsumerState<MoreScreen> with TickerProviderStateMixin {
+class _MoreScreenState extends ConsumerState<MoreScreen>
+    with TickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
@@ -41,21 +41,17 @@ class _MoreScreenState extends ConsumerState<MoreScreen> with TickerProviderStat
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
 
     _animationController.forward();
   }
@@ -68,9 +64,6 @@ class _MoreScreenState extends ConsumerState<MoreScreen> with TickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    final prayerStats = ref.watch(prayerStatsProvider);
-    final todayStatus = ref.watch(todayPrayerStatusProvider);
-
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: const CustomAppBar(title: 'More'),
@@ -80,7 +73,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen> with TickerProviderStat
         backgroundColor: AppColors.surface,
         showChildOpacityTransition: true,
         onRefresh: () async {
-          await ref.read(prayerStatsProvider.notifier).refreshStats();
+          // Refresh user data or other non-prayer stats
         },
         child: FadeTransition(
           opacity: _fadeAnimation,
@@ -90,13 +83,11 @@ class _MoreScreenState extends ConsumerState<MoreScreen> with TickerProviderStat
               physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.all(AppConstants.defaultPadding),
               children: [
-                _buildUserProfileHeader(prayerStats),
-                const SizedBox(height: 24),
-                _buildQuickStatsSection(prayerStats, todayStatus),
+                _buildUserProfileHeader(),
                 const SizedBox(height: 24),
                 _buildSectionHeader('Progress & Analytics'),
                 const SizedBox(height: 12),
-                _buildAnalyticsSection(prayerStats),
+                _buildAnalyticsSection(),
                 const SizedBox(height: 24),
                 _buildSectionHeader('Settings'),
                 const SizedBox(height: 12),
@@ -114,7 +105,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen> with TickerProviderStat
     );
   }
 
-  Widget _buildUserProfileHeader(PrayerStats prayerStats) {
+  Widget _buildUserProfileHeader() {
     return CustomCard(
       child: Row(
         children: [
@@ -122,7 +113,9 @@ class _MoreScreenState extends ConsumerState<MoreScreen> with TickerProviderStat
             future: UserService.getUserGender(),
             builder: (context, genderSnapshot) {
               String gender = (genderSnapshot.data ?? 'Male').toLowerCase();
-              String asset = gender == 'female' ? 'assets/female.png' : 'assets/male.png';
+              String asset = gender == 'female'
+                  ? 'assets/female.png'
+                  : 'assets/male.png';
               return Container(
                 width: 70,
                 height: 70,
@@ -145,7 +138,11 @@ class _MoreScreenState extends ConsumerState<MoreScreen> with TickerProviderStat
                   borderRadius: BorderRadius.circular(18),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Image.asset(asset, fit: BoxFit.cover, color: Colors.white,),
+                    child: Image.asset(
+                      asset,
+                      fit: BoxFit.cover,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               );
@@ -192,98 +189,18 @@ class _MoreScreenState extends ConsumerState<MoreScreen> with TickerProviderStat
     );
   }
 
-  Widget _buildQuickStatsSection(PrayerStats prayerStats, PrayerStatus todayStatus) {
-    return Row(
-      children: [
-        Expanded(
-          child: _buildStatCard(
-            title: 'Prayers',
-            value: prayerStats.totalPrayers.toString(),
-            icon: Icons.mosque,
-            color: AppColors.primary,
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const PrayerStatsScreen()),
-            ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        // Commented out Quran progress since there's no tracking system yet
-        // Expanded(
-        //   child: _buildStatCard(
-        //     title: 'Quran',
-        //     value: '0%', // No tracking system implemented yet
-        //     icon: Icons.menu_book,
-        //     color: AppColors.accent,
-        //     onTap: () => Navigator.push(
-        //       context,
-        //       MaterialPageRoute(builder: (context) => const QuranScreen()),
-        //     ),
-        //   ),
-        // ),
-        // const SizedBox(width: 12),
-        Expanded(
-          child: _buildStatCard(
-            title: 'Today',
-            value: '${todayStatus.completedPrayers}/5',
-            icon: Icons.today,
-            color: AppColors.accent,
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const PrayerStatsScreen()),
-            ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: _buildStatCard(
-            title: 'Streak',
-            value: '${prayerStats.currentStreak}',
-            icon: Icons.local_fire_department,
-            color: AppColors.secondary,
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const PrayerStatsScreen()),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildAnalyticsSection(PrayerStats prayerStats) {
+  Widget _buildAnalyticsSection() {
     return Column(
       children: [
-        _buildMenuTile(
-          icon: Icons.analytics,
-          title: 'Prayer Statistics',
-          subtitle: 'Track your prayer performance',
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const PrayerStatsScreen()),
-          ),
-          trailing: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: AppColors.success.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              '${prayerStats.currentStreak} days',
-              style: AppTextStyles.bodySmall.copyWith(
-                color: AppColors.success,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ),
         _buildMenuTile(
           icon: Icons.calendar_month,
           title: 'Islamic Calendar',
           subtitle: 'Hijri dates and Islamic events',
           onTap: () => Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const IslamicCalendarScreen()),
+            MaterialPageRoute(
+              builder: (context) => const IslamicCalendarScreen(),
+            ),
           ),
         ),
       ],
@@ -328,8 +245,13 @@ class _MoreScreenState extends ConsumerState<MoreScreen> with TickerProviderStat
           onTap: () => _rateApp(),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
-            children: List.generate(5, (index) =>
-              Icon(Icons.star, size: 12, color: AppColors.accent.withValues(alpha: 0.6))
+            children: List.generate(
+              5,
+              (index) => Icon(
+                Icons.star,
+                size: 12,
+                color: AppColors.accent.withValues(alpha: 0.6),
+              ),
             ),
           ),
         ),
@@ -368,56 +290,6 @@ class _MoreScreenState extends ConsumerState<MoreScreen> with TickerProviderStat
     );
   }
 
-  Widget _buildStatCard({
-    required String title,
-    required String value,
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    Widget iconWidget;
-    if (icon == Icons.mosque) {
-      iconWidget = Image.asset('assets/masjid.png', height: 24, color: color);
-    } else if (icon == Icons.today) {
-      iconWidget = Image.asset('assets/prayer.png', height: 24, color: color);
-    } else if (icon == Icons.local_fire_department) {
-      iconWidget = Image.asset('assets/streak.png', height: 24, color: color);
-    } else {
-      iconWidget = Icon(icon, color: color, size: 24);
-    }
-    return CustomCard(
-      onTap: onTap,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: iconWidget,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: AppTextStyles.heading2.copyWith(
-              color: color,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            title,
-            style: AppTextStyles.bodySmall.copyWith(
-              color: AppColors.textSecondary,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildMenuTile({
     IconData? icon,
     Widget? iconWidget,
@@ -439,7 +311,11 @@ class _MoreScreenState extends ConsumerState<MoreScreen> with TickerProviderStat
                 color: AppColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: iconWidget ?? (icon != null ? Icon(icon, color: AppColors.primary, size: 20) : null),
+              child:
+                  iconWidget ??
+                  (icon != null
+                      ? Icon(icon, color: AppColors.primary, size: 20)
+                      : null),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -462,11 +338,12 @@ class _MoreScreenState extends ConsumerState<MoreScreen> with TickerProviderStat
                 ],
               ),
             ),
-            trailing ?? const Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-              color: AppColors.textSecondary,
-            ),
+            trailing ??
+                const Icon(
+                  Icons.arrow_forward_ios,
+                  size: 16,
+                  color: AppColors.textSecondary,
+                ),
           ],
         ),
       ),
@@ -490,7 +367,9 @@ class _MoreScreenState extends ConsumerState<MoreScreen> with TickerProviderStat
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Location Settings'),
-        content: const Text('Update your location for accurate prayer times and Qibla direction.'),
+        content: const Text(
+          'Update your location for accurate prayer times and Qibla direction.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -515,7 +394,9 @@ class _MoreScreenState extends ConsumerState<MoreScreen> with TickerProviderStat
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Backup & Sync'),
-        content: const Text('Backup your prayer history, bookmarks, and app settings to the cloud.'),
+        content: const Text(
+          'Backup your prayer history, bookmarks, and app settings to the cloud.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),

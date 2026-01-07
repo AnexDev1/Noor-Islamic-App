@@ -43,11 +43,23 @@ class AppHelpers {
       SnackBar(
         content: Text(message),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
+  }
+
+  // Sanitize error objects for display in the UI
+  static String sanitizeError(Object? error) {
+    if (error == null) return 'An unexpected error occurred.';
+    final s = error.toString();
+    if (s.contains('Failed to load')) return s;
+    if (s.contains('SocketException') ||
+        s.contains('ClientException') ||
+        s.contains('Network is unreachable')) {
+      return 'Network unavailable. Please check your internet connection and try again.';
+    }
+    // Fallback generic message
+    return 'Something went wrong. Please try again later.';
   }
 
   // Navigate with slide transition
@@ -64,9 +76,10 @@ class AppHelpers {
           const end = Offset.zero;
           const curve = Curves.ease;
 
-          var tween = Tween(begin: begin, end: end).chain(
-            CurveTween(curve: curve),
-          );
+          var tween = Tween(
+            begin: begin,
+            end: end,
+          ).chain(CurveTween(curve: curve));
 
           return SlideTransition(
             position: animation.drive(tween),

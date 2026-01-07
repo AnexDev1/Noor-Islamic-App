@@ -49,5 +49,11 @@
 	<string>This app needs your location to show accurate prayer times.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>This app needs your location to show accurate prayer times even when running in the background.</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>am</string>
+		<string>om</string>
+	</array>
 </dict>
 </plist>

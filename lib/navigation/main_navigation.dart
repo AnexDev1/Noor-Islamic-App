@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import '../features/home/ui/home_screen.dart';
 import '../features/qibla/ui/qibla_screen.dart';
 import '../features/ai_chat/ui/ai_chat_screen.dart';
@@ -23,31 +24,64 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     const MoreScreen(),
   ];
 
-  final List<NavigationItem> _navigationItems = [
-    NavigationItem(
-      icon: Image.asset('assets/masjid.png', height: 24, color: AppColors.textTertiary),
-      activeIcon: Image.asset('assets/masjid.png', height: 24, color: AppColors.primary),
-      label: 'Home',
-    ),
-    NavigationItem(
-      icon: Image.asset('assets/qibla.png', height: 24, color: AppColors.textTertiary),
-      activeIcon: Image.asset('assets/qibla.png', height: 24, color: AppColors.primary),
-      label: 'Qibla',
-    ),
-    NavigationItem(
-      icon: Image.asset('assets/chat.png', height: 24, color: AppColors.textTertiary),
-      activeIcon: Image.asset('assets/chat.png', height: 24, color: AppColors.primary),
-      label: 'AI Chat',
-    ),
-    NavigationItem(
-      icon: Image.asset('assets/more.png', height: 24, color: AppColors.textTertiary),
-      activeIcon: Image.asset('assets/more.png', height: 24, color: AppColors.primary),
-      label: 'More',
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final List<NavigationItem> navigationItems = [
+      NavigationItem(
+        icon: Image.asset(
+          'assets/masjid.png',
+          height: 24,
+          color: AppColors.textTertiary,
+        ),
+        activeIcon: Image.asset(
+          'assets/masjid.png',
+          height: 24,
+          color: AppColors.primary,
+        ),
+        label: l10n.home,
+      ),
+      NavigationItem(
+        icon: Image.asset(
+          'assets/qibla.png',
+          height: 24,
+          color: AppColors.textTertiary,
+        ),
+        activeIcon: Image.asset(
+          'assets/qibla.png',
+          height: 24,
+          color: AppColors.primary,
+        ),
+        label: l10n.qiblaDirection,
+      ),
+      NavigationItem(
+        icon: Image.asset(
+          'assets/chat.png',
+          height: 24,
+          color: AppColors.textTertiary,
+        ),
+        activeIcon: Image.asset(
+          'assets/chat.png',
+          height: 24,
+          color: AppColors.primary,
+        ),
+        label: l10n.aiChat,
+      ),
+      NavigationItem(
+        icon: Image.asset(
+          'assets/more.png',
+          height: 24,
+          color: AppColors.textTertiary,
+        ),
+        activeIcon: Image.asset(
+          'assets/more.png',
+          height: 24,
+          color: AppColors.primary,
+        ),
+        label: l10n.more,
+      ),
+    ];
+
     return Scaffold(
       body: _screens[_currentIndex],
       bottomNavigationBar: Container(
@@ -65,7 +99,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
-              children: _navigationItems.asMap().entries.map((entry) {
+              children: navigationItems.asMap().entries.map((entry) {
                 final int index = entry.key;
                 final NavigationItem item = entry.value;
                 final bool isActive = _currentIndex == index;
@@ -91,15 +125,16 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                                   : Colors.transparent,
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: item.icon is Widget || item.activeIcon is Widget
-                              ? (isActive ? item.activeIcon : item.icon)
-                              : Icon(
-                                  isActive ? item.activeIcon : item.icon,
-                                  size: 24,
-                                  color: isActive
-                                      ? AppColors.primary
-                                      : AppColors.textTertiary,
-                                ),
+                            child:
+                                item.icon is Widget || item.activeIcon is Widget
+                                ? (isActive ? item.activeIcon : item.icon)
+                                : Icon(
+                                    isActive ? item.activeIcon : item.icon,
+                                    size: 24,
+                                    color: isActive
+                                        ? AppColors.primary
+                                        : AppColors.textTertiary,
+                                  ),
                           ),
                           const SizedBox(height: 4),
                           Text(

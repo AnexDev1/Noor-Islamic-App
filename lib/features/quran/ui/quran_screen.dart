@@ -5,6 +5,8 @@ import '../domain/surah_info.dart';
 import '../audio/audio_player_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/utils/helpers.dart';
+import '../../../l10n/app_localizations.dart';
 import 'widgets/audio_player_widget.dart';
 import 'widgets/surah_list.dart';
 
@@ -15,7 +17,8 @@ class QuranScreen extends StatefulWidget {
   State<QuranScreen> createState() => _QuranScreenState();
 }
 
-class _QuranScreenState extends State<QuranScreen> with TickerProviderStateMixin {
+class _QuranScreenState extends State<QuranScreen>
+    with TickerProviderStateMixin {
   late Future<List<SurahInfo>> _surahsFuture;
   final SimpleQuranAudioPlayer _audioService = SimpleQuranAudioPlayer.instance;
   late AnimationController _fadeController;
@@ -33,13 +36,9 @@ class _QuranScreenState extends State<QuranScreen> with TickerProviderStateMixin
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
+    );
 
     _fadeController.forward();
   }
@@ -57,9 +56,13 @@ class _QuranScreenState extends State<QuranScreen> with TickerProviderStateMixin
     if (_searchQuery.isEmpty) return surahs;
 
     return surahs.where((surah) {
-      return surah.surahName.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+      return surah.surahName.toLowerCase().contains(
+            _searchQuery.toLowerCase(),
+          ) ||
           surah.surahNameArabic.contains(_searchQuery) ||
-          surah.surahNameTranslation.toLowerCase().contains(_searchQuery.toLowerCase());
+          surah.surahNameTranslation.toLowerCase().contains(
+            _searchQuery.toLowerCase(),
+          );
     }).toList();
   }
 
@@ -81,7 +84,7 @@ class _QuranScreenState extends State<QuranScreen> with TickerProviderStateMixin
                   // Audio Player Widget (now above search bar)
                   AudioPlayerWidget(audioService: _audioService),
                   // Search Bar
-                  SizedBox(height: 5,),
+                  SizedBox(height: 5),
                   _buildSearchBar(),
                 ],
               ),
@@ -103,17 +106,20 @@ class _QuranScreenState extends State<QuranScreen> with TickerProviderStateMixin
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Holy Quran Chapters',
+                            AppLocalizations.of(context)!.quranChapters,
                             style: AppTextStyles.heading1,
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
                             decoration: BoxDecoration(
                               color: AppColors.primary.withAlpha(26),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
-                              '114 Surahs',
+                              AppLocalizations.of(context)!.surahCount(114),
                               style: AppTextStyles.labelMedium.copyWith(
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.w600,
@@ -127,12 +133,20 @@ class _QuranScreenState extends State<QuranScreen> with TickerProviderStateMixin
                       FutureBuilder<List<SurahInfo>>(
                         future: _surahsFuture,
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
                             return _buildShimmerList();
                           } else if (snapshot.hasError) {
-                            return _buildErrorWidget(snapshot.error.toString());
-                          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                            return const Center(child: Text('No Surahs found'));
+                            return _buildErrorWidget(
+                              AppHelpers.sanitizeError(snapshot.error),
+                            );
+                          } else if (!snapshot.hasData ||
+                              snapshot.data!.isEmpty) {
+                            return Center(
+                              child: Text(
+                                AppLocalizations.of(context)!.noSurahsFound,
+                              ),
+                            );
                           }
                           final filteredSurahs = _filterSurahs(snapshot.data!);
                           return SurahList(
@@ -141,7 +155,7 @@ class _QuranScreenState extends State<QuranScreen> with TickerProviderStateMixin
                           );
                         },
                       ),
-                      const SizedBox(height: 100),
+                      const SizedBox(height: 24),
                     ],
                   ),
                 ),
@@ -161,10 +175,7 @@ class _QuranScreenState extends State<QuranScreen> with TickerProviderStateMixin
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            AppColors.primary,
-            AppColors.primaryLight,
-          ],
+          colors: [AppColors.primary, AppColors.primaryLight],
         ),
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(32),
@@ -253,10 +264,7 @@ class _QuranScreenState extends State<QuranScreen> with TickerProviderStateMixin
           hintStyle: AppTextStyles.bodyMedium.copyWith(
             color: AppColors.textTertiary,
           ),
-          prefixIcon: Icon(
-            Icons.search,
-            color: AppColors.textSecondary,
-          ),
+          prefixIcon: Icon(Icons.search, color: AppColors.textSecondary),
           suffixIcon: _searchQuery.isNotEmpty
               ? IconButton(
                   onPressed: () {
@@ -265,14 +273,14 @@ class _QuranScreenState extends State<QuranScreen> with TickerProviderStateMixin
                       _searchQuery = '';
                     });
                   },
-                  icon: Icon(
-                    Icons.clear,
-                    color: AppColors.textSecondary,
-                  ),
+                  icon: Icon(Icons.clear, color: AppColors.textSecondary),
                 )
               : null,
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 16,
+          ),
         ),
         style: AppTextStyles.bodyMedium,
       ),
@@ -293,13 +301,15 @@ class _QuranScreenState extends State<QuranScreen> with TickerProviderStateMixin
                 ],
               ),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: AppColors.primary.withAlpha(51),
-              ),
+              border: Border.all(color: AppColors.primary.withAlpha(51)),
             ),
             child: Column(
               children: [
-                Image.asset('assets/quran.png', height: 37, color: Colors.black),
+                Image.asset(
+                  'assets/quran.png',
+                  height: 37,
+                  color: Colors.black,
+                ),
                 const SizedBox(height: 8),
                 Text(
                   '114',
@@ -330,9 +340,7 @@ class _QuranScreenState extends State<QuranScreen> with TickerProviderStateMixin
                 ],
               ),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: AppColors.accent.withAlpha(51),
-              ),
+              border: Border.all(color: AppColors.accent.withAlpha(51)),
             ),
             child: Column(
               children: [
@@ -394,23 +402,15 @@ class _QuranScreenState extends State<QuranScreen> with TickerProviderStateMixin
         decoration: BoxDecoration(
           color: AppColors.error.withAlpha(26),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: AppColors.error.withAlpha(77),
-          ),
+          border: Border.all(color: AppColors.error.withAlpha(77)),
         ),
         child: Column(
           children: [
-            Icon(
-              Icons.error_outline,
-              color: AppColors.error,
-              size: 48,
-            ),
+            Icon(Icons.error_outline, color: AppColors.error, size: 48),
             const SizedBox(height: 16),
             Text(
               'Failed to load Quran chapters',
-              style: AppTextStyles.heading4.copyWith(
-                color: AppColors.error,
-              ),
+              style: AppTextStyles.heading4.copyWith(color: AppColors.error),
             ),
             const SizedBox(height: 8),
             Text(

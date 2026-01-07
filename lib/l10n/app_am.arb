@@ -1,0 +1,133 @@
+{
+  "@@locale": "am",
+  "appTitle": "ኑር - የእስልምና መተግበሪያ",
+  
+  "home": "መነሻ",
+  "quran": "ቁርዓን",
+  "hadith": "ሐዲስ",
+  "azkhar": "አዝካር",
+  "tasbih": "ተስቢህ",
+  "more": "ተጨማሪ",
+  
+  "prayerTimes": "የሶላት ሰዓቶች",
+  "fajr": "ፈጅር",
+  "dhuhr": "ዙህር",
+  "asr": "ዐስር",
+  "maghrib": "መግሪብ",
+  "isha": "ዒሻ",
+  
+  "nextPrayer": "ቀጣዩ ሶላት",
+  "timeUntil": "እስከ {prayer} ድረስ ያለው ጊዜ",
+  
+  "settings": "ቅንብሮች",
+  "language": "ቋንቋ",
+  "notifications": "ማሳወቂያዎች",
+  "adhanNotifications": "የአዛን ማሳወቂያዎች",
+  "adhanNotificationsDesc": "የሶላት ጊዜ ሲደርስ ማሳወቂያ ያግኙ",
+  "prayerReminders": "የሶላት ማስታወሻዎች",
+  "prayerRemindersDesc": "ከሶላት 15 ደቂቃ በፊት ማስታወሻ ያግኙ",
+  
+  "darkMode": "ጨለማ ሁነታ",
+  "lightMode": "ብርሃን ሁነታ",
+  
+  "islamicCalendar": "የእስልምና ቀን መቁጠሪያ",
+  "hijriDate": "የሂጅሪያ ቀን",
+  
+  "exploreNoor": "ኑርን ያስሱ",
+  "discoverFeatures": "የመተግበሪያውን ሁሉንም ባህሪያት ያግኙ",
+  
+  "assalamuAlaikum": "አሰላሙ ዓለይኩም",
+  "welcome": "እንኳን በደህና መጡ",
+  "welcomeBack": "እንኳን በደህና ተመለሱ",
+  
+  "loading": "በመጫን ላይ...",
+  "error": "ስህተት",
+  "retry": "እንደገና ሞክር",
+  "cancel": "ሰርዝ",
+  "save": "አስቀምጥ",
+  "done": "ተጠናቀቀ",
+  "ok": "እሺ",
+  
+  "profile": "መገለጫ",
+  "editProfile": "መገለጫ አርትዕ",
+  "name": "ስም",
+  "gender": "ጾታ",
+  "male": "ወንድ",
+  "female": "ሴት",
+  
+  "about": "ስለ",
+  "version": "ስሪት",
+  "privacyPolicy": "የግላዊነት ፖሊሲ",
+  "termsOfService": "የአገልግሎት ውሎች",
+  "contactUs": "ያግኙን",
+  "rateApp": "መተግበሪያውን ይደግፉ",
+  "shareApp": "መተግበሪያውን ያጋሩ",
+  
+  "surah": "ሱራ",
+  "ayah": "አንቀጽ",
+  "juz": "ጁዝ",
+  "page": "ገጽ",
+  "verses": "ቁጥሮች",
+  "listen": "ያዳምጡ",
+  "reciter": "ቃሪ",
+  
+  "book": "መጽሐፍ",
+  "chapter": "ምዕራፍ",
+  "narrator": "ተራኪ",
+  
+  "morning": "ጧት",
+  "evening": "ማታ",
+  "afterPrayer": "ከሶላት በኋላ",
+  "sleep": "እንቅልፍ",
+  
+  "count": "ቁጥር",
+  "target": "ዒላማ",
+  "reset": "ዳግም አስጀምር",
+  "completed": "ተጠናቀቀ",
+  "thisSession": "ይህ ክፍለ ጊዜ",
+  "lifetime": "ጠቅላላ",
+  
+  "qiblaDirection": "የቂብላ አቅጣጫ",
+  "locationPermission": "የአካባቢ ፈቃድ",
+  "locationPermissionDesc": "ትክክለኛ የሶላት ጊዜዎችን እና የቂብላ አቅጣጫን ለማሳየት የአካባቢ ፈቃድ ያስፈልገናል",
+  "grant": "ፍቀድ",
+  "deny": "ከልክል",
+  
+  "noInternet": "የበይነመረብ ግንኙነት የለም",
+  "checkConnection": "እባክዎ የበይነመረብ ግንኙነትዎን ያረጋግጡ እና እንደገና ይሞክሩ",
+  
+  "selectLanguage": "ቋንቋ ይምረጡ",
+  "english": "English",
+  "amharic": "አማርኛ",
+  "afanOromo": "Afaan Oromoo",
+  "undoPrayerConfirmationTitle": "Undo prayer?",
+  "undoPrayerConfirmationDesc": "Do you want to undo this prayer entry?",
+  "undo": "Undo",
+  "aiChat": "AI Chat",
+  "madhabPreference": "Madhab Preference",
+  "selectMadhab": "Select Madhab",
+  "updateLocation": "Update Location",
+  "updateLocationDesc": "Update your location to get accurate prayer times",
+  "tapToTestNotification": "Tap to test notifications",
+  "testAdhanNotification": "Test Adhan Notification",
+  "testReminderNotification": "Test Reminder Notification",
+  "adhanNotificationSent": "Adhan test notification sent",
+  "reminderNotificationSent": "Reminder test notification sent",
+  "refreshPrayerTimes": "Refresh Prayer Times",
+  "refreshPrayerTimesDesc": "Fetch latest prayer times from the server",
+  "refreshingPrayerTimes": "Refreshing prayer times...",
+  "updatingLocation": "Updating location...",
+  "resetStatistics": "Reset Statistics",
+  "statisticsReset": "Statistics reset successfully",
+  "resetPrayerStatisticsDesc": "This will reset your prayer statistics.",
+  "quranChapters": "Holy Quran Chapters",
+  "surahCount": "{count} Surahs",
+  "@surahCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noSurahsFound": "No Surahs found"
+}

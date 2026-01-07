@@ -7,19 +7,27 @@ import '../domain/quran_enc_translation.dart';
 import '../domain/surah_detail.dart';
 import '../audio/audio_player_service.dart';
 import 'widgets/surah_detail_view.dart';
+import 'widgets/floating_audio_player.dart';
+import 'widgets/quran_settings_sheet.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/utils/helpers.dart';
 
 class SurahDetailScreen extends StatefulWidget {
   final int surahNo;
   final String surahName;
-  const SurahDetailScreen({super.key, required this.surahNo, required this.surahName});
+  const SurahDetailScreen({
+    super.key,
+    required this.surahNo,
+    required this.surahName,
+  });
 
   @override
   State<SurahDetailScreen> createState() => _SurahDetailScreenState();
 }
 
-class _SurahDetailScreenState extends State<SurahDetailScreen> with TickerProviderStateMixin {
+class _SurahDetailScreenState extends State<SurahDetailScreen>
+    with TickerProviderStateMixin {
   late Future<SurahDetail> _surahDetailFuture;
   late Future<List<QuranEncTranslation>> _translationFuture;
   late Future<Map<String, String>> _recitersFuture;
@@ -30,6 +38,8 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> with TickerProvid
   String _selectedTranslationKey = 'amharic_zain';
   String _selectedReciterId = '1';
   Map<String, String> _reciters = {};
+  String? _recitersError;
+  bool _showTranslation = true;
 
   final Map<String, String> _translationOptions = {
     'amharic_zain': 'Amharic',
@@ -41,7 +51,10 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> with TickerProvid
   void initState() {
     super.initState();
     _surahDetailFuture = SurahApi.fetchSurahDetail(widget.surahNo);
-    _translationFuture = QuranEncTranslationApi.fetchSurahTranslation(_selectedTranslationKey, widget.surahNo);
+    _translationFuture = QuranEncTranslationApi.fetchSurahTranslation(
+      _selectedTranslationKey,
+      widget.surahNo,
+    );
     _recitersFuture = RecitersApi.fetchReciters();
 
     _fadeController = AnimationController(
@@ -49,24 +62,27 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> with TickerProvid
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
+    );
 
     _fadeController.forward();
 
-    _recitersFuture.then((reciters) {
-      setState(() {
-        _reciters = reciters;
-        if (_reciters.isNotEmpty && !_reciters.containsKey(_selectedReciterId)) {
-          _selectedReciterId = _reciters.keys.first;
-        }
-      });
-    });
+    _recitersFuture
+        .then((reciters) {
+          setState(() {
+            _reciters = reciters;
+            if (_reciters.isNotEmpty &&
+                !_reciters.containsKey(_selectedReciterId)) {
+              _selectedReciterId = _reciters.keys.first;
+            }
+          });
+        })
+        .catchError((e) {
+          setState(() {
+            _recitersError = AppHelpers.sanitizeError(e);
+          });
+        });
   }
 
   @override
@@ -79,7 +95,10 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> with TickerProvid
     if (key != null && key != _selectedTranslationKey) {
       setState(() {
         _selectedTranslationKey = key;
-        _translationFuture = QuranEncTranslationApi.fetchSurahTranslation(_selectedTranslationKey, widget.surahNo);
+        _translationFuture = QuranEncTranslationApi.fetchSurahTranslation(
+          _selectedTranslationKey,
+          widget.surahNo,
+        );
       });
     }
   }
@@ -95,66 +114,125 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> with TickerProvid
     }
   }
 
+  void _onShowTranslationChanged(bool value) {
+    setState(() {
+      _showTranslation = value;
+    });
+  }
+
+  void _openSettings() {
+    if (_reciters.isEmpty && _recitersError != null) {
+      AppHelpers.showSnackBar(context, _recitersError!);
+    }
+
+    QuranSettingsSheet.show(
+      context: context,
+      selectedTranslationKey: _selectedTranslationKey,
+      selectedReciterId: _selectedReciterId,
+      showTranslation: _showTranslation,
+      translationOptions: _translationOptions,
+      reciters: _reciters,
+      onTranslationChanged: _onTranslationChanged,
+      onReciterChanged: _onReciterChanged,
+      onShowTranslationChanged: _onShowTranslationChanged,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: FadeTransition(
-        opacity: _fadeAnimation,
-        child: CustomScrollView(
-          slivers: [
-            // Modern App Bar
-            _buildModernAppBar(),
+      body: Stack(
+        children: [
+          FadeTransition(
+            opacity: _fadeAnimation,
+            child: CustomScrollView(
+              slivers: [
+                // Modern App Bar with Settings Icon
+                _buildModernAppBar(),
 
-            // Settings Panel
-            SliverToBoxAdapter(
-              child: _buildSettingsPanel(),
-            ),
-
-            // Main Content
-            SliverToBoxAdapter(
-              child: FutureBuilder<SurahDetail>(
-                future: _surahDetailFuture,
-                builder: (context, surahSnapshot) {
-                  if (surahSnapshot.connectionState == ConnectionState.waiting) {
-                    return const Padding(
-                      padding: EdgeInsets.all(40),
-                      child: Center(child: CircularProgressIndicator()),
-                    );
-                  } else if (surahSnapshot.hasError) {
-                    return _buildErrorWidget('Error loading surah: ${surahSnapshot.error}');
-                  } else if (!surahSnapshot.hasData) {
-                    return _buildErrorWidget('No surah data found');
-                  }
-
-                  return FutureBuilder<List<QuranEncTranslation>>(
-                    future: _translationFuture,
-                    builder: (context, translationSnapshot) {
-                      if (translationSnapshot.connectionState == ConnectionState.waiting) {
+                // Main Content
+                SliverToBoxAdapter(
+                  child: FutureBuilder<SurahDetail>(
+                    future: _surahDetailFuture,
+                    builder: (context, surahSnapshot) {
+                      if (surahSnapshot.connectionState ==
+                          ConnectionState.waiting) {
                         return const Padding(
                           padding: EdgeInsets.all(40),
                           child: Center(child: CircularProgressIndicator()),
                         );
-                      } else if (translationSnapshot.hasError) {
-                        return _buildErrorWidget('Error loading translation: ${translationSnapshot.error}');
-                      } else if (!translationSnapshot.hasData) {
-                        return _buildErrorWidget('No translation found');
+                      } else if (surahSnapshot.hasError) {
+                        return _buildErrorWidget(
+                          'Error loading surah: ${AppHelpers.sanitizeError(surahSnapshot.error)}',
+                        );
+                      } else if (!surahSnapshot.hasData) {
+                        return _buildErrorWidget('No surah data found');
                       }
 
-                      return SurahDetailView(
-                        surahDetail: surahSnapshot.data!,
-                        translations: translationSnapshot.data!,
-                        reciterId: _selectedReciterId,
-                        audioService: _audioService,
-                        reciterName: _reciters[_selectedReciterId] ?? 'Unknown Reciter',
-                      );
+                      if (_showTranslation) {
+                        return FutureBuilder<List<QuranEncTranslation>>(
+                          future: _translationFuture,
+                          builder: (context, translationSnapshot) {
+                            if (translationSnapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Padding(
+                                padding: EdgeInsets.all(40),
+                                child: Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            } else if (translationSnapshot.hasError) {
+                              return _buildErrorWidget(
+                                'Error loading translation: ${AppHelpers.sanitizeError(translationSnapshot.error)}',
+                              );
+                            } else if (!translationSnapshot.hasData) {
+                              return _buildErrorWidget('No translation found');
+                            }
+
+                            return SurahDetailView(
+                              surahDetail: surahSnapshot.data!,
+                              translations: translationSnapshot.data!,
+                              reciterId: _selectedReciterId,
+                              audioService: _audioService,
+                              reciterName:
+                                  _reciters[_selectedReciterId] ??
+                                  'Unknown Reciter',
+                              showTranslation: _showTranslation,
+                            );
+                          },
+                        );
+                      } else {
+                        // Arabic only mode - pass empty translations
+                        return SurahDetailView(
+                          surahDetail: surahSnapshot.data!,
+                          translations: const [],
+                          reciterId: _selectedReciterId,
+                          audioService: _audioService,
+                          reciterName:
+                              _reciters[_selectedReciterId] ??
+                              'Unknown Reciter',
+                          showTranslation: _showTranslation,
+                        );
+                      }
                     },
-                  );
-                },
-              ),
+                  ),
+                ),
+
+                // Bottom spacing for floating player
+                const SliverToBoxAdapter(child: SizedBox(height: 120)),
+              ],
             ),
-          ],
-        ),
+          ),
+
+          // Floating Audio Player at bottom
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: FloatingAudioPlayer(audioService: _audioService),
+          ),
+        ],
       ),
     );
   }
@@ -174,22 +252,31 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> with TickerProvid
             color: Colors.white.withOpacity(0.15),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Icon(
-            Icons.arrow_back,
-            color: Colors.white,
-          ),
+          child: const Icon(Icons.arrow_back, color: Colors.white),
         ),
       ),
+      actions: [
+        // Settings Icon
+        IconButton(
+          onPressed: _openSettings,
+          icon: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(Icons.tune_rounded, color: Colors.white),
+          ),
+        ),
+        const SizedBox(width: 8),
+      ],
       flexibleSpace: FlexibleSpaceBar(
         background: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                AppColors.primary,
-                AppColors.primaryLight,
-              ],
+              colors: [AppColors.primary, AppColors.primaryLight],
             ),
             borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(32),
@@ -232,11 +319,35 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> with TickerProvid
                               ),
                             ),
                             const SizedBox(height: 4),
-                            Text(
-                              'Chapter ${widget.surahNo}',
-                              style: AppTextStyles.bodyMedium.copyWith(
-                                color: Colors.white.withOpacity(0.9),
-                              ),
+                            Row(
+                              children: [
+                                Text(
+                                  'Chapter ${widget.surahNo}',
+                                  style: AppTextStyles.bodyMedium.copyWith(
+                                    color: Colors.white.withOpacity(0.9),
+                                  ),
+                                ),
+                                if (!_showTranslation) ...[
+                                  const SizedBox(width: 8),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 2,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      'Arabic Only',
+                                      style: AppTextStyles.labelSmall.copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
                           ],
                         ),
@@ -252,122 +363,6 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> with TickerProvid
     );
   }
 
-  Widget _buildSettingsPanel() {
-    return Container(
-      margin: const EdgeInsets.all(20),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadowLight,
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Settings',
-            style: AppTextStyles.heading3,
-          ),
-          const SizedBox(height: 16),
-
-          // Translation Selector
-          _buildSelector(
-            label: 'Translation Language',
-            value: _selectedTranslationKey,
-            options: _translationOptions,
-            onChanged: _onTranslationChanged,
-            iconWidget: Image.asset('assets/translation.png', height: 20, color: AppColors.primary),
-          ),
-
-          const SizedBox(height: 16),
-
-          // Reciter Selector
-          FutureBuilder<Map<String, String>>(
-            future: _recitersFuture,
-            builder: (context, snapshot) {
-              if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const SizedBox.shrink();
-              }
-
-              return _buildSelector(
-                label: 'Reciter',
-                value: _selectedReciterId,
-                options: snapshot.data!,
-                onChanged: _onReciterChanged,
-                iconWidget: Image.asset('assets/reciter.png', height: 20, color: AppColors.primary),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSelector({
-    required String label,
-    required String value,
-    required Map<String, String> options,
-    required Function(String?) onChanged,
-    Widget? iconWidget,
-    IconData? icon,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            if (iconWidget != null) iconWidget
-            else if (icon != null)
-              Icon(
-                icon,
-                color: AppColors.primary,
-                size: 20,
-              ),
-            const SizedBox(width: 8),
-            Text(
-              label,
-              style: AppTextStyles.bodyMedium.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          decoration: BoxDecoration(
-            color: AppColors.surfaceVariant,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: AppColors.primary.withOpacity(0.3),
-            ),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: value,
-              items: options.entries.map((e) => DropdownMenuItem<String>(
-                value: e.key,
-                child: Text(
-                  e.value,
-                  style: AppTextStyles.bodyMedium,
-                ),
-              )).toList(),
-              onChanged: onChanged,
-              isExpanded: true,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildErrorWidget(String error) {
     return Padding(
       padding: const EdgeInsets.all(20),
@@ -377,23 +372,15 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> with TickerProvid
         decoration: BoxDecoration(
           color: AppColors.error.withOpacity(0.1),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: AppColors.error.withOpacity(0.3),
-          ),
+          border: Border.all(color: AppColors.error.withOpacity(0.3)),
         ),
         child: Column(
           children: [
-            Icon(
-              Icons.error_outline,
-              color: AppColors.error,
-              size: 48,
-            ),
+            Icon(Icons.error_outline, color: AppColors.error, size: 48),
             const SizedBox(height: 16),
             Text(
               'Error',
-              style: AppTextStyles.heading4.copyWith(
-                color: AppColors.error,
-              ),
+              style: AppTextStyles.heading4.copyWith(color: AppColors.error),
             ),
             const SizedBox(height: 8),
             Text(
@@ -407,8 +394,14 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> with TickerProvid
             ElevatedButton(
               onPressed: () {
                 setState(() {
-                  _surahDetailFuture = SurahApi.fetchSurahDetail(widget.surahNo);
-                  _translationFuture = QuranEncTranslationApi.fetchSurahTranslation(_selectedTranslationKey, widget.surahNo);
+                  _surahDetailFuture = SurahApi.fetchSurahDetail(
+                    widget.surahNo,
+                  );
+                  _translationFuture =
+                      QuranEncTranslationApi.fetchSurahTranslation(
+                        _selectedTranslationKey,
+                        widget.surahNo,
+                      );
                 });
               },
               child: const Text('Retry'),

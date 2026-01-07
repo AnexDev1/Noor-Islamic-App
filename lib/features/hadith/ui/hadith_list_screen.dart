@@ -4,6 +4,7 @@ import '../data/hadiths_api.dart';
 import '../domain/hadith.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/utils/helpers.dart';
 import 'hadith_detail_screen.dart';
 
 class HadithListScreen extends StatefulWidget {
@@ -24,7 +25,8 @@ class HadithListScreen extends StatefulWidget {
   State<HadithListScreen> createState() => _HadithListScreenState();
 }
 
-class _HadithListScreenState extends State<HadithListScreen> with TickerProviderStateMixin {
+class _HadithListScreenState extends State<HadithListScreen>
+    with TickerProviderStateMixin {
   late Future<List<Hadith>> _hadithsFuture;
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
@@ -44,13 +46,9 @@ class _HadithListScreenState extends State<HadithListScreen> with TickerProvider
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
+    );
 
     _fadeController.forward();
   }
@@ -66,7 +64,10 @@ class _HadithListScreenState extends State<HadithListScreen> with TickerProvider
     if (_searchQuery.isEmpty) return hadiths;
 
     return hadiths.where((hadith) {
-      return (hadith.english?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false) ||
+      return (hadith.english?.toLowerCase().contains(
+                _searchQuery.toLowerCase(),
+              ) ??
+              false) ||
           (hadith.arabic?.contains(_searchQuery) ?? false) ||
           (hadith.urdu?.contains(_searchQuery) ?? false);
     }).toList();
@@ -116,7 +117,11 @@ class _HadithListScreenState extends State<HadithListScreen> with TickerProvider
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return SliverToBoxAdapter(child: _buildShimmerList());
                 } else if (snapshot.hasError) {
-                  return SliverToBoxAdapter(child: _buildErrorWidget(snapshot.error.toString()));
+                  return SliverToBoxAdapter(
+                    child: _buildErrorWidget(
+                      AppHelpers.sanitizeError(snapshot.error),
+                    ),
+                  );
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return const SliverToBoxAdapter(
                     child: Center(child: Text('No hadiths found')),
@@ -129,9 +134,7 @@ class _HadithListScreenState extends State<HadithListScreen> with TickerProvider
             ),
 
             // Bottom padding
-            const SliverToBoxAdapter(
-              child: SizedBox(height: 100),
-            ),
+            const SliverToBoxAdapter(child: SizedBox(height: 100)),
           ],
         ),
       ),
@@ -153,10 +156,7 @@ class _HadithListScreenState extends State<HadithListScreen> with TickerProvider
             color: Colors.white.withOpacity(0.15),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Icon(
-            Icons.arrow_back,
-            color: Colors.white,
-          ),
+          child: const Icon(Icons.arrow_back, color: Colors.white),
         ),
       ),
       flexibleSpace: FlexibleSpaceBar(
@@ -256,10 +256,7 @@ class _HadithListScreenState extends State<HadithListScreen> with TickerProvider
           hintStyle: AppTextStyles.bodyMedium.copyWith(
             color: AppColors.textTertiary,
           ),
-          prefixIcon: Icon(
-            Icons.search,
-            color: AppColors.textSecondary,
-          ),
+          prefixIcon: Icon(Icons.search, color: AppColors.textSecondary),
           suffixIcon: _searchQuery.isNotEmpty
               ? IconButton(
                   onPressed: () {
@@ -268,14 +265,14 @@ class _HadithListScreenState extends State<HadithListScreen> with TickerProvider
                       _searchQuery = '';
                     });
                   },
-                  icon: Icon(
-                    Icons.clear,
-                    color: AppColors.textSecondary,
-                  ),
+                  icon: Icon(Icons.clear, color: AppColors.textSecondary),
                 )
               : null,
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 16,
+          ),
         ),
         style: AppTextStyles.bodyMedium,
       ),
@@ -286,143 +283,144 @@ class _HadithListScreenState extends State<HadithListScreen> with TickerProvider
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       sliver: SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            final hadith = hadiths[index];
+        delegate: SliverChildBuilderDelegate((context, index) {
+          final hadith = hadiths[index];
 
-            return Container(
-              margin: const EdgeInsets.only(bottom: 16),
-              decoration: BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.shadowLight,
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
+          return Container(
+            margin: const EdgeInsets.only(bottom: 16),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.shadowLight,
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: InkWell(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => HadithDetailScreen(hadith: hadith),
                   ),
-                ],
-              ),
-              child: InkWell(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => HadithDetailScreen(hadith: hadith),
-                    ),
-                  );
-                },
-                borderRadius: BorderRadius.circular(16),
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Header with hadith number
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
+                );
+              },
+              borderRadius: BorderRadius.circular(16),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header with hadith number
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                AppColors.primaryLight,
+                                AppColors.primaryDark.withOpacity(0.8),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            'Hadith ${hadith.hadithNumber}',
+                            style: AppTextStyles.labelMedium.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        if (hadith.status != null)
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  AppColors.primaryLight,
-                                  AppColors.primaryDark.withOpacity(0.8),
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(20),
+                              color: AppColors.success.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
-                              'Hadith ${hadith.hadithNumber}',
-                              style: AppTextStyles.labelMedium.copyWith(
-                                color: Colors.white,
+                              hadith.status!,
+                              style: AppTextStyles.labelSmall.copyWith(
+                                color: AppColors.success,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
                           ),
-                          if (hadith.status != null)
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: AppColors.success.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                hadith.status!,
-                                style: AppTextStyles.labelSmall.copyWith(
-                                  color: AppColors.success,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
+                      ],
+                    ),
 
-                      const SizedBox(height: 16),
+                    const SizedBox(height: 16),
 
-                      // Arabic text
-                      if (hadith.arabic != null && hadith.arabic!.isNotEmpty)
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: AppColors.accent.withOpacity(0.05),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: AppColors.accent.withOpacity(0.2),
-                            ),
-                          ),
-                          child: Text(
-                            hadith.arabic!,
-                            style: AppTextStyles.arabicMedium.copyWith(
-                              height: 1.8,
-                            ),
-                            textAlign: TextAlign.right,
-                            textDirection: TextDirection.rtl,
+                    // Arabic text
+                    if (hadith.arabic != null && hadith.arabic!.isNotEmpty)
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.accent.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: AppColors.accent.withOpacity(0.2),
                           ),
                         ),
+                        child: Text(
+                          hadith.arabic!,
+                          style: AppTextStyles.arabicMedium.copyWith(
+                            height: 1.8,
+                          ),
+                          textAlign: TextAlign.right,
+                          textDirection: TextDirection.rtl,
+                        ),
+                      ),
 
-                      const SizedBox(height: 12),
+                    const SizedBox(height: 12),
 
-                      // English translation
-                      if (hadith.english != null && hadith.english!.isNotEmpty)
+                    // English translation
+                    if (hadith.english != null && hadith.english!.isNotEmpty)
+                      Text(
+                        hadith.english!,
+                        style: AppTextStyles.bodyLarge.copyWith(height: 1.6),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+
+                    const SizedBox(height: 8),
+
+                    // Read more indicator
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
                         Text(
-                          hadith.english!,
-                          style: AppTextStyles.bodyLarge.copyWith(
-                            height: 1.6,
-                          ),
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-
-                      const SizedBox(height: 8),
-
-                      // Read more indicator
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Tap to read full hadith',
-                            style: AppTextStyles.bodySmall.copyWith(
-                              color: AppColors.textTertiary,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                          Icon(
-                            Icons.arrow_forward_ios,
+                          'Tap to read full hadith',
+                          style: AppTextStyles.bodySmall.copyWith(
                             color: AppColors.textTertiary,
-                            size: 14,
+                            fontStyle: FontStyle.italic,
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
+                        ),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          color: AppColors.textTertiary,
+                          size: 14,
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-            );
-          },
-          childCount: hadiths.length,
-        ),
+            ),
+          );
+        }, childCount: hadiths.length),
       ),
     );
   }
@@ -458,23 +456,15 @@ class _HadithListScreenState extends State<HadithListScreen> with TickerProvider
         decoration: BoxDecoration(
           color: AppColors.error.withOpacity(0.1),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: AppColors.error.withOpacity(0.3),
-          ),
+          border: Border.all(color: AppColors.error.withOpacity(0.3)),
         ),
         child: Column(
           children: [
-            Icon(
-              Icons.error_outline,
-              color: AppColors.error,
-              size: 48,
-            ),
+            Icon(Icons.error_outline, color: AppColors.error, size: 48),
             const SizedBox(height: 16),
             Text(
               'Failed to load hadiths',
-              style: AppTextStyles.heading4.copyWith(
-                color: AppColors.error,
-              ),
+              style: AppTextStyles.heading4.copyWith(color: AppColors.error),
             ),
             const SizedBox(height: 8),
             Text(

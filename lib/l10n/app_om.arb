@@ -1,0 +1,133 @@
+{
+  "@@locale": "om",
+  "appTitle": "Nuur - Appii Islaamaa",
+  
+  "home": "Mana",
+  "quran": "Qur'aana",
+  "hadith": "Hadiisa",
+  "azkhar": "Azkaar",
+  "tasbih": "Tasbiihaa",
+  "more": "Dabalata",
+  
+  "prayerTimes": "Yeroo Salaataa",
+  "fajr": "Fajrii",
+  "dhuhr": "Zuhurii",
+  "asr": "Asrii",
+  "maghrib": "Magriibii",
+  "isha": "Ishaa'ii",
+  
+  "nextPrayer": "Salaata Itti Aanu",
+  "timeUntil": "Yeroo hanga {prayer}",
+  
+  "settings": "Qindaa'ina",
+  "language": "Afaan",
+  "notifications": "Beeksisa",
+  "adhanNotifications": "Beeksisa Azaanaa",
+  "adhanNotificationsDesc": "Yeroon salaataa yoo ga'u beeksisa argadhu",
+  "prayerReminders": "Yaadachiisa Salaataa",
+  "prayerRemindersDesc": "Salaata dura daqiiqaa 15 yaadachiisa argadhu",
+  
+  "darkMode": "Haala Dukkana",
+  "lightMode": "Haala Ifaa",
+  
+  "islamicCalendar": "Kaaleendarii Islaamaa",
+  "hijriDate": "Guyyaa Hijraa",
+  
+  "exploreNoor": "Nuur Qoradhu",
+  "discoverFeatures": "Tajaajila appii hundaa argadhu",
+  
+  "assalamuAlaikum": "Assalaamu Aleykum",
+  "welcome": "Baga Nagaan Dhuftan",
+  "welcomeBack": "Baga Nagaan Deebitan",
+  
+  "loading": "Fe'aa jira...",
+  "error": "Dogoggora",
+  "retry": "Irra Deebi'ii Yaali",
+  "cancel": "Haqi",
+  "save": "Olkaa'i",
+  "done": "Raawwatame",
+  "ok": "Tole",
+  
+  "profile": "Piroofaayilii",
+  "editProfile": "Piroofaayilii Gulaali",
+  "name": "Maqaa",
+  "gender": "Saala",
+  "male": "Dhiira",
+  "female": "Dubartii",
+  
+  "about": "Waa'ee",
+  "version": "Gosa",
+  "privacyPolicy": "Imaammata Iccitii",
+  "termsOfService": "Haala Tajaajilaa",
+  "contactUs": "Nu Quunnamaa",
+  "rateApp": "Appii Madaali",
+  "shareApp": "Appii Qoodaa",
+  
+  "surah": "Suuraa",
+  "ayah": "Aayata",
+  "juz": "Juz'ii",
+  "page": "Fuula",
+  "verses": "Aayatoota",
+  "listen": "Dhaggeeffadhu",
+  "reciter": "Qaarii",
+  
+  "book": "Kitaaba",
+  "chapter": "Boqonnaa",
+  "narrator": "Odeessaa",
+  
+  "morning": "Ganama",
+  "evening": "Galgala",
+  "afterPrayer": "Salaata Booda",
+  "sleep": "Hirribaa",
+  
+  "count": "Lakkoofsa",
+  "target": "Kaayyoo",
+  "reset": "Haaromsi",
+  "completed": "Xumurame",
+  "thisSession": "Yeroo Kana",
+  "lifetime": "Walii Galaa",
+  
+  "qiblaDirection": "Kallattii Qiblaa",
+  "locationPermission": "Hayyama Bakka",
+  "locationPermissionDesc": "Yeroo salaataa sirrii fi kallattii qiblaa agarsiisuuf hayyama bakka nu barbaachisa",
+  "grant": "Hayyami",
+  "deny": "Didi",
+  
+  "noInternet": "Walqunnamtii Interneetii Hin Jiru",
+  "checkConnection": "Maaloo walqunnamtii interneetii keessan mirkaneessaa irra deebi'aa yaalaa",
+  
+  "selectLanguage": "Afaan Filadhu",
+  "english": "English",
+  "amharic": "አማርኛ",
+  "afanOromo": "Afaan Oromoo",
+  "undoPrayerConfirmationTitle": "Undo prayer?",
+  "undoPrayerConfirmationDesc": "Do you want to undo this prayer entry?",
+  "undo": "Undo",
+  "aiChat": "AI Chat",
+  "madhabPreference": "Madhab Preference",
+  "selectMadhab": "Select Madhab",
+  "updateLocation": "Update Location",
+  "updateLocationDesc": "Update your location to get accurate prayer times",
+  "tapToTestNotification": "Tap to test notifications",
+  "testAdhanNotification": "Test Adhan Notification",
+  "testReminderNotification": "Test Reminder Notification",
+  "adhanNotificationSent": "Adhan test notification sent",
+  "reminderNotificationSent": "Reminder test notification sent",
+  "refreshPrayerTimes": "Refresh Prayer Times",
+  "refreshPrayerTimesDesc": "Fetch latest prayer times from the server",
+  "refreshingPrayerTimes": "Refreshing prayer times...",
+  "updatingLocation": "Updating location...",
+  "resetStatistics": "Reset Statistics",
+  "statisticsReset": "Statistics reset successfully",
+  "resetPrayerStatisticsDesc": "This will reset your prayer statistics.",
+  "quranChapters": "Holy Quran Chapters",
+  "surahCount": "{count} Surahs",
+  "@surahCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noSurahsFound": "No Surahs found"
+}

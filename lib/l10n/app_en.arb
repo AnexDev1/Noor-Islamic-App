@@ -1,0 +1,143 @@
+{
+  "@@locale": "en",
+  "appTitle": "Noor - Islamic App",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  
+  "home": "Home",
+  "quran": "Quran",
+  "hadith": "Hadith",
+  "azkhar": "Azkhar",
+  "tasbih": "Tasbih",
+  "more": "More",
+  
+  "prayerTimes": "Prayer Times",
+  "fajr": "Fajr",
+  "dhuhr": "Dhuhr",
+  "asr": "Asr",
+  "maghrib": "Maghrib",
+  "isha": "Isha",
+  
+  "nextPrayer": "Next Prayer",
+  "timeUntil": "Time until {prayer}",
+  "@timeUntil": {
+    "placeholders": {
+      "prayer": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "settings": "Settings",
+  "language": "Language",
+  "notifications": "Notifications",
+  "adhanNotifications": "Adhan Notifications",
+  "adhanNotificationsDesc": "Get notified when prayer time arrives",
+  "prayerReminders": "Prayer Reminders",
+  "prayerRemindersDesc": "Get reminded 15 minutes before prayer",
+  
+  "darkMode": "Dark Mode",
+  "lightMode": "Light Mode",
+  
+  "islamicCalendar": "Islamic Calendar",
+  "hijriDate": "Hijri Date",
+  
+  "exploreNoor": "Explore Noor",
+  "discoverFeatures": "Discover all the features of the app",
+  
+  "assalamuAlaikum": "As-salamu Alaykum",
+  "welcome": "Welcome",
+  "welcomeBack": "Welcome back",
+  
+  "loading": "Loading...",
+  "error": "Error",
+  "retry": "Retry",
+  "cancel": "Cancel",
+  "save": "Save",
+  "done": "Done",
+  "ok": "OK",
+  
+  "profile": "Profile",
+  "editProfile": "Edit Profile",
+  "name": "Name",
+  "gender": "Gender",
+  "male": "Male",
+  "female": "Female",
+  
+  "about": "About",
+  "version": "Version",
+  "privacyPolicy": "Privacy Policy",
+  "termsOfService": "Terms of Service",
+  "contactUs": "Contact Us",
+  "rateApp": "Rate App",
+  "shareApp": "Share App",
+  
+  "surah": "Surah",
+  "ayah": "Ayah",
+  "juz": "Juz",
+  "page": "Page",
+  "verses": "Verses",
+  "listen": "Listen",
+  "reciter": "Reciter",
+  
+  "book": "Book",
+  "chapter": "Chapter",
+  "narrator": "Narrator",
+  
+  "morning": "Morning",
+  "evening": "Evening",
+  "afterPrayer": "After Prayer",
+  "sleep": "Sleep",
+  
+  "count": "Count",
+  "target": "Target",
+  "reset": "Reset",
+  "completed": "Completed",
+  "thisSession": "This Session",
+  "lifetime": "Lifetime",
+  
+  "qiblaDirection": "Qibla Direction",
+  "locationPermission": "Location Permission",
+  "locationPermissionDesc": "We need location permission to show accurate prayer times and Qibla direction",
+  "grant": "Grant",
+  "deny": "Deny",
+  
+  "noInternet": "No Internet Connection",
+  "checkConnection": "Please check your internet connection and try again",
+  
+  "selectLanguage": "Select Language",
+  "english": "English",
+  "amharic": "አማርኛ",
+  "afanOromo": "Afaan Oromoo",
+  "undoPrayerConfirmationTitle": "Undo prayer?",
+  "undoPrayerConfirmationDesc": "Do you want to undo this prayer entry?",
+  "undo": "Undo",
+  "aiChat": "AI Chat",
+  "madhabPreference": "Madhab Preference",
+  "selectMadhab": "Select Madhab",
+  "updateLocation": "Update Location",
+  "updateLocationDesc": "Update your location to get accurate prayer times",
+  "tapToTestNotification": "Tap to test notifications",
+  "testAdhanNotification": "Test Adhan Notification",
+  "testReminderNotification": "Test Reminder Notification",
+  "adhanNotificationSent": "Adhan test notification sent",
+  "reminderNotificationSent": "Reminder test notification sent",
+  "refreshPrayerTimes": "Refresh Prayer Times",
+  "refreshPrayerTimesDesc": "Fetch latest prayer times from the server",
+  "refreshingPrayerTimes": "Refreshing prayer times...",
+  "updatingLocation": "Updating location...",
+  "resetStatistics": "Reset Statistics",
+  "statisticsReset": "Statistics reset successfully",
+  "resetPrayerStatisticsDesc": "This will reset your prayer statistics.",
+  "quranChapters": "Holy Quran Chapters",
+  "surahCount": "{count} Surahs",
+  "@surahCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noSurahsFound": "No Surahs found"
+}

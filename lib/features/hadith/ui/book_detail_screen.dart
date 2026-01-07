@@ -6,6 +6,7 @@ import '../domain/book.dart';
 import '../domain/chapter.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/utils/helpers.dart';
 import 'widgets/chapter_list.dart';
 import 'hadith_list_screen.dart';
 
@@ -17,7 +18,8 @@ class BookDetailScreen extends StatefulWidget {
   State<BookDetailScreen> createState() => _BookDetailScreenState();
 }
 
-class _BookDetailScreenState extends State<BookDetailScreen> with TickerProviderStateMixin {
+class _BookDetailScreenState extends State<BookDetailScreen>
+    with TickerProviderStateMixin {
   late Future<List<HadithChapter>> _chaptersFuture;
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
@@ -34,13 +36,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> with TickerProvider
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
+    );
 
     _fadeController.forward();
   }
@@ -56,7 +54,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> with TickerProvider
     if (_searchQuery.isEmpty) return chapters;
 
     return chapters.where((chapter) {
-      return chapter.english.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+      return chapter.english.toLowerCase().contains(
+            _searchQuery.toLowerCase(),
+          ) ||
           chapter.arabic.contains(_searchQuery) ||
           chapter.urdu.contains(_searchQuery);
     }).toList();
@@ -74,9 +74,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> with TickerProvider
             _buildModernAppBar(),
 
             // Book Info Header
-            SliverToBoxAdapter(
-              child: _buildBookInfoHeader(),
-            ),
+            SliverToBoxAdapter(child: _buildBookInfoHeader()),
 
             // Main Content
             SliverToBoxAdapter(
@@ -96,10 +94,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> with TickerProvider
                     const SizedBox(height: 32),
 
                     // Section Title
-                    Text(
-                      'Chapters',
-                      style: AppTextStyles.heading1,
-                    ),
+                    Text('Chapters', style: AppTextStyles.heading1),
 
                     const SizedBox(height: 16),
                   ],
@@ -114,7 +109,11 @@ class _BookDetailScreenState extends State<BookDetailScreen> with TickerProvider
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return SliverToBoxAdapter(child: _buildShimmerList());
                 } else if (snapshot.hasError) {
-                  return SliverToBoxAdapter(child: _buildErrorWidget(snapshot.error.toString()));
+                  return SliverToBoxAdapter(
+                    child: _buildErrorWidget(
+                      AppHelpers.sanitizeError(snapshot.error),
+                    ),
+                  );
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return const SliverToBoxAdapter(
                     child: Center(child: Text('No chapters found')),
@@ -133,9 +132,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> with TickerProvider
             ),
 
             // Bottom padding
-            const SliverToBoxAdapter(
-              child: SizedBox(height: 100),
-            ),
+            const SliverToBoxAdapter(child: SizedBox(height: 100)),
           ],
         ),
       ),
@@ -157,10 +154,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> with TickerProvider
             color: Colors.white.withOpacity(0.15),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Icon(
-            Icons.arrow_back,
-            color: Colors.white,
-          ),
+          child: const Icon(Icons.arrow_back, color: Colors.white),
         ),
       ),
       flexibleSpace: FlexibleSpaceBar(
@@ -169,10 +163,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> with TickerProvider
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                AppColors.primary,
-                AppColors.primaryLight,
-              ],
+              colors: [AppColors.primary, AppColors.primaryLight],
             ),
             borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(32),
@@ -247,17 +238,12 @@ class _BookDetailScreenState extends State<BookDetailScreen> with TickerProvider
           ],
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: AppColors.primary.withOpacity(0.2),
-        ),
+        border: Border.all(color: AppColors.primary.withOpacity(0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            widget.book.name,
-            style: AppTextStyles.heading1,
-          ),
+          Text(widget.book.name, style: AppTextStyles.heading1),
 
           if (widget.book.writer != null) ...[
             const SizedBox(height: 8),
@@ -291,7 +277,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> with TickerProvider
                   label: '${widget.book.chaptersCount} chapters',
                   color: AppColors.primary,
                 ),
-              if (widget.book.chaptersCount != null && widget.book.hadithsCount != null)
+              if (widget.book.chaptersCount != null &&
+                  widget.book.hadithsCount != null)
                 const SizedBox(width: 12),
               if (widget.book.hadithsCount != null)
                 _buildStatBadge(
@@ -316,18 +303,12 @@ class _BookDetailScreenState extends State<BookDetailScreen> with TickerProvider
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: color.withOpacity(0.3),
-        ),
+        border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 16,
-            color: color,
-          ),
+          Icon(icon, size: 16, color: color),
           const SizedBox(width: 6),
           Text(
             label,
@@ -366,10 +347,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> with TickerProvider
           hintStyle: AppTextStyles.bodyMedium.copyWith(
             color: AppColors.textTertiary,
           ),
-          prefixIcon: Icon(
-            Icons.search,
-            color: AppColors.textSecondary,
-          ),
+          prefixIcon: Icon(Icons.search, color: AppColors.textSecondary),
           suffixIcon: _searchQuery.isNotEmpty
               ? IconButton(
                   onPressed: () {
@@ -378,14 +356,14 @@ class _BookDetailScreenState extends State<BookDetailScreen> with TickerProvider
                       _searchQuery = '';
                     });
                   },
-                  icon: Icon(
-                    Icons.clear,
-                    color: AppColors.textSecondary,
-                  ),
+                  icon: Icon(Icons.clear, color: AppColors.textSecondary),
                 )
               : null,
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 16,
+          ),
         ),
         style: AppTextStyles.bodyMedium,
       ),
@@ -445,9 +423,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> with TickerProvider
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: color.withOpacity(0.2),
-          ),
+          border: Border.all(color: color.withOpacity(0.2)),
           boxShadow: [
             BoxShadow(
               color: AppColors.shadowLight,
@@ -465,11 +441,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> with TickerProvider
                 color: color.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(
-                icon,
-                color: color,
-                size: 28,
-              ),
+              child: Icon(icon, color: color, size: 28),
             ),
             const SizedBox(height: 16),
             Text(
@@ -523,23 +495,15 @@ class _BookDetailScreenState extends State<BookDetailScreen> with TickerProvider
         decoration: BoxDecoration(
           color: AppColors.error.withOpacity(0.1),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: AppColors.error.withOpacity(0.3),
-          ),
+          border: Border.all(color: AppColors.error.withOpacity(0.3)),
         ),
         child: Column(
           children: [
-            Icon(
-              Icons.error_outline,
-              color: AppColors.error,
-              size: 48,
-            ),
+            Icon(Icons.error_outline, color: AppColors.error, size: 48),
             const SizedBox(height: 16),
             Text(
               'Failed to load chapters',
-              style: AppTextStyles.heading4.copyWith(
-                color: AppColors.error,
-              ),
+              style: AppTextStyles.heading4.copyWith(color: AppColors.error),
             ),
             const SizedBox(height: 8),
             Text(

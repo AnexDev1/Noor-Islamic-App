@@ -13,6 +13,7 @@ class SurahDetailView extends StatefulWidget {
   final String reciterId;
   final SimpleQuranAudioPlayer audioService;
   final String reciterName;
+  final bool showTranslation;
 
   const SurahDetailView({
     super.key,
@@ -21,6 +22,7 @@ class SurahDetailView extends StatefulWidget {
     required this.reciterId,
     required this.audioService,
     required this.reciterName,
+    this.showTranslation = true,
   });
 
   @override
@@ -53,7 +55,8 @@ class _SurahDetailViewState extends State<SurahDetailView> {
 
     final reciterId = widget.reciterId;
     final surahNo = widget.surahDetail.surahNo;
-    final apiUrl = 'https://api.quran.com/api/v4/chapter_recitations/$reciterId?chapter_number=$surahNo';
+    final apiUrl =
+        'https://api.quran.com/api/v4/chapter_recitations/$reciterId?chapter_number=$surahNo';
 
     try {
       final response = await http.get(Uri.parse(apiUrl));
@@ -99,9 +102,7 @@ class _SurahDetailViewState extends State<SurahDetailView> {
           ],
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: AppColors.primary.withOpacity(0.2),
-        ),
+        border: Border.all(color: AppColors.primary.withOpacity(0.2)),
       ),
       child: Column(
         children: [
@@ -173,18 +174,12 @@ class _SurahDetailViewState extends State<SurahDetailView> {
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: color.withOpacity(0.3),
-        ),
+        border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 16,
-            color: color,
-          ),
+          Icon(icon, size: 16, color: color),
           const SizedBox(width: 6),
           Text(
             label,
@@ -196,169 +191,6 @@ class _SurahDetailViewState extends State<SurahDetailView> {
         ],
       ),
     );
-  }
-
-  Widget _buildAudioSection() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadowLight,
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Reciter: ${widget.reciterName}',
-                      style: AppTextStyles.bodyLarge.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    ValueListenableBuilder<String>(
-                      valueListenable: widget.audioService.currentSurahName,
-                      builder: (context, surahName, _) {
-                        return Text(
-                          surahName.isNotEmpty ? surahName : 'Not Playing',
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 16),
-              _buildPlayPauseButton(),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _buildAudioProgressBar(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPlayPauseButton() {
-    return ValueListenableBuilder<String>(
-      valueListenable: widget.audioService.currentSurahName,
-      builder: (context, currentSurah, child) {
-        final isCurrentSurah = currentSurah == widget.surahDetail.surahName;
-
-        return ValueListenableBuilder<bool>(
-          valueListenable: widget.audioService.isPlaying,
-          builder: (context, isPlaying, child) {
-            return ElevatedButton.icon(
-              onPressed: () {
-                if (isCurrentSurah && isPlaying) {
-                  widget.audioService.pause();
-                } else if (isCurrentSurah && !isPlaying) {
-                  widget.audioService.resume();
-                } else {
-                  _playAudio();
-                }
-              },
-              icon: Icon(
-                isCurrentSurah && isPlaying
-                    ? Icons.pause
-                    : Icons.play_arrow,
-                size: 24,
-              ),
-              label: Text(
-                isCurrentSurah && isPlaying
-                    ? 'Pause Recitation'
-                    : isCurrentSurah
-                        ? 'Resume Recitation'
-                        : 'Play Recitation',
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: isCurrentSurah
-                    ? AppColors.accent
-                    : AppColors.primary,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 16,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-  Widget _buildAudioProgressBar() {
-    return ValueListenableBuilder<Duration>(
-      valueListenable: widget.audioService.position,
-      builder: (context, position, _) {
-        return ValueListenableBuilder<Duration>(
-          valueListenable: widget.audioService.duration,
-          builder: (context, duration, _) {
-            return Column(
-              children: [
-                Slider(
-                  value: position.inSeconds.toDouble(),
-                  min: 0.0,
-                  max: duration.inSeconds.toDouble().isNaN ? 0.0 : duration.inSeconds.toDouble(),
-                  onChanged: (value) {
-                    widget.audioService.seek(Duration(seconds: value.toInt()));
-                  },
-                  activeColor: AppColors.primary,
-                  inactiveColor: AppColors.primary.withOpacity(0.3),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        _formatDuration(position),
-                        style: AppTextStyles.bodySmall,
-                      ),
-                      Text(
-                        _formatDuration(duration),
-                        style: AppTextStyles.bodySmall,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-
-  String _formatDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    final hours = duration.inHours;
-    final minutes = twoDigits(duration.inMinutes.remainder(60));
-    final seconds = twoDigits(duration.inSeconds.remainder(60));
-    return [
-      if (hours > 0) hours.toString(),
-      minutes,
-      seconds,
-    ].join(':');
   }
 
   Future<void> _playAudio() async {
@@ -383,8 +215,8 @@ class _SurahDetailViewState extends State<SurahDetailView> {
 
           const SizedBox(height: 24),
 
-          // Audio Player Section
-          _buildAudioSection(),
+          // Play Full Surah Button
+          _buildPlayButton(),
 
           const SizedBox(height: 32),
 
@@ -395,13 +227,196 @@ class _SurahDetailViewState extends State<SurahDetailView> {
     );
   }
 
+  Widget _buildPlayButton() {
+    return ValueListenableBuilder<String>(
+      valueListenable: widget.audioService.currentSurahName,
+      builder: (context, currentSurah, child) {
+        final isCurrentSurah = currentSurah == widget.surahDetail.surahName;
+
+        return ValueListenableBuilder<bool>(
+          valueListenable: widget.audioService.isPlaying,
+          builder: (context, isPlaying, child) {
+            return Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: isCurrentSurah
+                      ? [AppColors.accent, AppColors.accent.withOpacity(0.8)]
+                      : [AppColors.primary, AppColors.primaryLight],
+                ),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color:
+                        (isCurrentSurah ? AppColors.accent : AppColors.primary)
+                            .withOpacity(0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(16),
+                  onTap: () {
+                    if (isCurrentSurah && isPlaying) {
+                      widget.audioService.pause();
+                    } else if (isCurrentSurah && !isPlaying) {
+                      widget.audioService.resume();
+                    } else {
+                      _playAudio();
+                    }
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        isCurrentSurah && isPlaying
+                            ? Icons.pause_rounded
+                            : Icons.play_arrow_rounded,
+                        color: Colors.white,
+                        size: 28,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        isCurrentSurah && isPlaying
+                            ? 'Pause Recitation'
+                            : isCurrentSurah
+                            ? 'Resume Recitation'
+                            : 'Play Full Surah',
+                        style: AppTextStyles.bodyLarge.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   Widget _buildVersesSection() {
+    // Arabic Only Mode
+    if (!widget.showTranslation) {
+      return _buildArabicOnlyVerses();
+    }
+
+    // With Translation Mode
+    return _buildVersesWithTranslation();
+  }
+
+  Widget _buildArabicOnlyVerses() {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadowLight,
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          // Bismillah (except for Surah At-Tawbah)
+          if (widget.surahDetail.surahNo != 9) ...[
+            Center(
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 16,
+                ),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      AppColors.accent.withOpacity(0.1),
+                      AppColors.primary.withOpacity(0.05),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppColors.primary.withOpacity(0.2)),
+                ),
+                child: Text(
+                  'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
+                  style: AppTextStyles.arabicLarge.copyWith(
+                    fontSize: 26,
+                    color: AppColors.primary,
+                    height: 2.0,
+                  ),
+                  textAlign: TextAlign.center,
+                  textDirection: TextDirection.rtl,
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+          ],
+
+          // Arabic Verses in a flowing text format
+          SelectableText.rich(
+            TextSpan(
+              children: widget.surahDetail.arabic1.asMap().entries.map((entry) {
+                final index = entry.key;
+                final arabicText = entry.value;
+                return TextSpan(
+                  children: [
+                    TextSpan(
+                      text: arabicText,
+                      style: AppTextStyles.arabicLarge.copyWith(
+                        fontSize: 26,
+                        height: 2.2,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    TextSpan(
+                      text: ' ﴿${_toArabicNumber(index + 1)}﴾ ',
+                      style: AppTextStyles.arabicLarge.copyWith(
+                        fontSize: 20,
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                );
+              }).toList(),
+            ),
+            textAlign: TextAlign.right,
+            textDirection: TextDirection.rtl,
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _toArabicNumber(int number) {
+    const arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+    return number
+        .toString()
+        .split('')
+        .map((d) => arabicDigits[int.parse(d)])
+        .join();
+  }
+
+  Widget _buildVersesWithTranslation() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Verses with Translation',
-          style: AppTextStyles.heading2,
+        Row(
+          children: [
+            Icon(Icons.menu_book_rounded, color: AppColors.primary, size: 22),
+            const SizedBox(width: 10),
+            Text('Verses with Translation', style: AppTextStyles.heading3),
+          ],
         ),
 
         const SizedBox(height: 16),
@@ -411,71 +426,116 @@ class _SurahDetailViewState extends State<SurahDetailView> {
           final translation = entry.value;
 
           return Container(
-            margin: const EdgeInsets.only(bottom: 24),
-            padding: const EdgeInsets.all(20),
+            margin: const EdgeInsets.only(bottom: 20),
             decoration: BoxDecoration(
               color: AppColors.surface,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
                   color: AppColors.shadowLight,
                   blurRadius: 6,
-                  offset: const Offset(0, 1),
+                  offset: const Offset(0, 2),
                 ),
               ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Verse Number
+                // Verse Number Header
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 14,
                   ),
-                  child: Text(
-                    'Verse ${index + 1}',
-                    style: AppTextStyles.labelMedium.copyWith(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.w600,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withOpacity(0.05),
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
                     ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [AppColors.primary, AppColors.primaryLight],
+                          ),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Center(
+                          child: Text(
+                            '${index + 1}',
+                            style: AppTextStyles.labelLarge.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        'Verse ${index + 1}',
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
 
-                const SizedBox(height: 16),
+                // Content
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Arabic Text
+                      if (translation.arabicText != null &&
+                          translation.arabicText!.isNotEmpty)
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: AppColors.accent.withOpacity(0.04),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: AppColors.accent.withOpacity(0.15),
+                            ),
+                          ),
+                          child: Text(
+                            translation.arabicText!,
+                            style: AppTextStyles.arabicLarge.copyWith(
+                              fontSize: 24,
+                              height: 2.0,
+                              color: AppColors.textPrimary,
+                            ),
+                            textAlign: TextAlign.right,
+                            textDirection: TextDirection.rtl,
+                          ),
+                        ),
 
-                // Arabic Text
-                if (translation.arabicText != null && translation.arabicText!.isNotEmpty)
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: AppColors.accent.withOpacity(0.05),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: AppColors.accent.withOpacity(0.2),
+                      const SizedBox(height: 16),
+
+                      // Translation
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.surfaceVariant.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          translation.translation,
+                          style: AppTextStyles.bodyLarge.copyWith(
+                            height: 1.7,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      translation.arabicText!,
-                      style: AppTextStyles.arabicLarge.copyWith(
-                        fontSize: 22,
-                        height: 2.0,
-                        color: AppColors.textPrimary,
-                      ),
-                      textAlign: TextAlign.right,
-                      textDirection: TextDirection.rtl,
-                    ),
-                  ),
-
-                const SizedBox(height: 12),
-
-                // Translation
-                Text(
-                  translation.translation,
-                  style: AppTextStyles.bodyLarge.copyWith(
-                    height: 1.6,
+                    ],
                   ),
                 ),
               ],
@@ -484,7 +544,7 @@ class _SurahDetailViewState extends State<SurahDetailView> {
         }),
 
         // Bottom spacing
-        const SizedBox(height: 100),
+        const SizedBox(height: 40),
       ],
     );
   }

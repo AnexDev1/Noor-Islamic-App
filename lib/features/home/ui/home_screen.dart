@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:shimmer/shimmer.dart';
 import 'dart:async';
+import '../../../l10n/app_localizations.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/services/user_service.dart';
@@ -139,6 +140,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final prayerTimesAsync = ref.watch(prayerTimesProvider);
     final todayPrayerStatus = ref.watch(todayPrayerStatusProvider);
     final locationAsync = ref.watch(userLocationProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -168,15 +170,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
                     const SizedBox(height: 24),
 
-                    // Today's Prayer Progress
-                    _buildPrayerProgressCard(todayPrayerStatus),
-
-                    const SizedBox(height: 24),
-
                     // Quick Actions Grid
                     _buildQuickActionsGrid(context),
 
-                    const SizedBox(height: 100), // Bottom spacing
+                    const SizedBox(height: 24), // Bottom spacing reduced
                   ]),
                 ),
               ),
@@ -208,7 +205,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
   Widget _buildLoadingPrayerCard() {
     return Container(
-      height: 200,
+      height: 140,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -220,10 +217,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       child: Shimmer.fromColors(
         baseColor: Colors.white.withValues(alpha: 0.3),
         highlightColor: Colors.white.withValues(alpha: 0.7),
-        child: const Center(
+        child: Center(
           child: Text(
-            'Loading Prayer Times...',
-            style: TextStyle(color: Colors.white, fontSize: 16),
+            AppLocalizations.of(context)!.loading,
+            style: const TextStyle(color: Colors.white, fontSize: 15),
           ),
         ),
       ),
@@ -231,8 +228,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   }
 
   Widget _buildErrorPrayerCard(String error) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
-      height: 200,
+      height: 140,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -245,15 +243,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline, color: Colors.white, size: 48),
-            const SizedBox(height: 16),
+            const Icon(Icons.error_outline, color: Colors.white, size: 44),
+            const SizedBox(height: 10),
             Text(
-              'Error loading prayer times',
+              l10n.error,
               style: AppTextStyles.heading3.copyWith(color: Colors.white),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Text(
                 error,
                 style: const TextStyle(color: Colors.white70, fontSize: 12),
@@ -266,7 +264,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             ElevatedButton(
               onPressed: () =>
                   ref.read(prayerTimesProvider.notifier).refreshPrayerTimes(),
-              child: const Text('Retry'),
+              child: Text(l10n.retry),
             ),
           ],
         ),
@@ -279,8 +277,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     PrayerStatus todayStatus,
     AsyncValue<UserLocation> locationAsync,
   ) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -309,19 +308,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Prayer Times',
+                      l10n.prayerTimes,
                       style: AppTextStyles.heading2.copyWith(
                         color: Colors.white,
                       ),
                     ),
                     locationAsync.when(
-                      loading: () => const Text(
-                        'Loading location...',
-                        style: TextStyle(color: Colors.white70),
+                      loading: () => Text(
+                        l10n.loading,
+                        style: const TextStyle(color: Colors.white70),
                       ),
-                      error: (_, __) => const Text(
-                        'Location unavailable',
-                        style: TextStyle(color: Colors.white70),
+                      error: (_, __) => Text(
+                        l10n.error,
+                        style: const TextStyle(color: Colors.white70),
                       ),
                       data: (location) => Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -355,14 +354,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             ],
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
 
           // Cool Next Prayer Display
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(14),
               border: Border.all(
                 color: Colors.white.withValues(alpha: 0.2),
                 width: 1,
@@ -372,18 +371,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               children: [
                 // Next Prayer Icon
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Icon(
                     Icons.schedule,
                     color: Colors.white,
-                    size: 24,
+                    size: 20,
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 12),
 
                 // Next Prayer Info
                 Expanded(
@@ -394,7 +393,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         'Next Prayer',
                         style: const TextStyle(
                           color: Colors.white70,
-                          fontSize: 12,
+                          fontSize: 11,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
@@ -403,7 +402,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         _nextPrayerName,
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -414,8 +413,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 // Countdown Display
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
+                    horizontal: 12,
+                    vertical: 8,
                   ),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -424,7 +423,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         Colors.white.withValues(alpha: 0.15),
                       ],
                     ),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(10),
                     border: Border.all(
                       color: Colors.white.withValues(alpha: 0.3),
                       width: 1,
@@ -445,7 +444,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         _countdownText,
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 16,
+                          fontSize: 14,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 0.5,
                         ),
@@ -457,7 +456,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             ),
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 12),
 
           // Prayer times grid
           _buildPrayerTimesGrid(prayerTimes, todayStatus),
@@ -470,6 +469,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     PrayerTimes prayerTimes,
     PrayerStatus todayStatus,
   ) {
+    final l10n = AppLocalizations.of(context)!;
     final prayers = [
       {'name': 'Fajr', 'time': prayerTimes.fajr},
       {'name': 'Dhuhr', 'time': prayerTimes.dhuhr},
@@ -483,7 +483,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 5,
-        childAspectRatio: 0.8,
+        // Slightly taller tiles to prevent overflow when icons/borders appear
+        childAspectRatio: 0.85,
       ),
       itemCount: prayers.length,
       itemBuilder: (context, index) {
@@ -491,107 +492,78 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         final isCompleted = todayStatus.dailyPrayers[prayer['name']] ?? false;
 
         return GestureDetector(
-          onTap: () => ref
-              .read(todayPrayerStatusProvider.notifier)
-              .togglePrayer(prayer['name']!),
+          onTap: () async {
+            if (isCompleted) {
+              final confirm = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text(l10n.undoPrayerConfirmationTitle),
+                  content: Text(l10n.undoPrayerConfirmationDesc),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: Text(l10n.cancel),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      child: Text(l10n.undo),
+                    ),
+                  ],
+                ),
+              );
+
+              if (confirm == true) {
+                ref
+                    .read(todayPrayerStatusProvider.notifier)
+                    .togglePrayer(prayer['name']!);
+              }
+            } else {
+              ref
+                  .read(todayPrayerStatusProvider.notifier)
+                  .togglePrayer(prayer['name']!);
+            }
+          },
           child: Container(
-            margin: const EdgeInsets.all(2),
+            // slightly larger margin and consistent thin border to avoid layout jumps
+            margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
             decoration: BoxDecoration(
               color: isCompleted
                   ? Colors.green.withValues(alpha: 0.3)
                   : Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
-              border: isCompleted
-                  ? Border.all(color: Colors.green, width: 2)
-                  : null,
+              border: Border.all(
+                color: isCompleted ? Colors.green : Colors.transparent,
+                width: 1,
+              ),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (isCompleted)
-                  const Icon(Icons.check_circle, color: Colors.green, size: 20),
-                Text(
-                  prayer['name']!,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12,
+                  const Icon(Icons.check_circle, color: Colors.green, size: 16),
+                Flexible(
+                  child: Text(
+                    prayer['name']!,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 11,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 1),
                 Text(
                   prayer['time']!,
-                  style: const TextStyle(color: Colors.white70, fontSize: 10),
+                  style: const TextStyle(color: Colors.white70, fontSize: 9),
                 ),
               ],
             ),
           ),
         );
       },
-    );
-  }
-
-  Widget _buildPrayerProgressCard(PrayerStatus todayStatus) {
-    final completedPrayers = todayStatus.completedPrayers;
-    final progress = completedPrayers / 5.0;
-
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadowLight,
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Image.asset(
-                'assets/today-progress.png',
-                height: 24,
-                color: Colors.black,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text('Today\'s Progress', style: AppTextStyles.heading3),
-              ),
-              Text(
-                '$completedPrayers/5',
-                style: AppTextStyles.heading3.copyWith(
-                  color: AppColors.primary,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          LinearProgressIndicator(
-            value: progress,
-            backgroundColor: AppColors.primary.withValues(alpha: 0.2),
-            valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
-            minHeight: 8,
-          ),
-          const SizedBox(height: 12),
-          Text(
-            completedPrayers == 5
-                ? '🎉 Alhamdulillah! All prayers completed today!'
-                : completedPrayers == 0
-                ? 'Start your day with prayer'
-                : 'Keep going! ${5 - completedPrayers} prayers remaining',
-            style: AppTextStyles.body1.copyWith(
-              color: completedPrayers == 5
-                  ? Colors.green
-                  : AppColors.textSecondary,
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -696,9 +668,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   }
 
   Widget _buildQuickActionsGrid(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final features = [
       {
-        'title': 'Quran',
+        'title': l10n.quran,
         'icon': 'assets/quran.png',
         'onTap': () => Navigator.push(
           context,
@@ -706,7 +679,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         ),
       },
       {
-        'title': 'Hadith',
+        'title': l10n.hadith,
         'icon': Icons.format_quote_outlined,
         'onTap': () => Navigator.push(
           context,
@@ -714,7 +687,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         ),
       },
       {
-        'title': 'Azkhar',
+        'title': l10n.azkhar,
         'icon': 'assets/azkhar.png',
         'onTap': () => Navigator.push(
           context,
@@ -722,7 +695,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         ),
       },
       {
-        'title': 'Tasbih',
+        'title': l10n.tasbih,
         'icon': 'assets/tasbih.png',
         'onTap': () => Navigator.push(
           context,
@@ -734,10 +707,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Explore Noor', style: AppTextStyles.heading1),
+        Text(l10n.exploreNoor, style: AppTextStyles.heading1),
         const SizedBox(height: 8),
         Text(
-          'Discover all the features of the app',
+          l10n.discoverFeatures,
           style: AppTextStyles.bodyMedium.copyWith(
             color: AppColors.textSecondary,
           ),

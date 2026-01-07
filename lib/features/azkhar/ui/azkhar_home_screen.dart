@@ -4,6 +4,7 @@ import '../data/azkhar_api.dart';
 import '../domain/azkhar_category.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/utils/helpers.dart';
 import 'widgets/azkhar_category_list.dart';
 
 class AzkharHomeScreen extends StatefulWidget {
@@ -13,7 +14,8 @@ class AzkharHomeScreen extends StatefulWidget {
   State<AzkharHomeScreen> createState() => _AzkharHomeScreenState();
 }
 
-class _AzkharHomeScreenState extends State<AzkharHomeScreen> with TickerProviderStateMixin {
+class _AzkharHomeScreenState extends State<AzkharHomeScreen>
+    with TickerProviderStateMixin {
   late Future<List<AzkharCategory>> _categoriesFuture;
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
@@ -30,13 +32,9 @@ class _AzkharHomeScreenState extends State<AzkharHomeScreen> with TickerProvider
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
+    );
 
     _fadeController.forward();
   }
@@ -89,12 +87,12 @@ class _AzkharHomeScreenState extends State<AzkharHomeScreen> with TickerProvider
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          'Azkar Categories',
-                          style: AppTextStyles.heading1,
-                        ),
+                        Text('Azkar Categories', style: AppTextStyles.heading1),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.primary.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(20),
@@ -123,7 +121,11 @@ class _AzkharHomeScreenState extends State<AzkharHomeScreen> with TickerProvider
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return SliverToBoxAdapter(child: _buildShimmerList());
                 } else if (snapshot.hasError) {
-                  return SliverToBoxAdapter(child: _buildErrorWidget(snapshot.error.toString()));
+                  return SliverToBoxAdapter(
+                    child: _buildErrorWidget(
+                      AppHelpers.sanitizeError(snapshot.error),
+                    ),
+                  );
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return const SliverToBoxAdapter(
                     child: Center(child: Text('No Azkar categories found')),
@@ -133,17 +135,13 @@ class _AzkharHomeScreenState extends State<AzkharHomeScreen> with TickerProvider
                 final filteredCategories = _filterCategories(snapshot.data!);
                 return SliverPadding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  sliver: AzkharCategoryList(
-                    categories: filteredCategories,
-                  ),
+                  sliver: AzkharCategoryList(categories: filteredCategories),
                 );
               },
             ),
 
             // Bottom padding
-            const SliverToBoxAdapter(
-              child: SizedBox(height: 100),
-            ),
+            const SliverToBoxAdapter(child: SizedBox(height: 100)),
           ],
         ),
       ),
@@ -163,10 +161,7 @@ class _AzkharHomeScreenState extends State<AzkharHomeScreen> with TickerProvider
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                AppColors.primary,
-                AppColors.primaryLight,
-              ],
+              colors: [AppColors.primary, AppColors.primaryLight],
             ),
             borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(32),
@@ -263,10 +258,7 @@ class _AzkharHomeScreenState extends State<AzkharHomeScreen> with TickerProvider
           hintStyle: AppTextStyles.bodyMedium.copyWith(
             color: AppColors.textTertiary,
           ),
-          prefixIcon: Icon(
-            Icons.search,
-            color: AppColors.textSecondary,
-          ),
+          prefixIcon: Icon(Icons.search, color: AppColors.textSecondary),
           suffixIcon: _searchQuery.isNotEmpty
               ? IconButton(
                   onPressed: () {
@@ -275,14 +267,14 @@ class _AzkharHomeScreenState extends State<AzkharHomeScreen> with TickerProvider
                       _searchQuery = '';
                     });
                   },
-                  icon: Icon(
-                    Icons.clear,
-                    color: AppColors.textSecondary,
-                  ),
+                  icon: Icon(Icons.clear, color: AppColors.textSecondary),
                 )
               : null,
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 16,
+          ),
         ),
         style: AppTextStyles.bodyMedium,
       ),
@@ -316,9 +308,7 @@ class _AzkharHomeScreenState extends State<AzkharHomeScreen> with TickerProvider
                     ],
                   ),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: AppColors.primary.withOpacity(0.2),
-                  ),
+                  border: Border.all(color: AppColors.primary.withOpacity(0.2)),
                 ),
                 child: Column(
                   children: [
@@ -357,9 +347,7 @@ class _AzkharHomeScreenState extends State<AzkharHomeScreen> with TickerProvider
                     ],
                   ),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: AppColors.accent.withOpacity(0.2),
-                  ),
+                  border: Border.all(color: AppColors.accent.withOpacity(0.2)),
                 ),
                 child: Column(
                   children: [
@@ -426,23 +414,15 @@ class _AzkharHomeScreenState extends State<AzkharHomeScreen> with TickerProvider
         decoration: BoxDecoration(
           color: AppColors.error.withOpacity(0.1),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: AppColors.error.withOpacity(0.3),
-          ),
+          border: Border.all(color: AppColors.error.withOpacity(0.3)),
         ),
         child: Column(
           children: [
-            Icon(
-              Icons.error_outline,
-              color: AppColors.error,
-              size: 48,
-            ),
+            Icon(Icons.error_outline, color: AppColors.error, size: 48),
             const SizedBox(height: 16),
             Text(
               'Failed to load Azkar categories',
-              style: AppTextStyles.heading4.copyWith(
-                color: AppColors.error,
-              ),
+              style: AppTextStyles.heading4.copyWith(color: AppColors.error),
             ),
             const SizedBox(height: 8),
             Text(
