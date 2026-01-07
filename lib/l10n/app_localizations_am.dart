@@ -497,4 +497,10 @@ class AppLocalizationsAm extends AppLocalizations {
   @override
   String get unableToFetchQibla =>
       'የቂብላን አቅጣጫ ማግኘት አልተቻለም። እባክዎ የበመረብ ግንኙነትዎን ያረጋግጡ።';
+
+  @override
+  String get islamicVideos => 'እስላማዊ ቪዲዮዎች';
+
+  @override
+  String get curatedIslamicContent => 'የተራገፉ እስላማዊ ይዘቶች እና ማስታወሻዎች';
 }

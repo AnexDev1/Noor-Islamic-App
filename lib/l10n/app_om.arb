@@ -189,5 +189,8 @@
   "gettingLocation": "Iddoo keessan argachuu fi kallattii gara Ka'abaa shallaguu...",
   "directionToKaaba": "Kallattii gara Ka'abaa, Makkaa",
   "unableToFindQibla": "Qiblaa argachuu hin dandeenye",
-  "unableToFetchQibla": "Kallattii Qiblaa argachuu hin dandeenye. Maaloo walqunnamtii keessan mirkaneeffadhaa."
+  "unableToFetchQibla": "Kallattii Qiblaa argachuu hin dandeenye. Maaloo walqunnamtii keessan mirkaneeffadhaa.",
+  
+  "islamicVideos": "Viidiyoo Islaamaa",
+  "curatedIslamicContent": "Qabeenya Islaamaa fi yaadachiisa filataman"
 }

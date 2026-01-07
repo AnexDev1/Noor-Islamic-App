@@ -1059,6 +1059,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unable to fetch Qibla direction. Please check your connection.'**
   String get unableToFetchQibla;
+
+  /// No description provided for @islamicVideos.
+  ///
+  /// In en, this message translates to:
+  /// **'Islamic Videos'**
+  String get islamicVideos;
+
+  /// No description provided for @curatedIslamicContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Curated Islamic content & reminders'**
+  String get curatedIslamicContent;
 }
 
 class _AppLocalizationsDelegate

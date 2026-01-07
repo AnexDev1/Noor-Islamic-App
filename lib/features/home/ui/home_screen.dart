@@ -966,7 +966,7 @@ class _IslamicVideosCarouselState extends State<_IslamicVideosCarousel> {
                               ),
                               const SizedBox(width: 6),
                               Text(
-                                'Islamic Videos',
+                                AppLocalizations.of(context)!.islamicVideos,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 16, // Smaller font
@@ -978,7 +978,7 @@ class _IslamicVideosCarouselState extends State<_IslamicVideosCarousel> {
                           ),
                           const SizedBox(height: 2), // Reduced spacing
                           Text(
-                            'Curated Islamic content & reminders',
+                            AppLocalizations.of(context)!.curatedIslamicContent,
                             style: TextStyle(
                               color: Colors.white.withOpacity(0.8),
                               fontSize: 11, // Smaller font

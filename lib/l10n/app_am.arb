@@ -189,5 +189,8 @@
   "gettingLocation": "ቦታዎን በማግኘት እና ወደ ካባ፣ መካ አቅጣጫን በማስላት ላይ...",
   "directionToKaaba": "ወደ ካባ፣ መካ አቅጣጫ",
   "unableToFindQibla": "ቂብላን ማግኘት አልተቻለም",
-  "unableToFetchQibla": "የቂብላን አቅጣጫ ማግኘት አልተቻለም። እባክዎ የበመረብ ግንኙነትዎን ያረጋግጡ።"
+  "unableToFetchQibla": "የቂብላን አቅጣጫ ማግኘት አልተቻለም። እባክዎ የበመረብ ግንኙነትዎን ያረጋግጡ።",
+  
+  "islamicVideos": "እስላማዊ ቪዲዮዎች",
+  "curatedIslamicContent": "የተራገፉ እስላማዊ ይዘቶች እና ማስታወሻዎች"
 }
