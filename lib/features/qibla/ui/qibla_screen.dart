@@ -3,6 +3,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'dart:async';
 import 'dart:math' as math;
+import '../../../l10n/app_localizations.dart';
 import '../data/qibla_api.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -14,7 +15,8 @@ class QiblaScreen extends StatefulWidget {
   State<QiblaScreen> createState() => _QiblaScreenState();
 }
 
-class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin {
+class _QiblaScreenState extends State<QiblaScreen>
+    with TickerProviderStateMixin {
   double? _qiblaDirection;
   double? _heading;
   bool _loading = true;
@@ -53,29 +55,17 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
+    );
 
-    _pulseAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.2,
-    ).animate(CurvedAnimation(
-      parent: _pulseController,
-      curve: Curves.easeInOut,
-    ));
+    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.2).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
 
-    _rotationAnimation = Tween<double>(
-      begin: 0.0,
-      end: 2 * math.pi,
-    ).animate(CurvedAnimation(
-      parent: _rotationController,
-      curve: Curves.linear,
-    ));
+    _rotationAnimation = Tween<double>(begin: 0.0, end: 2 * math.pi).animate(
+      CurvedAnimation(parent: _rotationController, curve: Curves.linear),
+    );
 
     _fadeController.forward();
     _pulseController.repeat(reverse: true);
@@ -159,10 +149,12 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
       }
-      if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           setState(() {
-            _error = 'Location permission required for accurate Qibla direction';
+            _error = l10n.locationPermissionDesc;
             _loading = false;
           });
         }
@@ -170,8 +162,14 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
       }
 
       final position = await Geolocator.getCurrentPosition(
-          locationSettings: const LocationSettings(accuracy: LocationAccuracy.high));
-      final direction = await QiblaApi.getQiblaDirection(position.latitude, position.longitude);
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
+      );
+      final direction = await QiblaApi.getQiblaDirection(
+        position.latitude,
+        position.longitude,
+      );
 
       if (mounted) {
         setState(() {
@@ -181,8 +179,9 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         setState(() {
-          _error = 'Unable to fetch Qibla direction. Please check your connection.';
+          _error = l10n.unableToFetchQibla;
           _loading = false;
         });
       }
@@ -191,6 +190,7 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.background,
       body: FadeTransition(
@@ -208,8 +208,8 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
                 child: _loading
                     ? _buildLoadingState()
                     : _error != null
-                        ? _buildErrorState()
-                        : _buildCompassContent(),
+                    ? _buildErrorState()
+                    : _buildCompassContent(),
               ),
             ),
           ],
@@ -219,6 +219,7 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
   }
 
   Widget _buildModernAppBar() {
+    final l10n = AppLocalizations.of(context)!;
     return SliverAppBar(
       expandedHeight: 120,
       floating: false,
@@ -235,10 +236,7 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
               color: Colors.white.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(
-              Icons.refresh,
-              color: Colors.white,
-            ),
+            child: const Icon(Icons.refresh, color: Colors.white),
           ),
         ),
         const SizedBox(width: 16),
@@ -249,10 +247,7 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                AppColors.primaryLight,
-                AppColors.primaryDark,
-              ],
+              colors: [AppColors.primaryLight, AppColors.primaryDark],
             ),
             borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(32),
@@ -286,7 +281,7 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Qibla Compass',
+                              l10n.qibla,
                               style: AppTextStyles.displaySmall.copyWith(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,
@@ -294,7 +289,7 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Direction to Kaaba, Mecca',
+                              l10n.directionToKaaba,
                               style: AppTextStyles.bodyMedium.copyWith(
                                 color: Colors.white.withValues(alpha: 0.9),
                               ),
@@ -314,6 +309,7 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
   }
 
   Widget _buildLoadingState() {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -333,14 +329,12 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
         ),
         const SizedBox(height: 24),
         Text(
-          'Finding Qibla Direction',
-          style: AppTextStyles.heading2.copyWith(
-            color: AppColors.primary,
-          ),
+          l10n.findingQibla,
+          style: AppTextStyles.heading2.copyWith(color: AppColors.primary),
         ),
         const SizedBox(height: 8),
         Text(
-          'Getting your location and calculating the direction to Kaaba...',
+          l10n.gettingLocation,
           textAlign: TextAlign.center,
           style: AppTextStyles.bodyMedium.copyWith(
             color: AppColors.textSecondary,
@@ -351,6 +345,7 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
   }
 
   Widget _buildErrorState() {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -360,9 +355,7 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
           decoration: BoxDecoration(
             color: AppColors.error.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: AppColors.error.withValues(alpha: 0.3),
-            ),
+            border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
           ),
           child: Column(
             children: [
@@ -380,10 +373,8 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
               ),
               const SizedBox(height: 20),
               Text(
-                'Unable to Find Qibla',
-                style: AppTextStyles.heading2.copyWith(
-                  color: AppColors.error,
-                ),
+                l10n.unableToFindQibla,
+                style: AppTextStyles.heading2.copyWith(color: AppColors.error),
               ),
               const SizedBox(height: 12),
               Text(
@@ -397,11 +388,14 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
               ElevatedButton.icon(
                 onPressed: _initQibla,
                 icon: const Icon(Icons.refresh),
-                label: const Text('Try Again'),
+                label: Text(l10n.retry),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 16,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -423,11 +417,7 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
         const SizedBox(height: 32),
 
         // Main Compass
-        Expanded(
-          child: Center(
-            child: _buildModernCompass(),
-          ),
-        ),
+        Expanded(child: Center(child: _buildModernCompass())),
 
         const SizedBox(height: 32),
 
@@ -444,8 +434,14 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: _isAligned
-              ? [AppColors.success.withValues(alpha: 0.1), AppColors.success.withValues(alpha: 0.05)]
-              : [AppColors.primary.withValues(alpha: 0.1), AppColors.primary.withValues(alpha: 0.05)],
+              ? [
+                  AppColors.success.withValues(alpha: 0.1),
+                  AppColors.success.withValues(alpha: 0.05),
+                ]
+              : [
+                  AppColors.primary.withValues(alpha: 0.1),
+                  AppColors.primary.withValues(alpha: 0.05),
+                ],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
@@ -459,7 +455,8 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: (_isAligned ? AppColors.success : AppColors.primary).withValues(alpha: 0.1),
+              color: (_isAligned ? AppColors.success : AppColors.primary)
+                  .withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
@@ -530,7 +527,9 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
                             margin: const EdgeInsets.only(top: 8),
                             width: 2,
                             height: index % 3 == 0 ? 20 : 12,
-                            color: AppColors.textTertiary.withValues(alpha: 0.6),
+                            color: AppColors.textTertiary.withValues(
+                              alpha: 0.6,
+                            ),
                           ),
                         ),
                       );
@@ -553,7 +552,8 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
                     ),
                   ],
                 ),
-              ),);
+              ),
+            );
           },
         ),
 
@@ -566,10 +566,7 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
             gradient: RadialGradient(
               center: Alignment.center,
               radius: 1.0,
-              colors: [
-                AppColors.surface,
-                AppColors.surfaceVariant,
-              ],
+              colors: [AppColors.surface, AppColors.surfaceVariant],
             ),
             boxShadow: [
               BoxShadow(
@@ -603,7 +600,8 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
           animation: _pulseAnimation,
           builder: (context, child) {
             return Transform.rotate(
-              angle: (qiblaAngle * math.pi / 180) + math.pi, // Rotated 180 degrees
+              angle:
+                  (qiblaAngle * math.pi / 180) + math.pi, // Rotated 180 degrees
               child: Transform.scale(
                 scale: _isAligned ? _pulseAnimation.value : 1.0,
                 child: SizedBox(
@@ -628,7 +626,8 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
             color: _isAligned ? AppColors.success : AppColors.accent,
             boxShadow: [
               BoxShadow(
-                color: (_isAligned ? AppColors.success : AppColors.accent).withValues(alpha: 0.5),
+                color: (_isAligned ? AppColors.success : AppColors.accent)
+                    .withValues(alpha: 0.5),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -655,10 +654,7 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
             child: SizedBox(
               width: 32,
               height: 32,
-              child: Image.asset(
-                'assets/macca.png',
-                fit: BoxFit.contain,
-              ),
+              child: Image.asset('assets/macca.png', fit: BoxFit.contain),
             ),
           ),
         ),
@@ -685,11 +681,7 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
             ),
             child: Column(
               children: [
-                Icon(
-                  Icons.navigation,
-                  color: AppColors.qiblaCard,
-                  size: 24,
-                ),
+                Icon(Icons.navigation, color: AppColors.qiblaCard, size: 24),
                 const SizedBox(height: 8),
                 Text(
                   'Qibla Direction',
@@ -725,11 +717,7 @@ class _QiblaScreenState extends State<QiblaScreen> with TickerProviderStateMixin
             ),
             child: Column(
               children: [
-                Icon(
-                  Icons.phone_android,
-                  color: AppColors.accent,
-                  size: 24,
-                ),
+                Icon(Icons.phone_android, color: AppColors.accent, size: 24),
                 const SizedBox(height: 8),
                 Text(
                   'Device Heading',

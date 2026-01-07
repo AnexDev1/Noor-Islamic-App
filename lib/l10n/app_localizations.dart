@@ -729,6 +729,336 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No Surahs found'**
   String get noSurahsFound;
+
+  /// No description provided for @moreTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get moreTitle;
+
+  /// No description provided for @progressAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress & Analytics'**
+  String get progressAnalytics;
+
+  /// No description provided for @islamicCalendarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Islamic Calendar'**
+  String get islamicCalendarTitle;
+
+  /// No description provided for @islamicCalendarSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hijri dates and Islamic events'**
+  String get islamicCalendarSubtitle;
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'App Settings'**
+  String get settingsTitle;
+
+  /// No description provided for @settingsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications, theme, language'**
+  String get settingsSubtitle;
+
+  /// No description provided for @locationSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Location Settings'**
+  String get locationSettingsTitle;
+
+  /// No description provided for @locationSettingsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update prayer location'**
+  String get locationSettingsSubtitle;
+
+  /// No description provided for @backupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup & Sync'**
+  String get backupTitle;
+
+  /// No description provided for @backupSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Save your progress'**
+  String get backupSubtitle;
+
+  /// No description provided for @supportCommunity.
+  ///
+  /// In en, this message translates to:
+  /// **'Support & Community'**
+  String get supportCommunity;
+
+  /// No description provided for @rateAppTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate Noor'**
+  String get rateAppTitle;
+
+  /// No description provided for @rateAppSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Love the app? Rate us!'**
+  String get rateAppSubtitle;
+
+  /// No description provided for @shareAppTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share with Friends'**
+  String get shareAppTitle;
+
+  /// No description provided for @shareAppSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Spread the word'**
+  String get shareAppSubtitle;
+
+  /// No description provided for @feedbackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback'**
+  String get feedbackTitle;
+
+  /// No description provided for @feedbackSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Help us improve'**
+  String get feedbackSubtitle;
+
+  /// No description provided for @aboutAppTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'About Noor'**
+  String get aboutAppTitle;
+
+  /// No description provided for @aboutAppSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'App info, privacy & terms'**
+  String get aboutAppSubtitle;
+
+  /// No description provided for @qadahTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Qadah Tracker'**
+  String get qadahTitle;
+
+  /// No description provided for @qadahSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Track and make up missed fasts'**
+  String get qadahSubtitle;
+
+  /// No description provided for @totalMissed.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Missed'**
+  String get totalMissed;
+
+  /// No description provided for @totalPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Paid'**
+  String get totalPaid;
+
+  /// No description provided for @remainingDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining Days'**
+  String get remainingDays;
+
+  /// No description provided for @fastingReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Fasting Reminders'**
+  String get fastingReminders;
+
+  /// No description provided for @remindMeOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind me on'**
+  String get remindMeOn;
+
+  /// No description provided for @reminderTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder Time'**
+  String get reminderTime;
+
+  /// No description provided for @incrementPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark Fast as Paid'**
+  String get incrementPaid;
+
+  /// No description provided for @setupQadah.
+  ///
+  /// In en, this message translates to:
+  /// **'Setup Qadah'**
+  String get setupQadah;
+
+  /// No description provided for @howManyMissed.
+  ///
+  /// In en, this message translates to:
+  /// **'How many days did you miss?'**
+  String get howManyMissed;
+
+  /// No description provided for @timeLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Time Left'**
+  String get timeLeft;
+
+  /// No description provided for @usingDefaultTimes.
+  ///
+  /// In en, this message translates to:
+  /// **'Using default times (offline)'**
+  String get usingDefaultTimes;
+
+  /// No description provided for @qibla.
+  ///
+  /// In en, this message translates to:
+  /// **'Qibla'**
+  String get qibla;
+
+  /// No description provided for @alignPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Align your phone with the Qibla'**
+  String get alignPhone;
+
+  /// No description provided for @searchSurah.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Surah...'**
+  String get searchSurah;
+
+  /// No description provided for @selectReciter.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Reciter'**
+  String get selectReciter;
+
+  /// No description provided for @translation.
+  ///
+  /// In en, this message translates to:
+  /// **'Translation'**
+  String get translation;
+
+  /// No description provided for @showTranslation.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Translation'**
+  String get showTranslation;
+
+  /// No description provided for @azkarCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Azkar Categories'**
+  String get azkarCategories;
+
+  /// No description provided for @dailyRemembrance.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Remembrance'**
+  String get dailyRemembrance;
+
+  /// No description provided for @noAzkarFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No Azkar categories found'**
+  String get noAzkarFound;
+
+  /// No description provided for @searchAzkar.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Azkar...'**
+  String get searchAzkar;
+
+  /// No description provided for @hadithCollections.
+  ///
+  /// In en, this message translates to:
+  /// **'Hadith Collections'**
+  String get hadithCollections;
+
+  /// No description provided for @authenticBooks.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentic Books'**
+  String get authenticBooks;
+
+  /// No description provided for @noHadithFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No Hadith books found'**
+  String get noHadithFound;
+
+  /// No description provided for @searchHadith.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Hadith...'**
+  String get searchHadith;
+
+  /// No description provided for @readingSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading Settings'**
+  String get readingSettings;
+
+  /// No description provided for @customizeQuranExperience.
+  ///
+  /// In en, this message translates to:
+  /// **'Customize your Quran reading experience'**
+  String get customizeQuranExperience;
+
+  /// No description provided for @showTranslationDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Display translation alongside Arabic text'**
+  String get showTranslationDesc;
+
+  /// No description provided for @tipFocus.
+  ///
+  /// In en, this message translates to:
+  /// **'Tip: Turn off translation for a focused Arabic reading experience'**
+  String get tipFocus;
+
+  /// No description provided for @findingQibla.
+  ///
+  /// In en, this message translates to:
+  /// **'Finding Qibla Direction'**
+  String get findingQibla;
+
+  /// No description provided for @gettingLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting your location and calculating the direction to Kaaba...'**
+  String get gettingLocation;
+
+  /// No description provided for @directionToKaaba.
+  ///
+  /// In en, this message translates to:
+  /// **'Direction to Kaaba, Mecca'**
+  String get directionToKaaba;
+
+  /// No description provided for @unableToFindQibla.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to Find Qibla'**
+  String get unableToFindQibla;
+
+  /// No description provided for @unableToFetchQibla.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to fetch Qibla direction. Please check your connection.'**
+  String get unableToFetchQibla;
 }
 
 class _AppLocalizationsDelegate

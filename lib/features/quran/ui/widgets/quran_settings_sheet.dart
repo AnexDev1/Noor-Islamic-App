@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class QuranSettingsSheet extends StatelessWidget {
   final String selectedTranslationKey;
@@ -54,6 +55,7 @@ class QuranSettingsSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
@@ -107,10 +109,10 @@ class QuranSettingsSheet extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Reading Settings', style: AppTextStyles.heading3),
+                      Text(l10n.readingSettings, style: AppTextStyles.heading3),
                       const SizedBox(height: 2),
                       Text(
-                        'Customize your Quran reading experience',
+                        l10n.customizeQuranExperience,
                         style: AppTextStyles.bodySmall.copyWith(
                           color: AppColors.textSecondary,
                         ),
@@ -141,8 +143,8 @@ class QuranSettingsSheet extends StatelessWidget {
                 _buildToggleSetting(
                   context: context,
                   icon: Icons.translate_rounded,
-                  title: 'Show Translation',
-                  subtitle: 'Display translation alongside Arabic text',
+                  title: l10n.showTranslation,
+                  subtitle: l10n.showTranslationDesc,
                   value: showTranslation,
                   onChanged: (value) {
                     onShowTranslationChanged(value);
@@ -157,7 +159,7 @@ class QuranSettingsSheet extends StatelessWidget {
                   _buildDropdownSetting(
                     context: context,
                     icon: Icons.language_rounded,
-                    title: 'Translation Language',
+                    title: l10n.translation,
                     value: selectedTranslationKey,
                     options: translationOptions,
                     onChanged: (value) {
@@ -173,7 +175,7 @@ class QuranSettingsSheet extends StatelessWidget {
                   _buildDropdownSetting(
                     context: context,
                     icon: Icons.record_voice_over_rounded,
-                    title: 'Reciter',
+                    title: l10n.reciter,
                     value: selectedReciterId,
                     options: reciters,
                     onChanged: (value) {
@@ -204,7 +206,7 @@ class QuranSettingsSheet extends StatelessWidget {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          'Tip: Turn off translation for a focused Arabic reading experience',
+                          l10n.tipFocus,
                           style: AppTextStyles.bodySmall.copyWith(
                             color: AppColors.primary,
                             height: 1.4,

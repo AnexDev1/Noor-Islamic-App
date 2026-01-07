@@ -334,4 +334,173 @@ class AppLocalizationsOm extends AppLocalizations {
 
   @override
   String get noSurahsFound => 'No Surahs found';
+
+  @override
+  String get moreTitle => 'More';
+
+  @override
+  String get progressAnalytics => 'Progress & Analytics';
+
+  @override
+  String get islamicCalendarTitle => 'Islamic Calendar';
+
+  @override
+  String get islamicCalendarSubtitle => 'Hijri dates and Islamic events';
+
+  @override
+  String get settingsTitle => 'App Settings';
+
+  @override
+  String get settingsSubtitle => 'Notifications, theme, language';
+
+  @override
+  String get locationSettingsTitle => 'Location Settings';
+
+  @override
+  String get locationSettingsSubtitle => 'Update prayer location';
+
+  @override
+  String get backupTitle => 'Backup & Sync';
+
+  @override
+  String get backupSubtitle => 'Save your progress';
+
+  @override
+  String get supportCommunity => 'Support & Community';
+
+  @override
+  String get rateAppTitle => 'Rate Noor';
+
+  @override
+  String get rateAppSubtitle => 'Love the app? Rate us!';
+
+  @override
+  String get shareAppTitle => 'Share with Friends';
+
+  @override
+  String get shareAppSubtitle => 'Spread the word';
+
+  @override
+  String get feedbackTitle => 'Feedback';
+
+  @override
+  String get feedbackSubtitle => 'Help us improve';
+
+  @override
+  String get aboutAppTitle => 'About Noor';
+
+  @override
+  String get aboutAppSubtitle => 'App info, privacy & terms';
+
+  @override
+  String get qadahTitle => 'Qadah Tracker';
+
+  @override
+  String get qadahSubtitle => 'Track and make up missed fasts';
+
+  @override
+  String get totalMissed => 'Total Missed';
+
+  @override
+  String get totalPaid => 'Total Paid';
+
+  @override
+  String get remainingDays => 'Remaining Days';
+
+  @override
+  String get fastingReminders => 'Fasting Reminders';
+
+  @override
+  String get remindMeOn => 'Remind me on';
+
+  @override
+  String get reminderTime => 'Reminder Time';
+
+  @override
+  String get incrementPaid => 'Mark Fast as Paid';
+
+  @override
+  String get setupQadah => 'Setup Qadah';
+
+  @override
+  String get howManyMissed => 'How many days did you miss?';
+
+  @override
+  String get timeLeft => 'Yeroo Hafte';
+
+  @override
+  String get usingDefaultTimes => 'Yeroo idilee fayyadamuun (tuunetta malee)';
+
+  @override
+  String get qibla => 'Qiblaa';
+
+  @override
+  String get alignPhone => 'Bilbila kee Qiblaa wajjin qixxeessi';
+
+  @override
+  String get searchSurah => 'Suuraa Barbaadi...';
+
+  @override
+  String get selectReciter => 'Qara\'aa Filadhu';
+
+  @override
+  String get translation => 'Hiikkaa';
+
+  @override
+  String get showTranslation => 'Hiikkaa Agarsiisi';
+
+  @override
+  String get azkarCategories => 'Gosoota Azkaaraa';
+
+  @override
+  String get dailyRemembrance => 'Azkaara Guyyaa';
+
+  @override
+  String get noAzkarFound => 'Azkaaronni homaayyuu hin argamne';
+
+  @override
+  String get searchAzkar => 'Azkaara Barbaadi...';
+
+  @override
+  String get hadithCollections => 'Walitti Qabama Hadiisaa';
+
+  @override
+  String get authenticBooks => 'Kitaabota Sirrii';
+
+  @override
+  String get noHadithFound => 'Kitaabonni Hadiisaa hin argamne';
+
+  @override
+  String get searchHadith => 'Hadiisa barbaadi...';
+
+  @override
+  String get readingSettings => 'Qindaa\'ina Dubbisaa';
+
+  @override
+  String get customizeQuranExperience =>
+      'Muuxannoo dubbisa Qur\'aana keessan haala barbaaddaniin qopheessaa';
+
+  @override
+  String get showTranslationDesc =>
+      'Hiika barreeffama Arabiffaa cinaatti agarsiisi';
+
+  @override
+  String get tipFocus => 'Gorsa: Dubbisa Arabiffaa qofaaf hiika dhaamsaa';
+
+  @override
+  String get findingQibla => 'Kallattii Qiblaa barbaadaa jira';
+
+  @override
+  String get gettingLocation =>
+      'Iddoo keessan argachuu fi kallattii gara Ka\'abaa shallaguu...';
+
+  @override
+  String get directionToKaaba => 'Kallattii gara Ka\'abaa, Makkaa';
+
+  @override
+  String get unableToFindQibla => 'Qiblaa argachuu hin dandeenye';
+
+  @override
+  String get unableToFetchQibla =>
+      'Kallattii Qiblaa argachuu hin dandeenye. Maaloo walqunnamtii keessan mirkaneeffadhaa.';
 }

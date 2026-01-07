@@ -332,4 +332,173 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noSurahsFound => 'No Surahs found';
+
+  @override
+  String get moreTitle => 'More';
+
+  @override
+  String get progressAnalytics => 'Progress & Analytics';
+
+  @override
+  String get islamicCalendarTitle => 'Islamic Calendar';
+
+  @override
+  String get islamicCalendarSubtitle => 'Hijri dates and Islamic events';
+
+  @override
+  String get settingsTitle => 'App Settings';
+
+  @override
+  String get settingsSubtitle => 'Notifications, theme, language';
+
+  @override
+  String get locationSettingsTitle => 'Location Settings';
+
+  @override
+  String get locationSettingsSubtitle => 'Update prayer location';
+
+  @override
+  String get backupTitle => 'Backup & Sync';
+
+  @override
+  String get backupSubtitle => 'Save your progress';
+
+  @override
+  String get supportCommunity => 'Support & Community';
+
+  @override
+  String get rateAppTitle => 'Rate Noor';
+
+  @override
+  String get rateAppSubtitle => 'Love the app? Rate us!';
+
+  @override
+  String get shareAppTitle => 'Share with Friends';
+
+  @override
+  String get shareAppSubtitle => 'Spread the word';
+
+  @override
+  String get feedbackTitle => 'Feedback';
+
+  @override
+  String get feedbackSubtitle => 'Help us improve';
+
+  @override
+  String get aboutAppTitle => 'About Noor';
+
+  @override
+  String get aboutAppSubtitle => 'App info, privacy & terms';
+
+  @override
+  String get qadahTitle => 'Qadah Tracker';
+
+  @override
+  String get qadahSubtitle => 'Track and make up missed fasts';
+
+  @override
+  String get totalMissed => 'Total Missed';
+
+  @override
+  String get totalPaid => 'Total Paid';
+
+  @override
+  String get remainingDays => 'Remaining Days';
+
+  @override
+  String get fastingReminders => 'Fasting Reminders';
+
+  @override
+  String get remindMeOn => 'Remind me on';
+
+  @override
+  String get reminderTime => 'Reminder Time';
+
+  @override
+  String get incrementPaid => 'Mark Fast as Paid';
+
+  @override
+  String get setupQadah => 'Setup Qadah';
+
+  @override
+  String get howManyMissed => 'How many days did you miss?';
+
+  @override
+  String get timeLeft => 'Time Left';
+
+  @override
+  String get usingDefaultTimes => 'Using default times (offline)';
+
+  @override
+  String get qibla => 'Qibla';
+
+  @override
+  String get alignPhone => 'Align your phone with the Qibla';
+
+  @override
+  String get searchSurah => 'Search Surah...';
+
+  @override
+  String get selectReciter => 'Select Reciter';
+
+  @override
+  String get translation => 'Translation';
+
+  @override
+  String get showTranslation => 'Show Translation';
+
+  @override
+  String get azkarCategories => 'Azkar Categories';
+
+  @override
+  String get dailyRemembrance => 'Daily Remembrance';
+
+  @override
+  String get noAzkarFound => 'No Azkar categories found';
+
+  @override
+  String get searchAzkar => 'Search Azkar...';
+
+  @override
+  String get hadithCollections => 'Hadith Collections';
+
+  @override
+  String get authenticBooks => 'Authentic Books';
+
+  @override
+  String get noHadithFound => 'No Hadith books found';
+
+  @override
+  String get searchHadith => 'Search Hadith...';
+
+  @override
+  String get readingSettings => 'Reading Settings';
+
+  @override
+  String get customizeQuranExperience =>
+      'Customize your Quran reading experience';
+
+  @override
+  String get showTranslationDesc => 'Display translation alongside Arabic text';
+
+  @override
+  String get tipFocus =>
+      'Tip: Turn off translation for a focused Arabic reading experience';
+
+  @override
+  String get findingQibla => 'Finding Qibla Direction';
+
+  @override
+  String get gettingLocation =>
+      'Getting your location and calculating the direction to Kaaba...';
+
+  @override
+  String get directionToKaaba => 'Direction to Kaaba, Mecca';
+
+  @override
+  String get unableToFindQibla => 'Unable to Find Qibla';
+
+  @override
+  String get unableToFetchQibla =>
+      'Unable to fetch Qibla direction. Please check your connection.';
 }

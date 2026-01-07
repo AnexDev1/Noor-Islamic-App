@@ -331,4 +331,170 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get noSurahsFound => 'No Surahs found';
+
+  @override
+  String get moreTitle => 'More';
+
+  @override
+  String get progressAnalytics => 'Progress & Analytics';
+
+  @override
+  String get islamicCalendarTitle => 'Islamic Calendar';
+
+  @override
+  String get islamicCalendarSubtitle => 'Hijri dates and Islamic events';
+
+  @override
+  String get settingsTitle => 'App Settings';
+
+  @override
+  String get settingsSubtitle => 'Notifications, theme, language';
+
+  @override
+  String get locationSettingsTitle => 'Location Settings';
+
+  @override
+  String get locationSettingsSubtitle => 'Update prayer location';
+
+  @override
+  String get backupTitle => 'Backup & Sync';
+
+  @override
+  String get backupSubtitle => 'Save your progress';
+
+  @override
+  String get supportCommunity => 'Support & Community';
+
+  @override
+  String get rateAppTitle => 'Rate Noor';
+
+  @override
+  String get rateAppSubtitle => 'Love the app? Rate us!';
+
+  @override
+  String get shareAppTitle => 'Share with Friends';
+
+  @override
+  String get shareAppSubtitle => 'Spread the word';
+
+  @override
+  String get feedbackTitle => 'Feedback';
+
+  @override
+  String get feedbackSubtitle => 'Help us improve';
+
+  @override
+  String get aboutAppTitle => 'About Noor';
+
+  @override
+  String get aboutAppSubtitle => 'App info, privacy & terms';
+
+  @override
+  String get qadahTitle => 'Qadah Tracker';
+
+  @override
+  String get qadahSubtitle => 'Track and make up missed fasts';
+
+  @override
+  String get totalMissed => 'Total Missed';
+
+  @override
+  String get totalPaid => 'Total Paid';
+
+  @override
+  String get remainingDays => 'Remaining Days';
+
+  @override
+  String get fastingReminders => 'Fasting Reminders';
+
+  @override
+  String get remindMeOn => 'Remind me on';
+
+  @override
+  String get reminderTime => 'Reminder Time';
+
+  @override
+  String get incrementPaid => 'Mark Fast as Paid';
+
+  @override
+  String get setupQadah => 'Setup Qadah';
+
+  @override
+  String get howManyMissed => 'How many days did you miss?';
+
+  @override
+  String get timeLeft => 'ቀሪ ጊዜ';
+
+  @override
+  String get usingDefaultTimes => 'ነባሪ ሰዓቶችን በመጠቀም (ከመስመር ውጭ)';
+
+  @override
+  String get qibla => 'ቂብላ';
+
+  @override
+  String get alignPhone => 'ስልክዎን ከቂብላ ጋር ያስተካክሉ';
+
+  @override
+  String get searchSurah => 'ሱራ ይፈልጉ...';
+
+  @override
+  String get selectReciter => 'አንባቢ ይምረጡ';
+
+  @override
+  String get translation => 'ትርጉም';
+
+  @override
+  String get showTranslation => 'ትርጉም አሳይ';
+
+  @override
+  String get azkarCategories => 'የአዝካር አይነቶች';
+
+  @override
+  String get dailyRemembrance => 'ዕለታዊ አዝካር';
+
+  @override
+  String get noAzkarFound => 'ምንም አይነት አዝካር አልተገኘም';
+
+  @override
+  String get searchAzkar => 'አዝካር ይፈልጉ...';
+
+  @override
+  String get hadithCollections => 'የሐዲስ ስብስቦች';
+
+  @override
+  String get authenticBooks => 'ትክክለኛ መጽሐፎች';
+
+  @override
+  String get noHadithFound => 'ምንም አይነት የሐዲስ መጽሐፍ አልተገኘም';
+
+  @override
+  String get searchHadith => 'ሃዲስ ይፈልጉ...';
+
+  @override
+  String get readingSettings => 'የንባብ ቅንጅቶች';
+
+  @override
+  String get customizeQuranExperience => 'የቁርአን ንባብ ልምድዎን ያብጁ';
+
+  @override
+  String get showTranslationDesc => 'ከአረብኛው ጽሑፍ ጎን ትርጉም አሳይ';
+
+  @override
+  String get tipFocus => 'ምክር: ለአረብኛ ንባብ ብቻ ትርጉሙን ያጥፉ';
+
+  @override
+  String get findingQibla => 'የቀብላ አቅጣጫን በመፈለግ ላይ';
+
+  @override
+  String get gettingLocation => 'ቦታዎን በማግኘት እና ወደ ካባ፣ መካ አቅጣጫን በማስላት ላይ...';
+
+  @override
+  String get directionToKaaba => 'ወደ ካባ፣ መካ አቅጣጫ';
+
+  @override
+  String get unableToFindQibla => 'ቂብላን ማግኘት አልተቻለም';
+
+  @override
+  String get unableToFetchQibla =>
+      'የቂብላን አቅጣጫ ማግኘት አልተቻለም። እባክዎ የበመረብ ግንኙነትዎን ያረጋግጡ።';
 }

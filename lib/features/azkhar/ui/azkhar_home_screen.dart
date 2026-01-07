@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
+import '../../../l10n/app_localizations.dart';
 import '../data/azkhar_api.dart';
 import '../domain/azkhar_category.dart';
 import '../../../core/theme/app_colors.dart';
@@ -57,6 +58,7 @@ class _AzkharHomeScreenState extends State<AzkharHomeScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.background,
       body: FadeTransition(
@@ -87,7 +89,10 @@ class _AzkharHomeScreenState extends State<AzkharHomeScreen>
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Azkar Categories', style: AppTextStyles.heading1),
+                        Text(
+                          l10n.azkarCategories,
+                          style: AppTextStyles.heading1,
+                        ),
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
@@ -98,7 +103,7 @@ class _AzkharHomeScreenState extends State<AzkharHomeScreen>
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
-                            'Daily Remembrance',
+                            l10n.dailyRemembrance,
                             style: AppTextStyles.labelMedium.copyWith(
                               color: AppColors.primary,
                               fontWeight: FontWeight.w600,
@@ -127,8 +132,8 @@ class _AzkharHomeScreenState extends State<AzkharHomeScreen>
                     ),
                   );
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const SliverToBoxAdapter(
-                    child: Center(child: Text('No Azkar categories found')),
+                  return SliverToBoxAdapter(
+                    child: Center(child: Text(l10n.noAzkarFound)),
                   );
                 }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:noor/core/theme/app_text_styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'l10n/app_localizations.dart';
@@ -46,6 +47,9 @@ class MyApp extends ConsumerWidget {
     // Watch user preferences for theme switching
     final preferences = ref.watch(userPreferencesProvider);
     final locale = ref.watch(localeProvider);
+
+    // Update global text styles with current locale
+    AppTextStyles.setLocale(locale.languageCode);
 
     return MaterialApp(
       key: ValueKey(locale.languageCode), // Force rebuild on locale change

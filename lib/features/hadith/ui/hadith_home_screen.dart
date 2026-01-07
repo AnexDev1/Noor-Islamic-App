@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
+import '../../../l10n/app_localizations.dart';
 import '../data/books_api.dart';
 import '../domain/book.dart';
 import '../../../core/theme/app_colors.dart';
@@ -60,6 +61,7 @@ class _HadithHomeScreenState extends State<HadithHomeScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.background,
       body: FadeTransition(
@@ -91,7 +93,7 @@ class _HadithHomeScreenState extends State<HadithHomeScreen>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Hadith Collections',
+                          l10n.hadithCollections,
                           style: AppTextStyles.heading1,
                         ),
                         Container(
@@ -104,7 +106,7 @@ class _HadithHomeScreenState extends State<HadithHomeScreen>
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
-                            'Authentic Books',
+                            l10n.authenticBooks,
                             style: AppTextStyles.labelMedium.copyWith(
                               color: AppColors.primary,
                               fontWeight: FontWeight.w600,
@@ -133,8 +135,8 @@ class _HadithHomeScreenState extends State<HadithHomeScreen>
                     ),
                   );
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const SliverToBoxAdapter(
-                    child: Center(child: Text('No Hadith books found')),
+                  return SliverToBoxAdapter(
+                    child: Center(child: Text(l10n.noHadithFound)),
                   );
                 }
 

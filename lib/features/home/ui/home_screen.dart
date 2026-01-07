@@ -333,9 +333,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                             ),
                           ),
                           if (prayerTimes.isUsingFallbackPrayerTimes)
-                            const Text(
-                              'Using default times (offline)',
-                              style: TextStyle(
+                            Text(
+                              l10n.usingDefaultTimes,
+                              style: const TextStyle(
                                 color: Colors.white60,
                                 fontSize: 10,
                               ),
@@ -390,7 +390,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Next Prayer',
+                        l10n.nextPrayer,
                         style: const TextStyle(
                           color: Colors.white70,
                           fontSize: 11,
@@ -432,7 +432,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   child: Column(
                     children: [
                       Text(
-                        'Time Left',
+                        l10n.timeLeft,
                         style: const TextStyle(
                           color: Colors.white70,
                           fontSize: 10,
@@ -471,11 +471,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   ) {
     final l10n = AppLocalizations.of(context)!;
     final prayers = [
-      {'name': 'Fajr', 'time': prayerTimes.fajr},
-      {'name': 'Dhuhr', 'time': prayerTimes.dhuhr},
-      {'name': 'Asr', 'time': prayerTimes.asr},
-      {'name': 'Maghrib', 'time': prayerTimes.maghrib},
-      {'name': 'Isha', 'time': prayerTimes.isha},
+      {'name': l10n.fajr, 'time': prayerTimes.fajr, 'key': 'Fajr'},
+      {'name': l10n.dhuhr, 'time': prayerTimes.dhuhr, 'key': 'Dhuhr'},
+      {'name': l10n.asr, 'time': prayerTimes.asr, 'key': 'Asr'},
+      {'name': l10n.maghrib, 'time': prayerTimes.maghrib, 'key': 'Maghrib'},
+      {'name': l10n.isha, 'time': prayerTimes.isha, 'key': 'Isha'},
     ];
 
     return GridView.builder(
@@ -489,7 +489,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       itemCount: prayers.length,
       itemBuilder: (context, index) {
         final prayer = prayers[index];
-        final isCompleted = todayStatus.dailyPrayers[prayer['name']] ?? false;
+        final isCompleted = todayStatus.dailyPrayers[prayer['key']] ?? false;
 
         return GestureDetector(
           onTap: () async {
@@ -515,12 +515,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               if (confirm == true) {
                 ref
                     .read(todayPrayerStatusProvider.notifier)
-                    .togglePrayer(prayer['name']!);
+                    .togglePrayer(prayer['key']!);
               }
             } else {
               ref
                   .read(todayPrayerStatusProvider.notifier)
-                  .togglePrayer(prayer['name']!);
+                  .togglePrayer(prayer['key']!);
             }
           },
           child: Container(

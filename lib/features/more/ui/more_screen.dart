@@ -11,6 +11,8 @@ import '../../../core/utils/helpers.dart';
 import '../../../core/services/user_service.dart';
 import '../../../core/providers/app_providers.dart';
 import '../../../core/providers/models.dart';
+import '../../../l10n/app_localizations.dart'; // Import localization
+import '../../qadah/ui/qadah_screen.dart'; // Import Qadah screen
 import 'settings_screen.dart';
 import 'islamic_calendar_screen.dart';
 import 'about_screen.dart';
@@ -64,9 +66,12 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
 
   @override
   Widget build(BuildContext context) {
+    // Access localization
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: const CustomAppBar(title: 'More'),
+      appBar: CustomAppBar(title: l10n.moreTitle), // Localized title
       body: LiquidPullToRefresh(
         animSpeedFactor: 3,
         color: AppColors.primary,
@@ -83,19 +88,19 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
               physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.all(AppConstants.defaultPadding),
               children: [
-                _buildUserProfileHeader(),
+                _buildUserProfileHeader(l10n), // Pass l10n
                 const SizedBox(height: 24),
-                _buildSectionHeader('Progress & Analytics'),
+                _buildSectionHeader(l10n.progressAnalytics), // Localized header
                 const SizedBox(height: 12),
-                _buildAnalyticsSection(),
+                _buildAnalyticsSection(l10n), // Pass l10n
                 const SizedBox(height: 24),
-                _buildSectionHeader('Settings'),
+                _buildSectionHeader(l10n.settingsTitle), // Localized header
                 const SizedBox(height: 12),
-                _buildSettingsSection(),
+                _buildSettingsSection(l10n), // Pass l10n
                 const SizedBox(height: 24),
-                _buildSectionHeader('Support & Community'),
+                _buildSectionHeader(l10n.supportCommunity), // Localized header
                 const SizedBox(height: 12),
-                _buildSupportSection(),
+                _buildSupportSection(l10n), // Pass l10n
                 const SizedBox(height: 32),
               ],
             ),
@@ -105,7 +110,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
     );
   }
 
-  Widget _buildUserProfileHeader() {
+  Widget _buildUserProfileHeader(AppLocalizations l10n) {
     return CustomCard(
       child: Row(
         children: [
@@ -160,7 +165,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          greetingSnapshot.data ?? 'As-salamu Alaykum',
+                          greetingSnapshot.data ?? l10n.assalamuAlaikum,
                           style: AppTextStyles.bodyMedium.copyWith(
                             color: AppColors.textSecondary,
                           ),
@@ -189,13 +194,22 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
     );
   }
 
-  Widget _buildAnalyticsSection() {
+  Widget _buildAnalyticsSection(AppLocalizations l10n) {
     return Column(
       children: [
         _buildMenuTile(
+          icon: Icons.calendar_today,
+          title: l10n.qadahTitle, // "Qadah Tracker"
+          subtitle: l10n.qadahSubtitle, // "Track and make up missed fasts"
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const QadahScreen()),
+          ),
+        ),
+        _buildMenuTile(
           icon: Icons.calendar_month,
-          title: 'Islamic Calendar',
-          subtitle: 'Hijri dates and Islamic events',
+          title: l10n.islamicCalendarTitle,
+          subtitle: l10n.islamicCalendarSubtitle,
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(
@@ -207,13 +221,13 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
     );
   }
 
-  Widget _buildSettingsSection() {
+  Widget _buildSettingsSection(AppLocalizations l10n) {
     return Column(
       children: [
         _buildMenuTile(
           icon: Icons.settings,
-          title: 'App Settings',
-          subtitle: 'Notifications, theme, language',
+          title: l10n.settingsTitle,
+          subtitle: l10n.settingsSubtitle,
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const SettingsScreen()),
@@ -221,28 +235,28 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
         ),
         _buildMenuTile(
           icon: Icons.location_on,
-          title: 'Location Settings',
-          subtitle: 'Update prayer location',
-          onTap: () => _showLocationSettings(),
+          title: l10n.locationSettingsTitle,
+          subtitle: l10n.locationSettingsSubtitle,
+          onTap: () => _showLocationSettings(l10n),
         ),
         _buildMenuTile(
           icon: Icons.backup,
-          title: 'Backup & Sync',
-          subtitle: 'Save your progress',
-          onTap: () => _showBackupOptions(),
+          title: l10n.backupTitle,
+          subtitle: l10n.backupSubtitle,
+          onTap: () => _showBackupOptions(l10n),
         ),
       ],
     );
   }
 
-  Widget _buildSupportSection() {
+  Widget _buildSupportSection(AppLocalizations l10n) {
     return Column(
       children: [
         _buildMenuTile(
           icon: Icons.star,
-          title: 'Rate Noor',
-          subtitle: 'Love the app? Rate us!',
-          onTap: () => _rateApp(),
+          title: l10n.rateAppTitle,
+          subtitle: l10n.rateAppSubtitle,
+          onTap: () => _rateApp(l10n),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: List.generate(
@@ -257,20 +271,20 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
         ),
         _buildMenuTile(
           icon: Icons.share,
-          title: 'Share with Friends',
-          subtitle: 'Spread the word',
-          onTap: () => _shareApp(),
+          title: l10n.shareAppTitle,
+          subtitle: l10n.shareAppSubtitle,
+          onTap: () => _shareApp(l10n),
         ),
         _buildMenuTile(
           icon: Icons.feedback,
-          title: 'Feedback',
-          subtitle: 'Help us improve',
-          onTap: () => _sendFeedback(),
+          title: l10n.feedbackTitle,
+          subtitle: l10n.feedbackSubtitle,
+          onTap: () => _sendFeedback(l10n),
         ),
         _buildMenuTile(
           icon: Icons.info,
-          title: 'About Noor',
-          subtitle: 'App info, privacy & terms',
+          title: l10n.aboutAppTitle,
+          subtitle: l10n.aboutAppSubtitle,
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const AboutScreen()),
@@ -362,45 +376,45 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
     }
   }
 
-  void _showLocationSettings() {
+  void _showLocationSettings(AppLocalizations l10n) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Location Settings'),
-        content: const Text(
-          'Update your location for accurate prayer times and Qibla direction.',
+        title: Text(l10n.locationSettingsTitle),
+        content: Text(
+          l10n.locationPermissionDesc, // Reusing existing string for description
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               // Update location using Riverpod provider
               ref.read(userLocationProvider.notifier).refreshLocation();
-              AppHelpers.showSnackBar(context, 'Updating location...');
+              AppHelpers.showSnackBar(context, l10n.updatingLocation);
             },
-            child: const Text('Update Location'),
+            child: Text(l10n.updateLocation),
           ),
         ],
       ),
     );
   }
 
-  void _showBackupOptions() {
+  void _showBackupOptions(AppLocalizations l10n) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Backup & Sync'),
+        title: Text(l10n.backupTitle),
         content: const Text(
           'Backup your prayer history, bookmarks, and app settings to the cloud.',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -414,16 +428,16 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
     );
   }
 
-  Future<void> _rateApp() async {
+  Future<void> _rateApp(AppLocalizations l10n) async {
     // In a real app, this would open the app store
     AppHelpers.showSnackBar(context, 'Thank you! Redirecting to app store...');
   }
 
-  Future<void> _shareApp() async {
+  Future<void> _shareApp(AppLocalizations l10n) async {
     AppHelpers.showSnackBar(context, 'Sharing Noor app with friends...');
   }
 
-  Future<void> _sendFeedback() async {
+  Future<void> _sendFeedback(AppLocalizations l10n) async {
     final Uri emailUri = Uri(
       scheme: 'mailto',
       path: 'feedback@noorapp.com',
