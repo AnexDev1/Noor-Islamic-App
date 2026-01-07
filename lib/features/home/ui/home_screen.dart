@@ -14,6 +14,7 @@ import '../../quran/ui/quran_screen.dart';
 import '../../hadith/ui/hadith_home_screen.dart';
 import '../../azkhar/ui/azkhar_home_screen.dart';
 import '../../tasbih/ui/tasbih_screen.dart';
+import '../../videos/ui/video_hub_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -173,6 +174,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     // Quick Actions Grid
                     _buildQuickActionsGrid(context),
 
+                    const SizedBox(height: 24),
+
+                    // Featured Videos Card
+                    _buildFeaturedVideosCard(),
+
                     const SizedBox(height: 24), // Bottom spacing reduced
                   ]),
                 ),
@@ -181,6 +187,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildFeaturedVideosCard() {
+    return _IslamicVideosCarousel(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const VideoHubScreen(
+              channelIds: [
+                // Verified Islamic Content Channel IDs Only
+                'UCTX8ZbNDi_HBoyjTWRw9fAg',
+                'UCNHaE-HxyC7PMqB-7QJEScg',
+                'UCQQWZ1IeswjheSTSEXKcQsA',
+                'UCNB_OaI4524fASt8h0IL8dw',
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -778,4 +805,253 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       ],
     );
   }
+}
+
+// Auto-Sliding Islamic Videos Carousel Widget
+class _IslamicVideosCarousel extends StatefulWidget {
+  final VoidCallback onTap;
+
+  const _IslamicVideosCarousel({required this.onTap});
+
+  @override
+  State<_IslamicVideosCarousel> createState() => _IslamicVideosCarouselState();
+}
+
+class _IslamicVideosCarouselState extends State<_IslamicVideosCarousel> {
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+  Timer? _autoSlideTimer;
+
+  // Islamic-themed images - using network images for beautiful Islamic content
+  final List<String> _images = [
+    'https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=800&q=80', // Kaaba
+    'https://images.unsplash.com/photo-1542816417-0983c9c9ad53?w=800&q=80', // Mosque dome
+    'https://images.unsplash.com/photo-1580480055273-228ff5388ef8?w=800&q=80', // Quran
+    'https://images.unsplash.com/photo-1564769625905-50e93615e769?w=800&q=80', // Prayer beads
+    'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=800&q=80', // Islamic calligraphy
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _startAutoSlide();
+  }
+
+  void _startAutoSlide() {
+    _autoSlideTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
+      if (_currentPage < _images.length - 1) {
+        _currentPage++;
+      } else {
+        _currentPage = 0;
+      }
+
+      if (_pageController.hasClients) {
+        _pageController.animateToPage(
+          _currentPage,
+          duration: const Duration(milliseconds: 600),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _autoSlideTimer?.cancel();
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return GestureDetector(
+      onTap: widget.onTap,
+      child: Container(
+        height: 100, // Reduced from 120 to 100
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [AppColors.primary, AppColors.primaryLight],
+          ),
+          borderRadius: BorderRadius.circular(16), // Reduced border radius
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primary.withOpacity(0.3),
+              blurRadius: 12, // Reduced blur
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Stack(
+            children: [
+              // Decorative pattern overlay
+              Positioned.fill(
+                child: Opacity(
+                  opacity: 0.1,
+                  child: CustomPaint(painter: _IslamicPatternPainter()),
+                ),
+              ),
+
+              // Sliding images as background (subtle)
+              Positioned.fill(
+                child: PageView.builder(
+                  controller: _pageController,
+                  onPageChanged: (index) {
+                    setState(() => _currentPage = index);
+                  },
+                  itemCount: _images.length,
+                  itemBuilder: (context, index) {
+                    return Opacity(
+                      opacity: 0.15,
+                      child: Image.network(
+                        _images[index],
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const SizedBox.shrink();
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+              // Content
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ), // Reduced padding
+                child: Row(
+                  children: [
+                    // Play button - smaller
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.15),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Icon(
+                        Icons.play_arrow_rounded,
+                        color: AppColors.primary,
+                        size: 24, // Reduced size
+                      ),
+                    ),
+
+                    const SizedBox(width: 12), // Reduced spacing
+                    // Text content - simplified
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.video_library_rounded,
+                                color: Colors.white,
+                                size: 16, // Smaller icon
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                'Islamic Videos',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16, // Smaller font
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.3,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 2), // Reduced spacing
+                          Text(
+                            'Curated Islamic content & reminders',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.8),
+                              fontSize: 11, // Smaller font
+                              height: 1.2,
+                            ),
+                            maxLines: 1, // Single line only
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Arrow indicator
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.white.withOpacity(0.7),
+                      size: 16,
+                    ),
+                  ],
+                ),
+              ),
+
+              // Page indicators - smaller and repositioned
+              Positioned(
+                bottom: 8,
+                right: 12,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: List.generate(
+                    _images.length,
+                    (dotIndex) => AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      margin: const EdgeInsets.symmetric(horizontal: 2),
+                      width: _currentPage == dotIndex ? 12 : 4, // Smaller dots
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: _currentPage == dotIndex
+                            ? Colors.white
+                            : Colors.white.withOpacity(0.4),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Custom painter for Islamic pattern
+class _IslamicPatternPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+
+    // Draw subtle geometric Islamic patterns
+    final spacing = 40.0;
+    for (double x = 0; x < size.width; x += spacing) {
+      for (double y = 0; y < size.height; y += spacing) {
+        canvas.drawCircle(Offset(x, y), 8, paint);
+        canvas.drawLine(Offset(x - 8, y), Offset(x + 8, y), paint);
+        canvas.drawLine(Offset(x, y - 8), Offset(x, y + 8), paint);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
