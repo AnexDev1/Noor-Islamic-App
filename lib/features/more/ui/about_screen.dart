@@ -58,10 +58,7 @@ class _AboutScreenState extends State<AboutScreen> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [
-                    AppColors.primary,
-                    AppColors.primaryLight,
-                  ],
+                  colors: [AppColors.primary, AppColors.primaryLight],
                 ),
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -185,6 +182,18 @@ class _AboutScreenState extends State<AboutScreen> {
                     description: 'Accurate Qibla finder with compass',
                   ),
                   _FeatureItem(
+                    icon: Icons.video_collection_rounded,
+                    title: 'Islamic Videos & Shorts',
+                    description:
+                        'Curated videos and immersive shorts (TikTok-style)',
+                  ),
+                  _FeatureItem(
+                    icon: Icons.restore_page_rounded,
+                    title: 'Qadah Tracker',
+                    description:
+                        'Track and make up missed prayers with reminders',
+                  ),
+                  _FeatureItem(
                     icon: Icons.chat,
                     title: 'AI Islamic Guide',
                     description: 'AI-powered Islamic Q&A assistant',
@@ -219,7 +228,7 @@ class _AboutScreenState extends State<AboutScreen> {
                     title: 'Website',
                     subtitle: 'coming soon',
                     // onTap: () => _launchWebsite(),
-                    onTap: () => (){},
+                    onTap: () => () {},
                   ),
                   _ContactItem(
                     icon: Icons.privacy_tip,

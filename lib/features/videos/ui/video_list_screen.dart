@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart' as yt;
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import 'shorts_viewer_screen.dart';
@@ -29,6 +31,15 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   bool _isDescriptionExpanded = false;
   final ScrollController _scrollController = ScrollController();
 
+  // Lazy metadata fetch when videoInfo is not provided
+  final _yt = yt.YoutubeExplode();
+  yt.Video? _fetchedVideo;
+
+  // Related videos fallback when none are supplied by caller
+  List<yt.Video> _related = [];
+  bool _loadingRelated = false;
+  bool _loadingRelatedMore = false; // background fetch indicator
+
   @override
   void initState() {
     super.initState();
@@ -42,9 +53,31 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
         controlsVisibleAtStart: true,
       ),
     )..addListener(_listener);
+
+    // If full metadata isn't provided, fetch it lazily
+    if (widget.videoInfo == null) {
+      _fetchMetadata();
+    }
   }
 
+  bool _wasFullScreen = false;
+
   void _listener() {
+    final isFull = _controller.value.isFullScreen;
+    if (isFull != _wasFullScreen) {
+      _wasFullScreen = isFull;
+      if (isFull) {
+        SystemChrome.setPreferredOrientations([
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight,
+        ]);
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+      } else {
+        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+      }
+    }
+
     if (_isPlayerReady && mounted && !_controller.value.isFullScreen) {
       setState(() {});
     }
@@ -56,19 +89,155 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     super.deactivate();
   }
 
+  Future<void> _fetchMetadata() async {
+    try {
+      final vid = await _yt.videos.get(widget.videoId);
+      if (mounted) {
+        setState(() => _fetchedVideo = vid);
+      }
+      // After fetching metadata, ensure related videos are fetched if needed
+      _ensureRelated();
+    } catch (e) {
+      debugPrint('Failed to fetch video metadata: $e');
+    }
+  }
+
+  void _ensureRelated() {
+    // If host provided related videos, use them as an initial placeholder but
+    // still fetch channel uploads (they are preferred) to ensure the related
+    // list matches the currently playing video's channel.
+    if (widget.relatedVideos != null && widget.relatedVideos!.isNotEmpty) {
+      setState(() => _related = widget.relatedVideos!);
+      if (!_loadingRelated) {
+        _fetchRelatedVideos();
+      }
+      return;
+    }
+
+    if (_related.isEmpty && !_loadingRelated) {
+      _fetchRelatedVideos();
+    }
+  }
+
+  Future<void> _fetchRelatedVideos() async {
+    final current = _fetchedVideo ?? widget.videoInfo;
+    if (current == null) return;
+
+    setState(() => _loadingRelated = true);
+    final String currentId = widget.videoId.trim();
+
+    String? channelId;
+
+    // Try to extract a channel id from runtime fields using dynamic access.
+    try {
+      final dyn = current as dynamic;
+
+      // Common property: authorUrl (may contain /channel/{id} or /@handle)
+      try {
+        final String? authorUrl = dyn.authorUrl as String?;
+        if (authorUrl != null && authorUrl.isNotEmpty) {
+          final m = RegExp(r'/channel/([A-Za-z0-9_-]+)').firstMatch(authorUrl);
+          if (m != null) {
+            channelId = m.group(1);
+          } else {
+            // Try handle fallback (e.g., /@handle)
+            final h = RegExp(r'/(@[^/?]+)').firstMatch(authorUrl);
+            if (h != null) {
+              final handle = h.group(1)!.replaceFirst('@', '');
+              try {
+                final channel = await _yt.channels.getByHandle(handle);
+                channelId = channel.id.value;
+              } catch (_) {}
+            }
+          }
+        }
+      } catch (_) {}
+
+      // Try other possible fields (authorId, channelId, owner)
+      try {
+        final dynamic candidate = dyn.authorId ?? dyn.channelId ?? dyn.owner;
+        if (candidate != null) {
+          channelId ??= candidate is String ? candidate : candidate.toString();
+        }
+      } catch (_) {}
+    } catch (_) {}
+
+    // If we found a channel id, fetch the channel uploads
+    if (channelId != null) {
+      try {
+        final uploads = await _yt.channels
+            .getUploads(yt.ChannelId(channelId))
+            .take(10)
+            .toList();
+        final filtered = uploads
+            .where((v) => v.id.value.toString().trim() != currentId)
+            .toList();
+        if (mounted) {
+          setState(() {
+            _related = filtered;
+            _loadingRelated = false;
+          });
+        }
+        return;
+      } catch (e) {
+        debugPrint('Failed to fetch channel uploads ($channelId): $e');
+      }
+    }
+
+    // Fallback: search for other videos by the same author name
+    final authorName = (current.author ?? '').trim();
+    final List<yt.Video> results = [];
+    if (authorName.isNotEmpty) {
+      try {
+        final searchList = await _yt.search.search(authorName);
+        for (final item in searchList) {
+          try {
+            final id = (item.id?.value ?? item.id.toString()).toString().trim();
+            if (id == currentId) continue;
+            final v = await _yt.videos.get(id);
+            if (v.author == authorName) {
+              results.add(v);
+              if (results.length >= 8) break;
+            }
+          } catch (_) {
+            // ignore individual failures
+          }
+        }
+      } catch (e) {
+        debugPrint('Fallback search for author failed: $e');
+      }
+    }
+
+    if (mounted) {
+      setState(() {
+        _related = results;
+        _loadingRelated = false;
+      });
+    }
+  }
+
   @override
   void dispose() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     _controller.dispose();
     _scrollController.dispose();
+    _yt.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return YoutubePlayerBuilder(
+      onEnterFullScreen: () {
+        SystemChrome.setPreferredOrientations([
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight,
+        ]);
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+      },
       onExitFullScreen: () {
         SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
       },
       player: YoutubePlayer(
         controller: _controller,
@@ -119,16 +288,17 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                         // Video Info Section
                         SliverToBoxAdapter(child: _buildVideoInfoSection()),
 
-                        // Engagement Buttons
-                        SliverToBoxAdapter(child: _buildEngagementSection()),
-
                         // Description
-                        if (widget.videoInfo?.description != null)
+                        if ((_fetchedVideo?.description ??
+                                widget.videoInfo?.description) !=
+                            null)
                           SliverToBoxAdapter(child: _buildDescriptionSection()),
 
-                        // Related Videos
-                        if (widget.relatedVideos != null &&
-                            widget.relatedVideos!.isNotEmpty)
+                        // Related Videos (from caller or fallback search)
+                        if ((widget.relatedVideos != null &&
+                                widget.relatedVideos!.isNotEmpty) ||
+                            _related.isNotEmpty ||
+                            _loadingRelated)
                           SliverToBoxAdapter(
                             child: _buildRelatedVideosSection(),
                           ),
@@ -157,7 +327,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
         children: [
           // Title
           Text(
-            widget.videoInfo?.title ?? 'Islamic Video',
+            _fetchedVideo?.title ?? widget.videoInfo?.title ?? 'Islamic Video',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -167,10 +337,10 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
           ),
           const SizedBox(height: 12),
 
-          // View count and date
+          // Date only (views removed)
           Text(
             widget.videoInfo != null
-                ? '${_formatViewCount(widget.videoInfo!.engagement.viewCount)} • ${_formatDate(widget.videoInfo!.uploadDate)}'
+                ? _formatDate(widget.videoInfo!.uploadDate)
                 : 'Islamic Content',
             style: TextStyle(
               fontSize: 14,
@@ -179,9 +349,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
 
-          // Channel Info
+          // Channel Info with inline share icon
           Row(
             children: [
               CircleAvatar(
@@ -205,6 +375,17 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                   ],
                 ),
               ),
+
+              // Share icon placed beside channel name (icon-only)
+              IconButton(
+                icon: Icon(
+                  Icons.share_outlined,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+                onPressed: () =>
+                    _showShareSheetForVideo(_fetchedVideo ?? widget.videoInfo),
+                tooltip: 'Share',
+              ),
             ],
           ),
         ],
@@ -217,17 +398,15 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        children: [
-          _buildEngagementButton(
-            icon: Icons.share_outlined,
-            label: 'Share',
-            onTap: () {
-              // Share functionality
-            },
-            isDark: isDark,
-          ),
-        ],
+      child: Center(
+        child: _buildEngagementButton(
+          icon: Icons.share_outlined,
+          label: 'Share',
+          onTap: () {
+            // Share functionality
+          },
+          isDark: isDark,
+        ),
       ),
     );
   }
@@ -238,35 +417,30 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     required VoidCallback onTap,
     required bool isDark,
   }) {
-    return Expanded(
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(24),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          decoration: BoxDecoration(
-            color: isDark ? Colors.grey.shade900 : Colors.grey.shade100,
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                icon,
-                size: 20,
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(24),
+      child: Container(
+        width: 140,
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          color: isDark ? Colors.grey.shade900 : Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 20, color: isDark ? Colors.white : Colors.black87),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
                 color: isDark ? Colors.white : Colors.black87,
               ),
-              const SizedBox(width: 6),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: isDark ? Colors.white : Colors.black87,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -274,8 +448,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
   Widget _buildDescriptionSection() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final description = widget.videoInfo?.description ?? '';
-
+    final description =
+        _fetchedVideo?.description ?? widget.videoInfo?.description ?? '';
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
@@ -316,6 +490,11 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   Widget _buildRelatedVideosSection() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final list =
+        (widget.relatedVideos != null && widget.relatedVideos!.isNotEmpty)
+        ? widget.relatedVideos!
+        : _related;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -330,16 +509,46 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
             ),
           ),
         ),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          itemCount: widget.relatedVideos!.length,
-          itemBuilder: (context, index) {
-            final video = widget.relatedVideos![index];
-            return _buildRelatedVideoItem(video, isDark);
-          },
-        ),
+        // If initial load is ongoing and nothing to show yet, show spinner
+        if (_loadingRelated && list.isEmpty)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 8),
+            child: Center(child: CircularProgressIndicator()),
+          )
+        else if (list.isEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Text(
+              'No related videos available',
+              style: TextStyle(
+                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+              ),
+            ),
+          )
+        else
+          Column(
+            children: [
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: list.length,
+                itemBuilder: (context, index) {
+                  final video = list[index];
+                  return _buildRelatedVideoItem(video, isDark);
+                },
+              ),
+              // Background fetch indicator
+              if (_loadingRelatedMore)
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  child: LinearProgressIndicator(),
+                ),
+            ],
+          ),
         const SizedBox(height: 16),
       ],
     );
@@ -354,7 +563,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
             builder: (context) => VideoPlayerScreen(
               videoId: video.id.value,
               videoInfo: video,
-              relatedVideos: widget.relatedVideos,
+              relatedVideos:
+                  null, // force the player to fetch channel uploads for this video
             ),
           ),
         );
@@ -463,6 +673,112 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     );
   }
 
+  // Share sheet similar to Shorts viewer
+  void _showShareSheetForVideo(yt.Video? v) {
+    final id = (v?.id.value ?? '').toString().trim();
+    if (id.isEmpty) return;
+    final url = 'https://www.youtube.com/watch?v=${Uri.encodeComponent(id)}';
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade900,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Handle bar
+            Container(
+              margin: const EdgeInsets.only(bottom: 20),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade700,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const Text(
+              'Share to',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildShareOption(Icons.link_rounded, 'Copy Link', () async {
+                  await Clipboard.setData(ClipboardData(text: url));
+                  if (mounted) Navigator.pop(context);
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Link copied')),
+                    );
+                  }
+                }),
+                _buildShareOption(Icons.share_rounded, 'Share', () async {
+                  try {
+                    await Share.share(url);
+                  } catch (e) {
+                    await Clipboard.setData(ClipboardData(text: url));
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Link copied')),
+                      );
+                    }
+                  } finally {
+                    if (mounted) Navigator.pop(context);
+                  }
+                }),
+                _buildShareOption(Icons.open_in_new_rounded, 'Open', () async {
+                  try {
+                    await launchUrlString(url);
+                  } catch (_) {}
+                  if (mounted) Navigator.pop(context);
+                }),
+              ],
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShareOption(IconData icon, String label, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade800,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: Colors.white, size: 28),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.grey.shade400,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   String _formatDuration(Duration? duration) {
     if (duration == null) return '';
     if (duration.inHours > 0) {
@@ -550,7 +866,47 @@ class _VideoListScreenState extends State<VideoListScreen>
     // Fetch videos only from specified Islamic channel IDs
     for (final channelId in widget.channelIds) {
       try {
-        final id = yt.ChannelId(channelId);
+        // Accept channel ID, channel URL (contains /channel/), custom URL (/c/) or handle (contains @)
+        late yt.ChannelId id;
+        if (channelId.contains('/channel/')) {
+          final part = channelId.split('/channel/').last;
+          id = yt.ChannelId(part.split('?').first);
+        } else if (channelId.contains('/c/')) {
+          final part = channelId.split('/c/').last;
+          final candidate = part.split('?').first.split('/').first;
+          try {
+            final channel = await _yt.channels.getByHandle(
+              candidate.startsWith('@') ? candidate.substring(1) : candidate,
+            );
+            id = channel.id;
+          } catch (_) {
+            id = yt.ChannelId(candidate);
+          }
+        } else if (channelId.contains('/user/')) {
+          final part = channelId.split('/user/').last;
+          final candidate = part.split('?').first.split('/').first;
+          try {
+            final channel = await _yt.channels.getByHandle(
+              candidate.startsWith('@') ? candidate.substring(1) : candidate,
+            );
+            id = channel.id;
+          } catch (_) {
+            id = yt.ChannelId(candidate);
+          }
+        } else if (channelId.contains('@')) {
+          var handle = channelId.substring(channelId.indexOf('@') + 1);
+          if (handle.contains('?')) handle = handle.split('?').first;
+          if (handle.contains('/')) handle = handle.split('/').first;
+          if (handle.startsWith('@')) handle = handle.substring(1);
+          try {
+            final channel = await _yt.channels.getByHandle(handle);
+            id = channel.id;
+          } catch (_) {
+            id = yt.ChannelId(handle);
+          }
+        } else {
+          id = yt.ChannelId(channelId.split('?').first);
+        }
 
         // Fetch channel info to get the channel name
         final channelInfo = await _yt.channels.get(id);
@@ -1341,6 +1697,108 @@ class _VideoListScreenState extends State<VideoListScreen>
         ),
       ),
       onTap: onTap,
+    );
+  }
+
+  // Share sheet similar to Shorts viewer
+  void _showShareSheetForVideo(yt.Video? v) {
+    final id = (v?.id.value ?? '').toString().trim();
+    if (id.isEmpty) return;
+    final url = 'https://www.youtube.com/watch?v=${Uri.encodeComponent(id)}';
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade900,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Handle bar
+            Container(
+              margin: const EdgeInsets.only(bottom: 20),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade700,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            Text(
+              'Share to',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildShareOption(Icons.link_rounded, 'Copy Link', () async {
+                  await Clipboard.setData(ClipboardData(text: url));
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(const SnackBar(content: Text('Link copied')));
+                }),
+                _buildShareOption(Icons.share_rounded, 'Share', () async {
+                  try {
+                    await Share.share(url);
+                  } catch (e) {
+                    await Clipboard.setData(ClipboardData(text: url));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Link copied')),
+                    );
+                  } finally {
+                    Navigator.pop(context);
+                  }
+                }),
+                _buildShareOption(Icons.open_in_new_rounded, 'Open', () async {
+                  try {
+                    await launchUrlString(url);
+                  } catch (_) {}
+                  Navigator.pop(context);
+                }),
+              ],
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShareOption(IconData icon, String label, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade800,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: Colors.white, size: 28),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.grey.shade400,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
     );
   }
 

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:convert';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart' as yt;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/theme/app_colors.dart';
 import 'shorts_viewer_screen.dart';
 import 'video_list_screen.dart';
@@ -15,12 +17,72 @@ class VideoHubScreen extends StatefulWidget {
   State<VideoHubScreen> createState() => _VideoHubScreenState();
 }
 
+class VideoItem {
+  final String id;
+  final String title;
+  final String author;
+  final String thumbnailUrl;
+  final int? durationSeconds;
+  final String? uploadDateIso;
+  final int? viewCount;
+  final int? likeCount;
+
+  VideoItem({
+    required this.id,
+    required this.title,
+    required this.author,
+    required this.thumbnailUrl,
+    this.durationSeconds,
+    this.uploadDateIso,
+    this.viewCount,
+    this.likeCount,
+  });
+
+  factory VideoItem.fromYt(yt.Video v) {
+    return VideoItem(
+      id: v.id.value,
+      title: v.title,
+      author: v.author,
+      thumbnailUrl: v.thumbnails.highResUrl,
+      durationSeconds: v.duration?.inSeconds,
+      uploadDateIso: v.uploadDate?.toIso8601String(),
+      viewCount: v.engagement.viewCount,
+      likeCount: v.engagement.likeCount,
+    );
+  }
+
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'title': title,
+    'author': author,
+    'thumbnailUrl': thumbnailUrl,
+    'durationSeconds': durationSeconds,
+    'uploadDateIso': uploadDateIso,
+    'viewCount': viewCount,
+    'likeCount': likeCount,
+  };
+
+  factory VideoItem.fromMap(Map<String, dynamic> m) => VideoItem(
+    id: m['id'] as String,
+    title: m['title'] as String,
+    author: m['author'] as String,
+    thumbnailUrl: m['thumbnailUrl'] as String,
+    durationSeconds: m['durationSeconds'] as int?,
+    uploadDateIso: m['uploadDateIso'] as String?,
+    viewCount: m['viewCount'] as int?,
+    likeCount: m['likeCount'] as int?,
+  );
+
+  DateTime? get uploadDate =>
+      uploadDateIso != null ? DateTime.tryParse(uploadDateIso!) : null;
+}
+
 class _VideoHubScreenState extends State<VideoHubScreen>
     with TickerProviderStateMixin {
   final _yt = yt.YoutubeExplode();
-  List<yt.Video> _videos = [];
-  List<yt.Video> _filteredVideos = [];
-  List<yt.Video> _shorts = [];
+  List<VideoItem> _videos = [];
+  List<VideoItem> _filteredVideos = [];
+  List<VideoItem> _shorts = [];
   Map<String, String> _channelNames = {};
   bool _loading = true;
   String _selectedFilter = 'All';
@@ -28,12 +90,20 @@ class _VideoHubScreenState extends State<VideoHubScreen>
   bool _isSearching = false;
   int _currentMode = 0; // 0 = Videos, 1 = Shorts
 
+  // Incremental loading configuration
+  final int _initialPerChannel = 6; // fetch small batch first
+  final int _backgroundPerChannel = 20; // fetch additional items in background
+  bool _isBackgroundLoading = false;
+
   late AnimationController _animationController;
   late AnimationController _modeAnimationController;
   late Animation<double> _modeAnimation;
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
   final ScrollController _scrollController = ScrollController();
+
+  // Track seen IDs to avoid duplicates during fetches
+  final Set<String> _seenIds = {};
 
   @override
   void initState() {
@@ -54,43 +124,196 @@ class _VideoHubScreenState extends State<VideoHubScreen>
   }
 
   Future<void> _fetchContent() async {
-    setState(() => _loading = true);
-    List<yt.Video> allVideos = [];
-    List<yt.Video> allShorts = [];
-    Map<String, String> channelNames = {};
+    // Load cached videos if available so user sees results immediately
+    await _loadCache();
 
+    setState(() {
+      _loading = _videos.isEmpty; // show loading only if we have no cache
+      _isBackgroundLoading = true;
+    });
+
+    List<VideoItem> allVideos = [];
+    List<VideoItem> allShorts = [];
+    Map<String, String> channelNames = {};
+    // Use class-level seen set to prevent duplicates across both fetch phases
+    _seenIds.clear();
+    _seenIds.addAll(_videos.map((v) => v.id));
+    _seenIds.addAll(_shorts.map((s) => s.id));
+
+    // Fetch a small batch for each channel and update UI progressively
     for (final channelId in widget.channelIds) {
       try {
         final id = yt.ChannelId(channelId);
         final channelInfo = await _yt.channels.get(id);
         channelNames[channelId] = channelInfo.title;
-        final uploads = await _yt.channels.getUploads(id).take(30).toList();
 
-        // Separate videos and shorts
-        for (final video in uploads) {
+        final initialUploads = await _yt.channels
+            .getUploads(id)
+            .take(_initialPerChannel)
+            .toList();
+
+        for (final video in initialUploads) {
+          final item = VideoItem.fromYt(video);
+          if (_seenIds.contains(item.id)) continue;
+          _seenIds.add(item.id);
+
           if (video.duration != null &&
               video.duration!.inSeconds <= 60 &&
               video.duration!.inSeconds >= 10) {
-            allShorts.add(video);
+            allShorts.add(item);
           } else {
-            allVideos.add(video);
+            allVideos.add(item);
           }
+        }
+
+        // Update UI after each channel's initial batch (append, no shuffle)
+        if (mounted) {
+          // After initial batches per channel, bring most popular videos to the top
+          final hadCache = _videos.isNotEmpty;
+
+          // Determine popularity by viewCount then likeCount
+          final sortedByPopularity = List<VideoItem>.from(allVideos)
+            ..sort((a, b) {
+              final av = a.viewCount ?? 0;
+              final bv = b.viewCount ?? 0;
+              if (bv != av) return bv.compareTo(av);
+              final al = a.likeCount ?? 0;
+              final bl = b.likeCount ?? 0;
+              return bl.compareTo(al);
+            });
+
+          const int topN = 10;
+          final topPopular = sortedByPopularity.take(topN).toList();
+
+          // Remove topPopular ids from the main list
+          final rest = allVideos
+              .where((v) => !topPopular.any((t) => t.id == v.id))
+              .toList();
+
+          // Shuffle first time the user visits (no cache)
+          if (!hadCache) {
+            rest.shuffle();
+          }
+
+          final finalList = List<VideoItem>.from(topPopular)..addAll(rest);
+
+          setState(() {
+            _videos = List.from(finalList);
+            _shorts = List.from(allShorts);
+            _filteredVideos = _videos;
+            _channelNames = Map.from(channelNames);
+            _loading = false; // show partial results as soon as we have some
+          });
+          await _saveCache();
         }
       } catch (e) {
         debugPrint('Error fetching channel $channelId: $e');
       }
     }
 
-    if (mounted) {
-      setState(() {
-        _videos = allVideos..shuffle();
-        _shorts = allShorts..shuffle();
-        _filteredVideos = _videos;
-        _channelNames = channelNames;
-        _loading = false;
-      });
-      _animationController.forward();
+    // After initial batches are shown, background-load more items per channel
+    _backgroundLoadRemaining();
+
+    if (mounted) _animationController.forward();
+  }
+
+  Future<void> _saveCache() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(
+        'cached_videos',
+        jsonEncode(_videos.map((v) => v.toMap()).toList()),
+      );
+      await prefs.setString(
+        'cached_shorts',
+        jsonEncode(_shorts.map((v) => v.toMap()).toList()),
+      );
+      await prefs.setString('cached_channel_names', jsonEncode(_channelNames));
+      await prefs.setInt(
+        'cached_videos_timestamp',
+        DateTime.now().millisecondsSinceEpoch,
+      );
+    } catch (e) {
+      debugPrint('Error saving cache: $e');
     }
+  }
+
+  Future<void> _loadCache() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final cv = prefs.getString('cached_videos');
+      final cs = prefs.getString('cached_shorts');
+      final cn = prefs.getString('cached_channel_names');
+
+      if (cv != null) {
+        final list = jsonDecode(cv) as List<dynamic>;
+        _videos = list
+            .map((e) => VideoItem.fromMap(Map<String, dynamic>.from(e)))
+            .toList();
+        _filteredVideos = List.from(_videos);
+      }
+
+      if (cs != null) {
+        final list = jsonDecode(cs) as List<dynamic>;
+        _shorts = list
+            .map((e) => VideoItem.fromMap(Map<String, dynamic>.from(e)))
+            .toList();
+      }
+
+      if (cn != null) {
+        final map = Map<String, dynamic>.from(jsonDecode(cn));
+        _channelNames = map.map((k, v) => MapEntry(k, v.toString()));
+      }
+    } catch (e) {
+      debugPrint('Error loading cache: $e');
+    }
+  }
+
+  Future<void> _backgroundLoadRemaining() async {
+    setState(() => _isBackgroundLoading = true);
+
+    for (final channelId in widget.channelIds) {
+      try {
+        final id = yt.ChannelId(channelId);
+
+        // Fetch a larger chunk (initial + background) and append the remainder
+        final combined = await _yt.channels
+            .getUploads(id)
+            .take(_initialPerChannel + _backgroundPerChannel)
+            .toList();
+
+        if (combined.length > _initialPerChannel) {
+          final remaining = combined.skip(_initialPerChannel).toList();
+
+          // Add remaining items to lists (append at end, no shuffle)
+          for (final video in remaining) {
+            final item = VideoItem.fromYt(video);
+            if (_seenIds.contains(item.id)) continue;
+            _seenIds.add(item.id);
+
+            if (video.duration != null &&
+                video.duration!.inSeconds <= 60 &&
+                video.duration!.inSeconds >= 10) {
+              _shorts.add(item);
+            } else {
+              _videos.add(item);
+            }
+          }
+
+          // Update UI after appending more
+          if (mounted) {
+            setState(() {
+              _filteredVideos = _videos;
+            });
+            await _saveCache();
+          }
+        }
+      } catch (e) {
+        debugPrint('Error background-loading channel $channelId: $e');
+      }
+    }
+
+    if (mounted) setState(() => _isBackgroundLoading = false);
   }
 
   void _filterVideos(String query) {
@@ -296,32 +519,26 @@ class _VideoHubScreenState extends State<VideoHubScreen>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Title with gradient
-                  ShaderMask(
-                    shaderCallback: (bounds) => LinearGradient(
-                      colors: [AppColors.primary, AppColors.accent],
-                    ).createShader(bounds),
-                    child: const Text(
-                      'Islamic Videos',
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
-                        letterSpacing: -0.5,
-                      ),
+                  // Title using primary brand color
+                  const Text(
+                    'Islamic Videos',
+                    style: TextStyle(
+                      color: AppColors.primary,
+                      fontSize: 32,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.5,
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    '${_videos.length} videos • ${_shorts.length} shorts',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: isDark
-                          ? Colors.grey.shade500
-                          : Colors.grey.shade600,
-                      fontWeight: FontWeight.w500,
+                  // Background loader (small) when fetching more content
+                  if (_isBackgroundLoading)
+                    const SizedBox(
+                      height: 4,
+                      child: LinearProgressIndicator(
+                        backgroundColor: Colors.transparent,
+                        valueColor: AlwaysStoppedAnimation(AppColors.primary),
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),
@@ -529,11 +746,9 @@ class _VideoHubScreenState extends State<VideoHubScreen>
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         decoration: BoxDecoration(
           gradient: (isSelected || hasGradient) && label == 'Shorts'
-              ? LinearGradient(
-                  colors: [Colors.red.shade400, Colors.pink.shade400],
-                )
+              ? const LinearGradient(colors: AppColors.primaryGradient)
               : isSelected
-              ? LinearGradient(colors: [AppColors.primary, AppColors.accent])
+              ? const LinearGradient(colors: AppColors.primaryGradient)
               : null,
           color: isSelected || (hasGradient && label == 'Shorts')
               ? null
@@ -649,7 +864,7 @@ class _VideoHubScreenState extends State<VideoHubScreen>
     );
   }
 
-  Widget _buildPremiumVideoCard(yt.Video video, bool isDark, int index) {
+  Widget _buildPremiumVideoCard(VideoItem video, bool isDark, int index) {
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       child: InkWell(
@@ -659,12 +874,9 @@ class _VideoHubScreenState extends State<VideoHubScreen>
             PageRouteBuilder(
               pageBuilder: (context, animation, secondaryAnimation) =>
                   VideoPlayerScreen(
-                    videoId: video.id.value,
-                    videoInfo: video,
-                    relatedVideos: _filteredVideos
-                        .where((v) => v.id != video.id)
-                        .take(10)
-                        .toList(),
+                    videoId: video.id,
+                    videoInfo: null, // fetch metadata in player if needed
+                    relatedVideos: null,
                   ),
               transitionsBuilder:
                   (context, animation, secondaryAnimation, child) {
@@ -720,7 +932,7 @@ class _VideoHubScreenState extends State<VideoHubScreen>
                         fit: StackFit.expand,
                         children: [
                           Image.network(
-                            video.thumbnails.highResUrl,
+                            video.thumbnailUrl,
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) =>
                                 Container(
@@ -767,7 +979,7 @@ class _VideoHubScreenState extends State<VideoHubScreen>
                     ),
                   ),
                   // Duration badge
-                  if (video.duration != null)
+                  if (video.durationSeconds != null)
                     Positioned(
                       bottom: 12,
                       right: 12,
@@ -781,7 +993,7 @@ class _VideoHubScreenState extends State<VideoHubScreen>
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          _formatDuration(video.duration),
+                          _formatDurationFromSeconds(video.durationSeconds),
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 12,
@@ -932,7 +1144,7 @@ class _VideoHubScreenState extends State<VideoHubScreen>
                       children: [
                         _buildStatChip(
                           Icons.visibility_outlined,
-                          _formatViewCount(video.engagement.viewCount),
+                          _formatViewCount(video.viewCount ?? 0),
                           isDark,
                         ),
                         const SizedBox(width: 12),
@@ -1093,6 +1305,12 @@ class _VideoHubScreenState extends State<VideoHubScreen>
       return '$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
     }
     return '$minutes:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  String _formatDurationFromSeconds(int? seconds) {
+    if (seconds == null) return '';
+    final duration = Duration(seconds: seconds);
+    return _formatDuration(duration);
   }
 
   String _formatViewCount(int views) {

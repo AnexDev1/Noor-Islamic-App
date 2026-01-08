@@ -89,11 +89,12 @@ class _ShortsViewerScreenState extends State<ShortsViewerScreen>
   }
 
   void _initializeController(int index) {
-    if (_controllers.containsKey(index) || index >= _shorts.length || index < 0)
-      return;
+    if (_shorts.isEmpty) return;
+    final logical = (index % _shorts.length + _shorts.length) % _shorts.length;
+    if (_controllers.containsKey(logical)) return;
 
     final controller = YoutubePlayerController(
-      initialVideoId: _shorts[index].id.value,
+      initialVideoId: _shorts[logical].id.value,
       flags: const YoutubePlayerFlags(
         autoPlay: true,
         mute: false,
@@ -105,7 +106,7 @@ class _ShortsViewerScreenState extends State<ShortsViewerScreen>
       ),
     );
 
-    _controllers[index] = controller;
+    _controllers[logical] = controller;
   }
 
   void _disposeController(int index) {
@@ -114,32 +115,38 @@ class _ShortsViewerScreenState extends State<ShortsViewerScreen>
   }
 
   void _onPageChanged(int index) {
+    if (_shorts.isEmpty) return;
+    final logical = index % _shorts.length;
+
     // Pause previous video
     final prevController = _controllers[_currentIndex];
     prevController?.pause();
 
     setState(() {
-      _currentIndex = index;
+      _currentIndex = logical;
       _isPaused = false;
     });
 
-    // Play current video
-    final currentController = _controllers[index];
+    // Play current video (logical key)
+    final currentController = _controllers[logical];
     if (currentController != null) {
       currentController.play();
     } else {
-      _initializeController(index);
+      _initializeController(logical);
     }
 
-    // Preload adjacent videos
-    _initializeController(index + 1);
-    _initializeController(index - 1);
+    // Preload adjacent videos (modulo)
+    _initializeController((logical + 1) % _shorts.length);
+    _initializeController((logical - 1 + _shorts.length) % _shorts.length);
 
-    // Dispose old controllers to free memory (keep 3 around current)
+    // Keep only adjacent controllers to free memory
+    final keep = {
+      logical,
+      (logical + 1) % _shorts.length,
+      (logical - 1 + _shorts.length) % _shorts.length,
+    };
     for (final key in _controllers.keys.toList()) {
-      if ((key - index).abs() > 2) {
-        _disposeController(key);
-      }
+      if (!keep.contains(key)) _disposeController(key);
     }
   }
 
@@ -200,15 +207,16 @@ class _ShortsViewerScreenState extends State<ShortsViewerScreen>
       extendBodyBehindAppBar: true,
       body: Stack(
         children: [
-          // Full-screen PageView for TikTok-style scrolling
+          // Full-screen PageView for TikTok-style scrolling (infinite loop via modulo mapping)
           PageView.builder(
             controller: _pageController,
             scrollDirection: Axis.vertical,
             physics: const BouncingScrollPhysics(),
             onPageChanged: _onPageChanged,
-            itemCount: _shorts.length,
+            // No itemCount for infinite behavior; map to shorts via modulo
             itemBuilder: (context, index) {
-              return _buildShortItem(index);
+              final logicalIndex = _shorts.isEmpty ? 0 : index % _shorts.length;
+              return _buildShortItem(logicalIndex);
             },
           ),
 
@@ -438,23 +446,8 @@ class _ShortsViewerScreenState extends State<ShortsViewerScreen>
             ),
           ),
           const Spacer(),
-          // Video counter
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.4),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-            ),
-            child: Text(
-              '${_currentIndex + 1}/${_shorts.length}',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
+          // Video counter removed per design
+          const SizedBox.shrink(),
         ],
       ),
     );

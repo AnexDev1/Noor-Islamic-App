@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz_data;
+import '../utils/native_timezone.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/models.dart';
 
@@ -33,6 +34,13 @@ class AdhanNotificationService {
   static Future<void> initialize() async {
     // Initialize timezone
     tz_data.initializeTimeZones();
+    try {
+      final String timeZoneName = await NativeTimezone.getLocalTimezone();
+      tz.setLocalLocation(tz.getLocation(timeZoneName));
+      debugPrint('Local timezone set to $timeZoneName');
+    } catch (e) {
+      debugPrint('Failed to set local timezone: $e');
+    }
 
     // Android initialization settings
     const androidSettings = AndroidInitializationSettings(
@@ -220,6 +228,9 @@ class AdhanNotificationService {
     );
 
     debugPrint('Prayer notifications scheduled successfully');
+
+    // Debug: log pending scheduled notifications
+    await logPendingNotifications();
   }
 
   /// Schedule all prayer notifications using PrayerTimes model
@@ -256,6 +267,10 @@ class AdhanNotificationService {
         time.minute,
       );
 
+      debugPrint(
+        'Prayer $prayerName local scheduled time: $scheduledDateTime, now: ${DateTime.now()}',
+      );
+
       // Only schedule if the time is in the future
       if (scheduledDateTime.isAfter(DateTime.now())) {
         // Schedule main adhan notification
@@ -284,6 +299,10 @@ class AdhanNotificationService {
             );
           }
         }
+      } else {
+        debugPrint(
+          'Skipping scheduling for $prayerName - time $scheduledDateTime is not in the future',
+        );
       }
     } catch (e) {
       debugPrint('Error scheduling $prayerName notification: $e');
@@ -328,6 +347,10 @@ class AdhanNotificationService {
     final details = NotificationDetails(
       android: androidDetails,
       iOS: iosDetails,
+    );
+
+    debugPrint(
+      'Scheduling notification id:$id at $scheduledTime (tz:${tz.TZDateTime.from(scheduledTime, tz.local)}) channel:$channelId',
     );
 
     await _notifications.zonedSchedule(
@@ -448,6 +471,17 @@ class AdhanNotificationService {
     } catch (e) {
       debugPrint('Error parsing time string: $timeString - $e');
       return null;
+    }
+  }
+
+  /// Debug helper - log pending scheduled notifications
+  static Future<void> logPendingNotifications() async {
+    final pending = await _notifications.pendingNotificationRequests();
+    debugPrint('Pending scheduled notifications count: ${pending.length}');
+    for (final p in pending) {
+      debugPrint(
+        'Pending id:${p.id} title:${p.title} body:${p.body} payload:${p.payload}',
+      );
     }
   }
 

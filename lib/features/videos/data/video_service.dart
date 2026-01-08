@@ -20,12 +20,18 @@ class VideoService {
           final part = url.split('/channel/').last;
           id = ChannelId(part.split('?').first);
         } else if (url.contains('@')) {
-          var handle = url.substring(url.indexOf('@'));
+          var handle = url.substring(url.indexOf('@') + 1);
           if (handle.contains('?')) handle = handle.split('?').first;
           if (handle.contains('/')) handle = handle.split('/').first;
+          if (handle.startsWith('@')) handle = handle.substring(1);
 
-          final channel = await _yt.channels.getByHandle(handle);
-          id = channel.id;
+          try {
+            final channel = await _yt.channels.getByHandle(handle);
+            id = channel.id;
+          } catch (_) {
+            // Fallback to treat it as an ID if handle resolution fails
+            id = ChannelId(handle);
+          }
         } else {
           id = ChannelId(url.split('?').first);
         }
