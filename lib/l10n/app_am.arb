@@ -1,24 +1,20 @@
 {
   "@@locale": "am",
   "appTitle": "ኑር - የእስልምና መተግበሪያ",
-  
   "home": "መነሻ",
   "quran": "ቁርዓን",
   "hadith": "ሐዲስ",
   "azkhar": "አዝካር",
   "tasbih": "ተስቢህ",
   "more": "ተጨማሪ",
-  
   "prayerTimes": "የሶላት ሰዓቶች",
   "fajr": "ፈጅር",
   "dhuhr": "ዙህር",
   "asr": "ዐስር",
   "maghrib": "መግሪብ",
   "isha": "ዒሻ",
-  
   "nextPrayer": "ቀጣዩ ሶላት",
   "timeUntil": "እስከ {prayer} ድረስ ያለው ጊዜ",
-  
   "settings": "ቅንብሮች",
   "language": "ቋንቋ",
   "notifications": "ማሳወቂያዎች",
@@ -26,20 +22,15 @@
   "adhanNotificationsDesc": "የሶላት ጊዜ ሲደርስ ማሳወቂያ ያግኙ",
   "prayerReminders": "የሶላት ማስታወሻዎች",
   "prayerRemindersDesc": "ከሶላት 15 ደቂቃ በፊት ማስታወሻ ያግኙ",
-  
   "darkMode": "ጨለማ ሁነታ",
   "lightMode": "ብርሃን ሁነታ",
-  
   "islamicCalendar": "የእስልምና ቀን መቁጠሪያ",
   "hijriDate": "የሂጅሪያ ቀን",
-  
   "exploreNoor": "ኑርን ያስሱ",
   "discoverFeatures": "የመተግበሪያውን ሁሉንም ባህሪያት ያግኙ",
-  
   "assalamuAlaikum": "አሰላሙ ዓለይኩም",
   "welcome": "እንኳን በደህና መጡ",
   "welcomeBack": "እንኳን በደህና ተመለሱ",
-  
   "loading": "በመጫን ላይ...",
   "error": "ስህተት",
   "retry": "እንደገና ሞክር",
@@ -47,14 +38,12 @@
   "save": "አስቀምጥ",
   "done": "ተጠናቀቀ",
   "ok": "እሺ",
-  
   "profile": "መገለጫ",
   "editProfile": "መገለጫ አርትዕ",
   "name": "ስም",
   "gender": "ጾታ",
   "male": "ወንድ",
   "female": "ሴት",
-  
   "about": "ስለ",
   "version": "ስሪት",
   "privacyPolicy": "የግላዊነት ፖሊሲ",
@@ -62,7 +51,6 @@
   "contactUs": "ያግኙን",
   "rateApp": "መተግበሪያውን ይደግፉ",
   "shareApp": "መተግበሪያውን ያጋሩ",
-  
   "surah": "ሱራ",
   "ayah": "አንቀጽ",
   "juz": "ጁዝ",
@@ -70,32 +58,26 @@
   "verses": "ቁጥሮች",
   "listen": "ያዳምጡ",
   "reciter": "ቃሪ",
-  
   "book": "መጽሐፍ",
   "chapter": "ምዕራፍ",
   "narrator": "ተራኪ",
-  
   "morning": "ጧት",
   "evening": "ማታ",
   "afterPrayer": "ከሶላት በኋላ",
   "sleep": "እንቅልፍ",
-  
   "count": "ቁጥር",
   "target": "ዒላማ",
   "reset": "ዳግም አስጀምር",
   "completed": "ተጠናቀቀ",
   "thisSession": "ይህ ክፍለ ጊዜ",
   "lifetime": "ጠቅላላ",
-  
   "qiblaDirection": "የቂብላ አቅጣጫ",
   "locationPermission": "የአካባቢ ፈቃድ",
   "locationPermissionDesc": "ትክክለኛ የሶላት ጊዜዎችን እና የቂብላ አቅጣጫን ለማሳየት የአካባቢ ፈቃድ ያስፈልገናል",
   "grant": "ፍቀድ",
   "deny": "ከልክል",
-  
   "noInternet": "የበይነመረብ ግንኙነት የለም",
   "checkConnection": "እባክዎ የበይነመረብ ግንኙነትዎን ያረጋግጡ እና እንደገና ይሞክሩ",
-  
   "selectLanguage": "ቋንቋ ይምረጡ",
   "english": "English",
   "amharic": "አማርኛ",
@@ -130,19 +112,16 @@
     }
   },
   "noSurahsFound": "No Surahs found",
-
   "moreTitle": "More",
   "progressAnalytics": "Progress & Analytics",
   "islamicCalendarTitle": "Islamic Calendar",
   "islamicCalendarSubtitle": "Hijri dates and Islamic events",
-  
   "settingsTitle": "App Settings",
   "settingsSubtitle": "Notifications, theme, language",
   "locationSettingsTitle": "Location Settings",
   "locationSettingsSubtitle": "Update prayer location",
   "backupTitle": "Backup & Sync",
   "backupSubtitle": "Save your progress",
-  
   "supportCommunity": "Support & Community",
   "rateAppTitle": "Rate Noor",
   "rateAppSubtitle": "Love the app? Rate us!",
@@ -152,7 +131,6 @@
   "feedbackSubtitle": "Help us improve",
   "aboutAppTitle": "About Noor",
   "aboutAppSubtitle": "App info, privacy & terms",
-  
   "qadahTitle": "Qadah Tracker",
   "qadahSubtitle": "Track and make up missed fasts",
   "totalMissed": "Total Missed",
@@ -164,7 +142,6 @@
   "incrementPaid": "Mark Fast as Paid",
   "setupQadah": "Setup Qadah",
   "howManyMissed": "How many days did you miss?",
-  
   "timeLeft": "ቀሪ ጊዜ",
   "usingDefaultTimes": "ነባሪ ሰዓቶችን በመጠቀም (ከመስመር ውጭ)",
   "qibla": "ቂብላ",
@@ -190,7 +167,14 @@
   "directionToKaaba": "ወደ ካባ፣ መካ አቅጣጫ",
   "unableToFindQibla": "ቂብላን ማግኘት አልተቻለም",
   "unableToFetchQibla": "የቂብላን አቅጣጫ ማግኘት አልተቻለም። እባክዎ የበመረብ ግንኙነትዎን ያረጋግጡ።",
-  
   "islamicVideos": "እስላማዊ ቪዲዮዎች",
-  "curatedIslamicContent": "የተራገፉ እስላማዊ ይዘቶች እና ማስታወሻዎች"
+  "curatedIslamicContent": "የተራገፉ እስላማዊ ይዘቶች እና ማስታወሻዎች",
+  "ramadanCountdown": "ረመዳን የቀረው ጊዜ",
+  "daysUntilRamadan": "ቀናት",
+  "hoursUntilRamadan": "ሰዓታት",
+  "minutesUntilRamadan": "ደቂቃዎች",
+  "secondsUntilRamadan": "ሰከንዶች",
+  "ramadanMubarak": "ረመዳን ሙባራክ!",
+  "ramadanKareem": "ረመዳን ካሪም!",
+  "ramadanBlessings": "ይህ ረመዳን ሰላም እና በረከት ይመጣል"
 }

@@ -503,4 +503,28 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get curatedIslamicContent => 'የተራገፉ እስላማዊ ይዘቶች እና ማስታወሻዎች';
+
+  @override
+  String get ramadanCountdown => 'ረመዳን ቆጠራ';
+
+  @override
+  String get daysUntilRamadan => 'ቀናት';
+
+  @override
+  String get hoursUntilRamadan => 'ሰዓታት';
+
+  @override
+  String get minutesUntilRamadan => 'ደቂቃዎች';
+
+  @override
+  String get secondsUntilRamadan => 'ሰከንዶች';
+
+  @override
+  String get ramadanMubarak => 'ረመዳን ሙባራክ!';
+
+  @override
+  String get ramadanKareem => 'ረመዳን ካሪም!';
+
+  @override
+  String get ramadanBlessings => 'ይህ ረመዳን ሰላም እና በረከት ይመጣል';
 }

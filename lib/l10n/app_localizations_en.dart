@@ -507,4 +507,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get curatedIslamicContent => 'Curated Islamic content & reminders';
+
+  @override
+  String get ramadanCountdown => 'Ramadan Countdown';
+
+  @override
+  String get daysUntilRamadan => 'Days';
+
+  @override
+  String get hoursUntilRamadan => 'Hours';
+
+  @override
+  String get minutesUntilRamadan => 'Minutes';
+
+  @override
+  String get secondsUntilRamadan => 'Seconds';
+
+  @override
+  String get ramadanMubarak => 'Ramadan Mubarak!';
+
+  @override
+  String get ramadanKareem => 'Ramadan Kareem!';
+
+  @override
+  String get ramadanBlessings =>
+      'May this Ramadan bring you peace and blessings';
 }

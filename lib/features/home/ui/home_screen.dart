@@ -34,6 +34,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   String _countdownText = '';
   String _nextPrayerName = '';
   PrayerTimes? _currentPrayerTimes;
+  Timer? _ramadanCountdownTimer;
+  RamadanCountdown? _currentRamadanCountdown;
 
   @override
   void initState() {
@@ -60,10 +62,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
     );
 
-    _slideAnimation =
-        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
-          CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
-        );
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
+    );
 
     _fadeController.forward();
     _slideController.forward();
@@ -74,6 +78,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     _fadeController.dispose();
     _slideController.dispose();
     _countdownTimer?.cancel();
+    _ramadanCountdownTimer?.cancel();
     super.dispose();
   }
 
@@ -196,15 +201,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const VideoHubScreen(
-              channelIds: [
-                // Verified Islamic Content Channel IDs Only
-                'UCTX8ZbNDi_HBoyjTWRw9fAg',
-                'UCNHaE-HxyC7PMqB-7QJEScg',
-                'UCQQWZ1IeswjheSTSEXKcQsA',
-                'UCNB_OaI4524fASt8h0IL8dw',
-              ],
-            ),
+            builder:
+                (context) => const VideoHubScreen(
+                  channelIds: [
+                    // Verified Islamic Content Channel IDs Only
+                    'UCTX8ZbNDi_HBoyjTWRw9fAg',
+                    'UCNHaE-HxyC7PMqB-7QJEScg',
+                    'UCQQWZ1IeswjheSTSEXKcQsA',
+                    'UCNB_OaI4524fASt8h0IL8dw',
+                  ],
+                ),
           ),
         );
       },
@@ -289,8 +295,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             ),
             const SizedBox(height: 8),
             ElevatedButton(
-              onPressed: () =>
-                  ref.read(prayerTimesProvider.notifier).refreshPrayerTimes(),
+              onPressed:
+                  () =>
+                      ref
+                          .read(prayerTimesProvider.notifier)
+                          .refreshPrayerTimes(),
               child: Text(l10n.retry),
             ),
           ],
@@ -341,41 +350,47 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                       ),
                     ),
                     locationAsync.when(
-                      loading: () => Text(
-                        l10n.loading,
-                        style: const TextStyle(color: Colors.white70),
-                      ),
-                      error: (_, __) => Text(
-                        l10n.error,
-                        style: const TextStyle(color: Colors.white70),
-                      ),
-                      data: (location) => Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${location.city}, ${location.country}',
-                            style: const TextStyle(
-                              color: Colors.white70,
-                              fontSize: 14,
-                            ),
+                      loading:
+                          () => Text(
+                            l10n.loading,
+                            style: const TextStyle(color: Colors.white70),
                           ),
-                          if (prayerTimes.isUsingFallbackPrayerTimes)
-                            Text(
-                              l10n.usingDefaultTimes,
-                              style: const TextStyle(
-                                color: Colors.white60,
-                                fontSize: 10,
+                      error:
+                          (_, __) => Text(
+                            l10n.error,
+                            style: const TextStyle(color: Colors.white70),
+                          ),
+                      data:
+                          (location) => Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${location.city}, ${location.country}',
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 14,
+                                ),
                               ),
-                            ),
-                        ],
-                      ),
+                              if (prayerTimes.isUsingFallbackPrayerTimes)
+                                Text(
+                                  l10n.usingDefaultTimes,
+                                  style: const TextStyle(
+                                    color: Colors.white60,
+                                    fontSize: 10,
+                                  ),
+                                ),
+                            ],
+                          ),
                     ),
                   ],
                 ),
               ),
               IconButton(
-                onPressed: () =>
-                    ref.read(prayerTimesProvider.notifier).refreshPrayerTimes(),
+                onPressed:
+                    () =>
+                        ref
+                            .read(prayerTimesProvider.notifier)
+                            .refreshPrayerTimes(),
                 icon: const Icon(Icons.refresh, color: Colors.white),
               ),
             ],
@@ -485,11 +500,201 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
           const SizedBox(height: 12),
 
-          // Prayer times grid
+          _buildRamadanCountdown(),
+
+          const SizedBox(height: 12),
+
           _buildPrayerTimesGrid(prayerTimes, todayStatus),
         ],
       ),
     );
+  }
+
+  Widget _buildRamadanCountdown() {
+    final ramadanAsync = ref.watch(ramadanCountdownProvider);
+    final l10n = AppLocalizations.of(context)!;
+
+    return ramadanAsync.when(
+      loading: () => const SizedBox.shrink(),
+      error: (_, __) => const SizedBox.shrink(),
+      data: (countdown) {
+        if (_currentRamadanCountdown != countdown) {
+          _currentRamadanCountdown = countdown;
+          _startRamadanCountdown(countdown);
+        }
+
+        if (countdown.isCountdownZero || countdown.isRamadanStarted) {
+          return _buildRamadanMubarakMessage();
+        }
+
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.2),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.accent.withValues(alpha: 0.2),
+                blurRadius: 6,
+                spreadRadius: 0,
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.mosque, color: Colors.white, size: 14),
+              const SizedBox(width: 6),
+              Text(
+                l10n.ramadanCountdown,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const Spacer(),
+              _buildCountdownItem(
+                _currentRamadanCountdown?.countdown['days'] ??
+                    countdown.countdown['days'] ??
+                    0,
+                l10n.daysUntilRamadan,
+              ),
+              const SizedBox(width: 8),
+              _buildCountdownItem(
+                _currentRamadanCountdown?.countdown['hours'] ??
+                    countdown.countdown['hours'] ??
+                    0,
+                l10n.hoursUntilRamadan,
+              ),
+              const SizedBox(width: 8),
+              _buildCountdownItem(
+                _currentRamadanCountdown?.countdown['minutes'] ??
+                    countdown.countdown['minutes'] ??
+                    0,
+                l10n.minutesUntilRamadan,
+              ),
+              const SizedBox(width: 8),
+              _buildCountdownItem(
+                _currentRamadanCountdown?.countdown['seconds'] ??
+                    countdown.countdown['seconds'] ??
+                    0,
+                l10n.secondsUntilRamadan,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCountdownItem(int value, String label) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          value.toString().padLeft(2, '0'),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.5,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          label,
+          style: const TextStyle(
+            color: Colors.white70,
+            fontSize: 8,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRamadanMubarakMessage() {
+    final l10n = AppLocalizations.of(context)!;
+    final messages = [
+      l10n.ramadanMubarak,
+      l10n.ramadanKareem,
+      l10n.ramadanBlessings,
+    ];
+    final random = DateTime.now().millisecondsSinceEpoch % messages.length;
+    final message = messages[random];
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: AppColors.accent.withValues(alpha: 0.4),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.accent.withValues(alpha: 0.3),
+            blurRadius: 8,
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.celebration, color: AppColors.accent, size: 16),
+          const SizedBox(width: 8),
+          Flexible(
+            child: Text(
+              message,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _startRamadanCountdown(RamadanCountdown countdown) {
+    _ramadanCountdownTimer?.cancel();
+    _ramadanCountdownTimer = Timer.periodic(const Duration(seconds: 1), (
+      timer,
+    ) {
+      if (mounted) {
+        final now = DateTime.now();
+        final difference = countdown.ramadanStartDate.difference(now);
+
+        if (difference.isNegative || difference.inSeconds <= 0) {
+          _currentRamadanCountdown = countdown.copyWith(
+            countdown: {'days': 0, 'hours': 0, 'minutes': 0, 'seconds': 0},
+          );
+          timer.cancel();
+        } else {
+          _currentRamadanCountdown = countdown.copyWith(
+            countdown: {
+              'days': difference.inDays,
+              'hours': difference.inHours % 24,
+              'minutes': difference.inMinutes % 60,
+              'seconds': difference.inSeconds % 60,
+            },
+          );
+        }
+        setState(() {});
+      }
+    });
   }
 
   Widget _buildPrayerTimesGrid(
@@ -627,9 +832,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         future: UserService.getUserGender(),
                         builder: (context, genderSnapshot) {
                           final gender = genderSnapshot.data ?? 'male';
-                          final asset = gender == 'female'
-                              ? 'assets/female.png'
-                              : 'assets/male.png';
+                          final asset =
+                              gender == 'female'
+                                  ? 'assets/female.png'
+                                  : 'assets/male.png';
                           return Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
@@ -700,34 +906,38 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       {
         'title': l10n.quran,
         'icon': 'assets/quran.png',
-        'onTap': () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const QuranScreen()),
-        ),
+        'onTap':
+            () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const QuranScreen()),
+            ),
       },
       {
         'title': l10n.hadith,
         'icon': Icons.format_quote_outlined,
-        'onTap': () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const HadithHomeScreen()),
-        ),
+        'onTap':
+            () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const HadithHomeScreen()),
+            ),
       },
       {
         'title': l10n.azkhar,
         'icon': 'assets/azkhar.png',
-        'onTap': () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const AzkharHomeScreen()),
-        ),
+        'onTap':
+            () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const AzkharHomeScreen()),
+            ),
       },
       {
         'title': l10n.tasbih,
         'icon': 'assets/tasbih.png',
-        'onTap': () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const TasbihScreen()),
-        ),
+        'onTap':
+            () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const TasbihScreen()),
+            ),
       },
     ];
 
@@ -747,60 +957,61 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           crossAxisCount: 2,
           mainAxisSpacing: 16,
           crossAxisSpacing: 16,
-          children: features.map((feature) {
-            return StaggeredGridTile.count(
-              crossAxisCellCount: 1,
-              mainAxisCellCount: 1,
-              child: GestureDetector(
-                onTap: feature['onTap'] as void Function(),
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        AppColors.primary.withAlpha(204),
-                        AppColors.primary,
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.primary.withAlpha(77),
-                        blurRadius: 10,
-                        offset: const Offset(0, 5),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      feature['icon'] is String
-                          ? Image.asset(
-                              feature['icon'] as String,
-                              height: 32,
-                              color: Colors.white,
-                            )
-                          : Icon(
-                              feature['icon'] as IconData,
-                              color: Colors.white,
-                              size: 32,
-                            ),
-                      Text(
-                        feature['title'] as String,
-                        style: AppTextStyles.heading3.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
+          children:
+              features.map((feature) {
+                return StaggeredGridTile.count(
+                  crossAxisCellCount: 1,
+                  mainAxisCellCount: 1,
+                  child: GestureDetector(
+                    onTap: feature['onTap'] as void Function(),
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            AppColors.primary.withAlpha(204),
+                            AppColors.primary,
+                          ],
                         ),
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primary.withAlpha(77),
+                            blurRadius: 10,
+                            offset: const Offset(0, 5),
+                          ),
+                        ],
                       ),
-                    ],
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          feature['icon'] is String
+                              ? Image.asset(
+                                feature['icon'] as String,
+                                height: 32,
+                                color: Colors.white,
+                              )
+                              : Icon(
+                                feature['icon'] as IconData,
+                                color: Colors.white,
+                                size: 32,
+                              ),
+                          Text(
+                            feature['title'] as String,
+                            style: AppTextStyles.heading3.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            );
-          }).toList(),
+                );
+              }).toList(),
         ),
       ],
     );
@@ -1015,9 +1226,10 @@ class _IslamicVideosCarouselState extends State<_IslamicVideosCarousel> {
                       width: _currentPage == dotIndex ? 12 : 4, // Smaller dots
                       height: 4,
                       decoration: BoxDecoration(
-                        color: _currentPage == dotIndex
-                            ? Colors.white
-                            : Colors.white.withOpacity(0.4),
+                        color:
+                            _currentPage == dotIndex
+                                ? Colors.white
+                                : Colors.white.withOpacity(0.4),
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -1036,10 +1248,11 @@ class _IslamicVideosCarouselState extends State<_IslamicVideosCarousel> {
 class _IslamicPatternPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5;
+    final paint =
+        Paint()
+          ..color = Colors.white
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.5;
 
     // Draw subtle geometric Islamic patterns
     final spacing = 40.0;

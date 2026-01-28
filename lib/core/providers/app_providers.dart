@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'dart:convert';
 import '../../features/home/data/prayer_time_api.dart';
+import '../../features/home/data/ramadan_countdown_api.dart';
 import '../services/adhan_notification_service.dart';
 import 'models.dart';
 
@@ -255,6 +256,38 @@ class PrayerTimesNotifier extends StateNotifier<AsyncValue<PrayerTimes>> {
 final prayerTimesProvider =
     StateNotifierProvider<PrayerTimesNotifier, AsyncValue<PrayerTimes>>((ref) {
       return PrayerTimesNotifier(ref);
+    });
+
+class RamadanCountdownNotifier
+    extends StateNotifier<AsyncValue<RamadanCountdown>> {
+  RamadanCountdownNotifier() : super(const AsyncValue.loading()) {
+    _loadCountdown();
+  }
+
+  Future<void> _loadCountdown() async {
+    try {
+      state = const AsyncValue.loading();
+      final timezoneOffset = DateTime.now().timeZoneOffset.inHours;
+      final countdown = await RamadanCountdownApi.fetchCountdown(
+        timezoneOffset: timezoneOffset,
+      );
+      state = AsyncValue.data(countdown);
+    } catch (e, stackTrace) {
+      state = AsyncValue.error(e, stackTrace);
+    }
+  }
+
+  Future<void> refreshCountdown() async {
+    await _loadCountdown();
+  }
+}
+
+final ramadanCountdownProvider =
+    StateNotifierProvider<
+      RamadanCountdownNotifier,
+      AsyncValue<RamadanCountdown>
+    >((ref) {
+      return RamadanCountdownNotifier();
     });
 
 // Prayer Status Provider (Today's Prayer Tracking)
