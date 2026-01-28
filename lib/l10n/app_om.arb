@@ -192,5 +192,14 @@
   "unableToFetchQibla": "Kallattii Qiblaa argachuu hin dandeenye. Maaloo walqunnamtii keessan mirkaneeffadhaa.",
   
   "islamicVideos": "Viidiyoo Islaamaa",
-  "curatedIslamicContent": "Qabeenya Islaamaa fi yaadachiisa filataman"
+  "curatedIslamicContent": "Qabeenya Islaamaa fi yaadachiisa filataman",
+  
+  "ramadanCountdown": "Ramadaan Lakkoofsi",
+  "daysUntilRamadan": "Guyyaa",
+  "hoursUntilRamadan": "Sa'aatii",
+  "minutesUntilRamadan": "Daqiiqaa",
+  "secondsUntilRamadan": "Sekondii",
+  "ramadanMubarak": "Ramadaan Mubaarak!",
+  "ramadanKareem": "Ramadaan Kariim!",
+  "ramadanBlessings": "Ramadaan kana nagaan fi barakaa haa siif haatu"
 }
