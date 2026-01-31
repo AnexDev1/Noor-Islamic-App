@@ -202,5 +202,14 @@
   "unableToFetchQibla": "Unable to fetch Qibla direction. Please check your connection.",
   
   "islamicVideos": "Islamic Videos",
-  "curatedIslamicContent": "Curated Islamic content & reminders"
+  "curatedIslamicContent": "Curated Islamic content & reminders",
+  
+  "ramadanCountdown": "Ramadan Countdown",
+  "daysUntilRamadan": "Days",
+  "hoursUntilRamadan": "Hours",
+  "minutesUntilRamadan": "Minutes",
+  "secondsUntilRamadan": "Seconds",
+  "ramadanMubarak": "Ramadan Mubarak!",
+  "ramadanKareem": "Ramadan Kareem!",
+  "ramadanBlessings": "May this Ramadan bring you peace and blessings"
 }
