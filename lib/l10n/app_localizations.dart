@@ -1071,6 +1071,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Curated Islamic content & reminders'**
   String get curatedIslamicContent;
+
+  /// No description provided for @ramadanCountdown.
+  ///
+  /// In en, this message translates to:
+  /// **'Ramadan Countdown'**
+  String get ramadanCountdown;
+
+  /// No description provided for @daysUntilRamadan.
+  ///
+  /// In en, this message translates to:
+  /// **'Days'**
+  String get daysUntilRamadan;
+
+  /// No description provided for @hoursUntilRamadan.
+  ///
+  /// In en, this message translates to:
+  /// **'Hours'**
+  String get hoursUntilRamadan;
+
+  /// No description provided for @minutesUntilRamadan.
+  ///
+  /// In en, this message translates to:
+  /// **'Minutes'**
+  String get minutesUntilRamadan;
+
+  /// No description provided for @secondsUntilRamadan.
+  ///
+  /// In en, this message translates to:
+  /// **'Seconds'**
+  String get secondsUntilRamadan;
+
+  /// No description provided for @ramadanMubarak.
+  ///
+  /// In en, this message translates to:
+  /// **'Ramadan Mubarak!'**
+  String get ramadanMubarak;
+
+  /// No description provided for @ramadanKareem.
+  ///
+  /// In en, this message translates to:
+  /// **'Ramadan Kareem!'**
+  String get ramadanKareem;
+
+  /// No description provided for @ramadanBlessings.
+  ///
+  /// In en, this message translates to:
+  /// **'May this Ramadan bring you peace and blessings'**
+  String get ramadanBlessings;
 }
 
 class _AppLocalizationsDelegate

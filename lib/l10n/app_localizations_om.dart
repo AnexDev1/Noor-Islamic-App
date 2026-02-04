@@ -510,4 +510,29 @@ class AppLocalizationsOm extends AppLocalizations {
   @override
   String get curatedIslamicContent =>
       'Qabeenya Islaamaa fi yaadachiisa filataman';
+
+  @override
+  String get ramadanCountdown => 'Ramadaan Lakkoofsi';
+
+  @override
+  String get daysUntilRamadan => 'Guyyaa';
+
+  @override
+  String get hoursUntilRamadan => 'Sa\'aatii';
+
+  @override
+  String get minutesUntilRamadan => 'Daqiiqaa';
+
+  @override
+  String get secondsUntilRamadan => 'Sekondii';
+
+  @override
+  String get ramadanMubarak => 'Ramadaan Mubaarak!';
+
+  @override
+  String get ramadanKareem => 'Ramadaan Kariim!';
+
+  @override
+  String get ramadanBlessings =>
+      'Ramadaan kana nagaan fi barakaa haa siif haatu';
 }

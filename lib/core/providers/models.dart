@@ -266,3 +266,52 @@ class UserPreferences {
     lastAppUsage: 'First time',
   );
 }
+
+class RamadanCountdown {
+  final DateTime ramadanStartDate;
+  final DateTime currentDate;
+  final int timezoneOffset;
+  final Map<String, int> countdown;
+
+  const RamadanCountdown({
+    required this.ramadanStartDate,
+    required this.currentDate,
+    required this.timezoneOffset,
+    required this.countdown,
+  });
+
+  bool get isRamadanStarted {
+    final now = DateTime.now();
+    return now.isAfter(ramadanStartDate) || now.isAtSameMomentAs(ramadanStartDate);
+  }
+
+  bool get isCountdownZero {
+    return countdown['days'] == 0 &&
+        countdown['hours'] == 0 &&
+        countdown['minutes'] == 0 &&
+        countdown['seconds'] == 0;
+  }
+
+  static RamadanCountdown fromJson(Map<String, dynamic> json) {
+    return RamadanCountdown(
+      ramadanStartDate: DateTime.parse(json['ramadanStartDate'] as String),
+      currentDate: DateTime.parse(json['currentDate'] as String),
+      timezoneOffset: json['timezoneOffset'] as int,
+      countdown: Map<String, int>.from(json['countdown'] as Map),
+    );
+  }
+
+  RamadanCountdown copyWith({
+    DateTime? ramadanStartDate,
+    DateTime? currentDate,
+    int? timezoneOffset,
+    Map<String, int>? countdown,
+  }) {
+    return RamadanCountdown(
+      ramadanStartDate: ramadanStartDate ?? this.ramadanStartDate,
+      currentDate: currentDate ?? this.currentDate,
+      timezoneOffset: timezoneOffset ?? this.timezoneOffset,
+      countdown: countdown ?? Map<String, int>.from(this.countdown),
+    );
+  }
+}
