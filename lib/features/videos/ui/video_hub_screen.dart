@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart' as yt;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../domain/video_item.dart';
 import 'shorts_viewer_screen.dart';
 import 'video_list_screen.dart';
 
@@ -17,66 +17,6 @@ class VideoHubScreen extends StatefulWidget {
   State<VideoHubScreen> createState() => _VideoHubScreenState();
 }
 
-class VideoItem {
-  final String id;
-  final String title;
-  final String author;
-  final String thumbnailUrl;
-  final int? durationSeconds;
-  final String? uploadDateIso;
-  final int? viewCount;
-  final int? likeCount;
-
-  VideoItem({
-    required this.id,
-    required this.title,
-    required this.author,
-    required this.thumbnailUrl,
-    this.durationSeconds,
-    this.uploadDateIso,
-    this.viewCount,
-    this.likeCount,
-  });
-
-  factory VideoItem.fromYt(yt.Video v) {
-    return VideoItem(
-      id: v.id.value,
-      title: v.title,
-      author: v.author,
-      thumbnailUrl: v.thumbnails.highResUrl,
-      durationSeconds: v.duration?.inSeconds,
-      uploadDateIso: v.uploadDate?.toIso8601String(),
-      viewCount: v.engagement.viewCount,
-      likeCount: v.engagement.likeCount,
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    'id': id,
-    'title': title,
-    'author': author,
-    'thumbnailUrl': thumbnailUrl,
-    'durationSeconds': durationSeconds,
-    'uploadDateIso': uploadDateIso,
-    'viewCount': viewCount,
-    'likeCount': likeCount,
-  };
-
-  factory VideoItem.fromMap(Map<String, dynamic> m) => VideoItem(
-    id: m['id'] as String,
-    title: m['title'] as String,
-    author: m['author'] as String,
-    thumbnailUrl: m['thumbnailUrl'] as String,
-    durationSeconds: m['durationSeconds'] as int?,
-    uploadDateIso: m['uploadDateIso'] as String?,
-    viewCount: m['viewCount'] as int?,
-    likeCount: m['likeCount'] as int?,
-  );
-
-  DateTime? get uploadDate =>
-      uploadDateIso != null ? DateTime.tryParse(uploadDateIso!) : null;
-}
-
 class _VideoHubScreenState extends State<VideoHubScreen>
     with TickerProviderStateMixin {
   final _yt = yt.YoutubeExplode();
@@ -88,7 +28,6 @@ class _VideoHubScreenState extends State<VideoHubScreen>
   String _selectedFilter = 'All';
   String _searchQuery = '';
   bool _isSearching = false;
-  int _currentMode = 0; // 0 = Videos, 1 = Shorts
 
   // Incremental loading configuration
   final int _initialPerChannel = 6; // fetch small batch first
@@ -96,8 +35,7 @@ class _VideoHubScreenState extends State<VideoHubScreen>
   bool _isBackgroundLoading = false;
 
   late AnimationController _animationController;
-  late AnimationController _modeAnimationController;
-  late Animation<double> _modeAnimation;
+  late TabController _tabController;
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
   final ScrollController _scrollController = ScrollController();
@@ -112,109 +50,165 @@ class _VideoHubScreenState extends State<VideoHubScreen>
       vsync: this,
       duration: const Duration(milliseconds: 400),
     );
-    _modeAnimationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
-    );
-    _modeAnimation = CurvedAnimation(
-      parent: _modeAnimationController,
-      curve: Curves.easeInOutCubic,
-    );
-    _fetchContent();
+    _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(() => setState(() {}));
+    // Defer fetch until after first frame so NestedScrollView + TabBarView
+    // complete their initial layout (fixes content not showing on first load)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _fetchContent();
+    });
   }
 
   Future<void> _fetchContent() async {
     // Load cached videos if available so user sees results immediately
     await _loadCache();
 
-    setState(() {
-      _loading = _videos.isEmpty; // show loading only if we have no cache
-      _isBackgroundLoading = true;
-    });
+    if (mounted) {
+      setState(() {
+        _loading = _videos.isEmpty; // show loading only if we have no cache
+        _isBackgroundLoading = true;
+      });
+    }
 
-    List<VideoItem> allVideos = [];
-    List<VideoItem> allShorts = [];
-    Map<String, String> channelNames = {};
     // Use class-level seen set to prevent duplicates across both fetch phases
     _seenIds.clear();
     _seenIds.addAll(_videos.map((v) => v.id));
     _seenIds.addAll(_shorts.map((s) => s.id));
 
-    // Fetch a small batch for each channel and update UI progressively
-    for (final channelId in widget.channelIds) {
-      try {
-        final id = yt.ChannelId(channelId);
-        final channelInfo = await _yt.channels.get(id);
-        channelNames[channelId] = channelInfo.title;
+    // Fetch channels and update UI progressively as each completes
+    final List<VideoItem> allVideos = [];
+    final List<VideoItem> allShorts = [];
+    final Map<String, String> channelNames = {};
 
-        final initialUploads = await _yt.channels
-            .getUploads(id)
-            .take(_initialPerChannel)
-            .toList();
-
-        for (final video in initialUploads) {
-          final item = VideoItem.fromYt(video);
-          if (_seenIds.contains(item.id)) continue;
-          _seenIds.add(item.id);
-
-          if (video.duration != null &&
-              video.duration!.inSeconds <= 60 &&
-              video.duration!.inSeconds >= 10) {
-            allShorts.add(item);
-          } else {
+    // Launch all fetches but process results as they arrive
+    final futures = widget.channelIds.map((channelId) async {
+      final result = await _fetchChannelBatch(channelId);
+      if (result != null && mounted) {
+        // Process this channel's results immediately
+        channelNames[result.channelId] = result.channelName;
+        for (final item in result.videos) {
+          if (!_seenIds.contains(item.id)) {
+            _seenIds.add(item.id);
             allVideos.add(item);
           }
         }
-
-        // Update UI after each channel's initial batch (append, no shuffle)
-        if (mounted) {
-          // After initial batches per channel, bring most popular videos to the top
-          final hadCache = _videos.isNotEmpty;
-
-          // Determine popularity by viewCount then likeCount
-          final sortedByPopularity = List<VideoItem>.from(allVideos)
-            ..sort((a, b) {
-              final av = a.viewCount ?? 0;
-              final bv = b.viewCount ?? 0;
-              if (bv != av) return bv.compareTo(av);
-              final al = a.likeCount ?? 0;
-              final bl = b.likeCount ?? 0;
-              return bl.compareTo(al);
-            });
-
-          const int topN = 10;
-          final topPopular = sortedByPopularity.take(topN).toList();
-
-          // Remove topPopular ids from the main list
-          final rest = allVideos
-              .where((v) => !topPopular.any((t) => t.id == v.id))
-              .toList();
-
-          // Shuffle first time the user visits (no cache)
-          if (!hadCache) {
-            rest.shuffle();
+        for (final item in result.shorts) {
+          if (!_seenIds.contains(item.id)) {
+            _seenIds.add(item.id);
+            allShorts.add(item);
           }
-
-          final finalList = List<VideoItem>.from(topPopular)..addAll(rest);
-
-          setState(() {
-            _videos = List.from(finalList);
-            _shorts = List.from(allShorts);
-            _filteredVideos = _videos;
-            _channelNames = Map.from(channelNames);
-            _loading = false; // show partial results as soon as we have some
-          });
-          await _saveCache();
         }
-      } catch (e) {
-        debugPrint('Error fetching channel $channelId: $e');
+
+        // Update UI immediately with current results
+        setState(() {
+          _videos = List.from(allVideos);
+          _shorts = List.from(allShorts);
+          _filteredVideos = _videos;
+          _channelNames = Map.from(channelNames);
+          _loading = false;
+        });
       }
+      return result;
+    }).toList();
+
+    // Wait for all to complete (with individual timeouts handled in _fetchChannelBatch)
+    await Future.wait(futures, eagerError: false);
+
+    // Final sort by popularity after all channels loaded
+    if (mounted && allVideos.isNotEmpty) {
+      final sortedByPopularity = List<VideoItem>.from(allVideos)
+        ..sort((a, b) {
+          final av = a.viewCount ?? 0;
+          final bv = b.viewCount ?? 0;
+          if (bv != av) return bv.compareTo(av);
+          final al = a.likeCount ?? 0;
+          final bl = b.likeCount ?? 0;
+          return bl.compareTo(al);
+        });
+
+      const int topN = 10;
+      final topPopular = sortedByPopularity.take(topN).toList();
+      final rest = allVideos
+          .where((v) => !topPopular.any((t) => t.id == v.id))
+          .toList();
+
+      final finalList = List<VideoItem>.from(topPopular)..addAll(rest);
+
+      setState(() {
+        _videos = List.from(finalList);
+        _filteredVideos = _videos;
+        _loading = false;
+      });
+      await _saveCache();
     }
 
-    // After initial batches are shown, background-load more items per channel
+    // Ensure loading is false even if no videos found
+    if (mounted) {
+      setState(() {
+        _loading = false;
+      });
+    }
+
+    // Background-load more items per channel
     _backgroundLoadRemaining();
 
     if (mounted) _animationController.forward();
+  }
+
+  /// Fetches initial batch for a single channel with timeout. Returns (channelId, channelName, videos, shorts) or null on error.
+  Future<
+    ({
+      String channelId,
+      String channelName,
+      List<VideoItem> videos,
+      List<VideoItem> shorts,
+    })?
+  >
+  _fetchChannelBatch(String channelId) async {
+    try {
+      final id = yt.ChannelId(channelId);
+
+      // Add timeout to prevent hanging on slow/unresponsive channels
+      final channelInfo = await _yt.channels
+          .get(id)
+          .timeout(
+            const Duration(seconds: 15),
+            onTimeout: () => throw Exception('Channel info timeout'),
+          );
+
+      final initialUploads = await _yt.channels
+          .getUploads(id)
+          .take(_initialPerChannel)
+          .toList()
+          .timeout(
+            const Duration(seconds: 20),
+            onTimeout: () => throw Exception('Uploads fetch timeout'),
+          );
+
+      final videos = <VideoItem>[];
+      final shorts = <VideoItem>[];
+
+      for (final video in initialUploads) {
+        final item = VideoItem.fromYt(video);
+        if (video.duration != null &&
+            video.duration!.inSeconds <= 60 &&
+            video.duration!.inSeconds >= 10) {
+          shorts.add(item);
+        } else {
+          videos.add(item);
+        }
+      }
+
+      return (
+        channelId: channelId,
+        channelName: channelInfo.title,
+        videos: videos,
+        shorts: shorts,
+      );
+    } catch (e) {
+      debugPrint('Error fetching channel $channelId: $e');
+      return null;
+    }
   }
 
   Future<void> _saveCache() async {
@@ -352,43 +346,38 @@ class _VideoHubScreenState extends State<VideoHubScreen>
     });
   }
 
-  void _switchMode(int mode) {
-    if (mode == 1) {
-      // Navigate to full-screen shorts experience
-      Navigator.push(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              ShortsViewerScreen(channelIds: widget.channelIds),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return SlideTransition(
-              position:
-                  Tween<Offset>(
-                    begin: const Offset(0, 1),
-                    end: Offset.zero,
-                  ).animate(
-                    CurvedAnimation(
-                      parent: animation,
-                      curve: Curves.easeOutCubic,
-                    ),
+  void _openShortsViewer(int startIndex) {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            ShortsViewerScreen(
+              channelIds: widget.channelIds,
+              startIndex: startIndex,
+              preloadedShorts: _shorts,
+            ),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero)
+                .animate(
+                  CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeOutCubic,
                   ),
-              child: child,
-            );
-          },
-          transitionDuration: const Duration(milliseconds: 400),
-        ),
-      );
-    } else {
-      setState(() => _currentMode = 0);
-      _modeAnimationController.reverse();
-    }
+                ),
+            child: child,
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 400),
+      ),
+    );
   }
 
   @override
   void dispose() {
     _yt.close();
     _animationController.dispose();
-    _modeAnimationController.dispose();
+    _tabController.dispose();
     _searchController.dispose();
     _searchFocusNode.dispose();
     _scrollController.dispose();
@@ -404,41 +393,37 @@ class _VideoHubScreenState extends State<VideoHubScreen>
       backgroundColor: isDark
           ? const Color(0xFF0A0A0A)
           : const Color(0xFFF8F9FA),
-      body: Stack(
-        children: [
-          // Main Content
-          CustomScrollView(
-            controller: _scrollController,
-            physics: const BouncingScrollPhysics(),
-            slivers: [
-              // Premium App Bar
-              _buildPremiumAppBar(isDark, size),
-
-              // Content based on mode
-              if (_loading)
-                _buildLoadingState(isDark)
-              else if (_filteredVideos.isEmpty)
-                _buildEmptyState(isDark)
-              else
-                _buildVideoGrid(isDark),
-            ],
-          ),
-
-          // Floating Mode Switcher
-          Positioned(
-            bottom: 24,
-            left: 0,
-            right: 0,
-            child: Center(child: _buildModeSwitcher(isDark)),
-          ),
+      body: NestedScrollView(
+        controller: _scrollController,
+        physics: const BouncingScrollPhysics(),
+        headerSliverBuilder: (context, innerBoxIsScrolled) => [
+          _buildPremiumAppBar(isDark, size),
         ],
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            // Videos tab
+            CustomScrollView(
+              slivers: [
+                if (_loading)
+                  _buildLoadingState(isDark)
+                else if (_filteredVideos.isEmpty)
+                  _buildEmptyState(isDark)
+                else
+                  _buildVideoGrid(isDark),
+              ],
+            ),
+            // Shorts tab
+            _buildShortsPreviewTab(isDark),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildPremiumAppBar(bool isDark, Size size) {
     return SliverAppBar(
-      expandedHeight: _isSearching ? 130 : 180,
+      expandedHeight: 120,
       floating: false,
       pinned: true,
       stretch: true,
@@ -447,59 +432,84 @@ class _VideoHubScreenState extends State<VideoHubScreen>
       backgroundColor: isDark
           ? const Color(0xFF0A0A0A)
           : const Color(0xFFF8F9FA),
-      leading: Container(
-        margin: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.1)
-              : Colors.black.withValues(alpha: 0.05),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: isDark ? Colors.white : Colors.black87,
-            size: 18,
+      leading: SizedBox(
+        width: 48,
+        height: 48,
+        child: Center(
+          child: Container(
+            margin: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.1)
+                  : Colors.black.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: isDark ? Colors.white : Colors.black87,
+                size: 20,
+              ),
+              onPressed: () {
+                if (Navigator.of(context).canPop()) {
+                  Navigator.of(context).pop();
+                }
+              },
+              style: IconButton.styleFrom(
+                minimumSize: const Size(40, 40),
+                padding: EdgeInsets.zero,
+              ),
+            ),
           ),
-          onPressed: () => Navigator.pop(context),
         ),
       ),
       actions: [
-        Container(
-          margin: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.1)
-                : Colors.black.withValues(alpha: 0.05),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: IconButton(
-            icon: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 200),
-              child: Icon(
-                _isSearching ? Icons.close_rounded : Icons.search_rounded,
-                key: ValueKey(_isSearching),
-                color: isDark ? Colors.white : Colors.black87,
-                size: 22,
+        if (_tabController.index == 0)
+          SizedBox(
+            width: 48,
+            height: 48,
+            child: Center(
+              child: Container(
+                margin: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.1)
+                      : Colors.black.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: IconButton(
+                  icon: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 200),
+                    child: Icon(
+                      _isSearching ? Icons.close_rounded : Icons.search_rounded,
+                      key: ValueKey(_isSearching),
+                      color: isDark ? Colors.white : Colors.black87,
+                      size: 22,
+                    ),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _isSearching = !_isSearching;
+                      if (!_isSearching) {
+                        _searchController.clear();
+                        _filterVideos('');
+                      }
+                    });
+                    if (_isSearching) {
+                      Future.delayed(const Duration(milliseconds: 100), () {
+                        _searchFocusNode.requestFocus();
+                      });
+                    }
+                  },
+                  style: IconButton.styleFrom(
+                    minimumSize: const Size(40, 40),
+                    padding: EdgeInsets.zero,
+                  ),
+                ),
               ),
             ),
-            onPressed: () {
-              setState(() {
-                _isSearching = !_isSearching;
-                if (!_isSearching) {
-                  _searchController.clear();
-                  _filterVideos('');
-                }
-              });
-              if (_isSearching) {
-                Future.delayed(const Duration(milliseconds: 100), () {
-                  _searchFocusNode.requestFocus();
-                });
-              }
-            },
           ),
-        ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 16),
       ],
       flexibleSpace: FlexibleSpaceBar(
         stretchModes: const [StretchMode.zoomBackground],
@@ -514,50 +524,39 @@ class _VideoHubScreenState extends State<VideoHubScreen>
             ),
           ),
           child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 60, 20, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Title using primary brand color
-                  const Text(
-                    'Islamic Videos',
-                    style: TextStyle(
-                      color: AppColors.primary,
-                      fontSize: 32,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -0.5,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  // Background loader (small) when fetching more content
-                  if (_isBackgroundLoading)
-                    const SizedBox(
-                      height: 4,
-                      child: LinearProgressIndicator(
-                        backgroundColor: Colors.transparent,
-                        valueColor: AlwaysStoppedAnimation(AppColors.primary),
-                      ),
-                    ),
-                ],
-              ),
-            ),
+            child: Padding(padding: const EdgeInsets.fromLTRB(20, 60, 20, 0)),
           ),
         ),
       ),
       bottom: PreferredSize(
-        preferredSize: Size.fromHeight(_isSearching ? 70 : 60),
+        preferredSize: Size.fromHeight(
+          56 + 44 + (_isBackgroundLoading ? 4 : 0),
+        ),
         child: Column(
           children: [
-            // Search Bar
-            if (_isSearching)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                child: _buildSearchBar(isDark),
+            _buildTabBar(isDark),
+            if (_isBackgroundLoading)
+              const SizedBox(
+                height: 4,
+                child: LinearProgressIndicator(
+                  backgroundColor: Colors.transparent,
+                  valueColor: AlwaysStoppedAnimation(AppColors.primary),
+                ),
               ),
-            // Filter Chips
-            if (_channelNames.isNotEmpty && !_isSearching)
-              SizedBox(height: 44, child: _buildFilterChips(isDark)),
+            SizedBox(
+              height: 44,
+              child: _tabController.index == 0
+                  ? (_isSearching
+                        ? Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
+                            child: _buildSearchBar(isDark),
+                          )
+                        : Container(
+                            // margin: const EdgeInsets.only(top: 8),
+                            child: _buildFilterChips(isDark),
+                          ))
+                  : const SizedBox.shrink(),
+            ),
           ],
         ),
       ),
@@ -568,40 +567,33 @@ class _VideoHubScreenState extends State<VideoHubScreen>
     return Container(
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isDark
               ? Colors.white.withValues(alpha: 0.1)
               : Colors.grey.shade200,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: TextField(
         controller: _searchController,
         focusNode: _searchFocusNode,
         style: TextStyle(
           color: isDark ? Colors.white : Colors.black87,
-          fontSize: 15,
+          fontSize: 14,
           fontWeight: FontWeight.w500,
         ),
         decoration: InputDecoration(
           hintText: 'Search videos, channels...',
           hintStyle: TextStyle(
             color: isDark ? Colors.grey.shade600 : Colors.grey.shade400,
-            fontSize: 15,
+            fontSize: 14,
           ),
           prefixIcon: Padding(
-            padding: const EdgeInsets.only(left: 16, right: 12),
+            padding: const EdgeInsets.only(left: 12, right: 8),
             child: Icon(
               Icons.search_rounded,
               color: isDark ? Colors.grey.shade500 : Colors.grey.shade400,
-              size: 22,
+              size: 20,
             ),
           ),
           prefixIconConstraints: const BoxConstraints(minWidth: 0),
@@ -610,7 +602,7 @@ class _VideoHubScreenState extends State<VideoHubScreen>
                   icon: Icon(
                     Icons.clear_rounded,
                     color: isDark ? Colors.grey.shade500 : Colors.grey.shade400,
-                    size: 20,
+                    size: 18,
                   ),
                   onPressed: () {
                     _searchController.clear();
@@ -619,7 +611,10 @@ class _VideoHubScreenState extends State<VideoHubScreen>
                 )
               : null,
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 10,
+            horizontal: 4,
+          ),
         ),
         onChanged: _filterVideos,
       ),
@@ -627,7 +622,7 @@ class _VideoHubScreenState extends State<VideoHubScreen>
   }
 
   Widget _buildFilterChips(bool isDark) {
-    final filters = ['All', ..._channelNames.values.toList()];
+    final filters = ['All', ..._channelNames.values];
 
     return ListView.builder(
       scrollDirection: Axis.horizontal,
@@ -686,98 +681,18 @@ class _VideoHubScreenState extends State<VideoHubScreen>
     );
   }
 
-  Widget _buildModeSwitcher(bool isDark) {
-    return Container(
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: isDark
-            ? const Color(0xFF1A1A2E).withValues(alpha: 0.95)
-            : Colors.white.withValues(alpha: 0.95),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
-        border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.1)
-              : Colors.grey.shade200,
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildModeButton(
-            icon: Icons.play_circle_filled_rounded,
-            label: 'Videos',
-            isSelected: _currentMode == 0,
-            isDark: isDark,
-            onTap: () => _switchMode(0),
-          ),
-          const SizedBox(width: 4),
-          _buildModeButton(
-            icon: Icons.bolt_rounded,
-            label: 'Shorts',
-            isSelected: _currentMode == 1,
-            isDark: isDark,
-            onTap: () => _switchMode(1),
-            hasGradient: true,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildModeButton({
-    required IconData icon,
-    required String label,
-    required bool isSelected,
-    required bool isDark,
-    required VoidCallback onTap,
-    bool hasGradient = false,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        decoration: BoxDecoration(
-          gradient: (isSelected || hasGradient) && label == 'Shorts'
-              ? const LinearGradient(colors: AppColors.primaryGradient)
-              : isSelected
-              ? const LinearGradient(colors: AppColors.primaryGradient)
-              : null,
-          color: isSelected || (hasGradient && label == 'Shorts')
-              ? null
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              size: 20,
-              color: (isSelected || (hasGradient && label == 'Shorts'))
-                  ? Colors.white
-                  : (isDark ? Colors.grey.shade400 : Colors.grey.shade600),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              label,
-              style: TextStyle(
-                color: (isSelected || (hasGradient && label == 'Shorts'))
-                    ? Colors.white
-                    : (isDark ? Colors.grey.shade400 : Colors.grey.shade600),
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-              ),
-            ),
-          ],
-        ),
-      ),
+  Widget _buildTabBar(bool isDark) {
+    return TabBar(
+      controller: _tabController,
+      indicatorColor: AppColors.primary,
+      labelColor: AppColors.primary,
+      unselectedLabelColor: isDark
+          ? Colors.grey.shade400
+          : Colors.grey.shade600,
+      tabs: const [
+        Tab(icon: Icon(Icons.play_circle_outline), text: 'Videos'),
+        Tab(icon: Icon(Icons.bolt), text: 'Shorts'),
+      ],
     );
   }
 
@@ -838,9 +753,154 @@ class _VideoHubScreenState extends State<VideoHubScreen>
     );
   }
 
+  Widget _buildShortsPreviewTab(bool isDark) {
+    if (_shorts.isEmpty) {
+      return _buildEmptyShortsState(isDark);
+    }
+    return GridView.builder(
+      padding: const EdgeInsets.all(8),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        childAspectRatio: 9 / 16,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+      ),
+      itemCount: _shorts.length,
+      itemBuilder: (context, index) =>
+          _buildShortPreviewCard(_shorts[index], index, isDark),
+    );
+  }
+
+  Widget _buildShortPreviewCard(VideoItem short, int index, bool isDark) {
+    return GestureDetector(
+      onTap: () => _openShortsViewer(index),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.network(
+              short.thumbnailUrl,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => Container(
+                color: isDark ? Colors.grey.shade900 : Colors.grey.shade200,
+                child: Icon(
+                  Icons.play_circle_outline,
+                  size: 32,
+                  color: Colors.grey.shade500,
+                ),
+              ),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withValues(alpha: 0.6),
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      short.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      short.author,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.9),
+                        fontSize: 10,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Center(
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.5),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.play_arrow_rounded,
+                  color: Colors.white,
+                  size: 28,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyShortsState(bool isDark) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.05)
+                  : Colors.grey.shade100,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.bolt_rounded,
+              size: 48,
+              color: isDark ? Colors.grey.shade600 : Colors.grey.shade400,
+            ),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            'No shorts available',
+            style: TextStyle(
+              color: isDark ? Colors.white : Colors.black87,
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Check back later for new content',
+            style: TextStyle(
+              color: isDark ? Colors.grey.shade500 : Colors.grey.shade600,
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildVideoGrid(bool isDark) {
     return SliverPadding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate((context, index) {
           final video = _filteredVideos[index];
@@ -1003,32 +1063,6 @@ class _VideoHubScreenState extends State<VideoHubScreen>
                         ),
                       ),
                     ),
-                  // Live indicator or HD badge
-                  Positioned(
-                    top: 12,
-                    left: 12,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [AppColors.primary, AppColors.accent],
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Text(
-                        'HD',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                    ),
-                  ),
                 ],
               ),
               // Video Info
