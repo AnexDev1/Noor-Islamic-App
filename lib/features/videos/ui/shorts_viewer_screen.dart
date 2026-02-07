@@ -3,12 +3,20 @@ import 'package:flutter/services.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart' as yt;
 import '../../../../core/theme/app_colors.dart';
+import '../domain/video_item.dart';
 
 /// Premium TikTok-style Shorts Viewer with immersive full-screen experience
 class ShortsViewerScreen extends StatefulWidget {
   final List<String> channelIds;
+  final int startIndex;
+  final List<VideoItem>? preloadedShorts;
 
-  const ShortsViewerScreen({super.key, required this.channelIds});
+  const ShortsViewerScreen({
+    super.key,
+    required this.channelIds,
+    this.startIndex = 0,
+    this.preloadedShorts,
+  });
 
   @override
   State<ShortsViewerScreen> createState() => _ShortsViewerScreenState();
@@ -17,10 +25,10 @@ class ShortsViewerScreen extends StatefulWidget {
 class _ShortsViewerScreenState extends State<ShortsViewerScreen>
     with TickerProviderStateMixin {
   final _yt = yt.YoutubeExplode();
-  List<yt.Video> _shorts = [];
+  List<VideoItem> _shorts = [];
   bool _loading = true;
   int _currentIndex = 0;
-  final PageController _pageController = PageController();
+  late PageController _pageController;
   final Map<int, YoutubePlayerController> _controllers = {};
   final Map<int, bool> _liked = {};
   final Map<int, bool> _bookmarked = {};
@@ -47,12 +55,30 @@ class _ShortsViewerScreenState extends State<ShortsViewerScreen>
       duration: const Duration(milliseconds: 300),
     );
 
-    _fetchShorts();
+    if (widget.preloadedShorts != null && widget.preloadedShorts!.isNotEmpty) {
+      _shorts = List.from(widget.preloadedShorts!);
+      _loading = false;
+      final startIdx =
+          (widget.startIndex % _shorts.length).clamp(0, _shorts.length - 1);
+      _currentIndex = startIdx;
+      _pageController = PageController(initialPage: startIdx);
+      if (_shorts.isNotEmpty) {
+        _initializeController(_currentIndex);
+        if (_shorts.length > 1) {
+          _initializeController((_currentIndex + 1) % _shorts.length);
+        }
+      } else {
+        _pageController = PageController();
+      }
+    } else {
+      _pageController = PageController();
+      _fetchShorts();
+    }
   }
 
   Future<void> _fetchShorts() async {
     setState(() => _loading = true);
-    List<yt.Video> allShorts = [];
+    List<VideoItem> allShorts = [];
 
     for (final channelId in widget.channelIds) {
       try {
@@ -60,13 +86,13 @@ class _ShortsViewerScreenState extends State<ShortsViewerScreen>
         final uploads = await _yt.channels.getUploads(id).take(50).toList();
 
         // Filter for shorts (typically under 60 seconds)
-        final shorts = uploads.where((video) {
-          return video.duration != null &&
+        for (final video in uploads) {
+          if (video.duration != null &&
               video.duration!.inSeconds <= 60 &&
-              video.duration!.inSeconds >= 10;
-        }).toList();
-
-        allShorts.addAll(shorts);
+              video.duration!.inSeconds >= 10) {
+            allShorts.add(VideoItem.fromYt(video));
+          }
+        }
       } catch (e) {
         debugPrint('Error fetching shorts from channel $channelId: $e');
       }
@@ -79,10 +105,13 @@ class _ShortsViewerScreenState extends State<ShortsViewerScreen>
       });
 
       if (_shorts.isNotEmpty) {
-        _initializeController(0);
-        // Preload next one
+        final startIdx =
+            widget.startIndex.clamp(0, _shorts.length - 1);
+        _currentIndex = startIdx;
+        _pageController.jumpToPage(startIdx);
+        _initializeController(startIdx);
         if (_shorts.length > 1) {
-          _initializeController(1);
+          _initializeController((startIdx + 1) % _shorts.length);
         }
       }
     }
@@ -94,7 +123,7 @@ class _ShortsViewerScreenState extends State<ShortsViewerScreen>
     if (_controllers.containsKey(logical)) return;
 
     final controller = YoutubePlayerController(
-      initialVideoId: _shorts[logical].id.value,
+      initialVideoId: _shorts[logical].id,
       flags: const YoutubePlayerFlags(
         autoPlay: true,
         mute: false,
@@ -454,7 +483,7 @@ class _ShortsViewerScreenState extends State<ShortsViewerScreen>
   }
 
   Widget _buildShortItem(int index) {
-    final short = _shorts[index];
+    final short = _shorts[index]; // VideoItem
     final controller = _controllers[index];
     final isLiked = _liked[index] ?? false;
     final isBookmarked = _bookmarked[index] ?? false;
@@ -492,7 +521,7 @@ class _ShortsViewerScreenState extends State<ShortsViewerScreen>
                 alignment: Alignment.center,
                 children: [
                   Image.network(
-                    short.thumbnails.highResUrl,
+                    short.thumbnailUrl,
                     fit: BoxFit.cover,
                     height: double.infinity,
                     width: double.infinity,
@@ -563,7 +592,7 @@ class _ShortsViewerScreenState extends State<ShortsViewerScreen>
                 // Like button with animation
                 _buildAnimatedActionButton(
                   icon: isLiked ? Icons.favorite : Icons.favorite_border,
-                  label: _formatCount(short.engagement.likeCount ?? 0),
+                  label: _formatCount(short.likeCount ?? 0),
                   color: isLiked ? Colors.red : Colors.white,
                   onTap: () {
                     setState(() {
@@ -577,7 +606,7 @@ class _ShortsViewerScreenState extends State<ShortsViewerScreen>
                 // Comment button
                 _buildAnimatedActionButton(
                   icon: Icons.chat_bubble_outline_rounded,
-                  label: _formatCount((short.engagement.likeCount ?? 0) ~/ 10),
+                  label: _formatCount((short.likeCount ?? 0) ~/ 10),
                   onTap: () {
                     _showCommentsSheet(short);
                   },
@@ -866,7 +895,7 @@ class _ShortsViewerScreenState extends State<ShortsViewerScreen>
     );
   }
 
-  void _showCommentsSheet(yt.Video short) {
+  void _showCommentsSheet(VideoItem short) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -938,7 +967,7 @@ class _ShortsViewerScreenState extends State<ShortsViewerScreen>
     );
   }
 
-  void _showShareSheet(yt.Video short) {
+  void _showShareSheet(VideoItem short) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
