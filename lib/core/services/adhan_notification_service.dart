@@ -40,6 +40,8 @@ class AdhanNotificationService {
       debugPrint('Local timezone set to $timeZoneName');
     } catch (e) {
       debugPrint('Failed to set local timezone: $e');
+      // Fallback to UTC if timezone not found
+      tz.setLocalLocation(tz.getLocation('UTC'));
     }
 
     // Android initialization settings
@@ -65,7 +67,7 @@ class AdhanNotificationService {
     );
 
     // Create notification channels for Android
-    if (Platform.isAndroid) {
+    if (!kIsWeb && Platform.isAndroid) {
       await _createNotificationChannels();
     }
   }
@@ -112,14 +114,14 @@ class AdhanNotificationService {
 
   /// Request notification permissions
   static Future<bool> requestPermissions() async {
-    if (Platform.isAndroid) {
+    if (!kIsWeb && Platform.isAndroid) {
       final androidPlugin = _notifications
           .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin
           >();
       final granted = await androidPlugin?.requestNotificationsPermission();
       return granted ?? false;
-    } else if (Platform.isIOS) {
+    } else if (!kIsWeb && Platform.isIOS) {
       final iosPlugin = _notifications
           .resolvePlatformSpecificImplementation<
             IOSFlutterLocalNotificationsPlugin
