@@ -82,6 +82,63 @@
             android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver"
             android:exported="false" />
 
+        <!-- ════════════════════════════════════════════════════════════ -->
+        <!-- ═══  HOME-SCREEN WIDGETS                                ═══ -->
+        <!-- ════════════════════════════════════════════════════════════ -->
+
+        <!-- Ramadan Countdown Widget -->
+        <receiver
+            android:name=".widget.provider.RamadanWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_ramadan_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.anexon.noor.widget.RAMADAN_REFRESH" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_ramadan_info" />
+        </receiver>
+
+        <!-- Prayer Times Widget -->
+        <receiver
+            android:name=".widget.provider.PrayerTimesWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_prayer_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.anexon.noor.widget.PRAYER_REFRESH" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_prayer_info" />
+        </receiver>
+
+        <!-- Widget tick receiver (minute updates + timezone / time changes + boot) -->
+        <receiver
+            android:name=".widget.service.WidgetTickReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.anexon.noor.widget.ACTION_TICK" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Widget configuration activity (shared by both widgets) -->
+        <activity
+            android:name=".widget.config.WidgetConfigActivity"
+            android:exported="true"
+            android:theme="@style/WidgetConfigTheme"
+            android:excludeFromRecents="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

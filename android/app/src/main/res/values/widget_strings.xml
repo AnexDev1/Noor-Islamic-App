@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- English strings for widgets -->
+<resources>
+    <!-- Ramadan widget -->
+    <string name="widget_ramadan_name">Ramadan Countdown</string>
+    <string name="widget_ramadan_description">Shows Hijri date, Ramadan countdown, or current Ramadan day</string>
+
+    <!-- Prayer widget -->
+    <string name="widget_prayer_name">Prayer Times</string>
+    <string name="widget_prayer_description">Shows next prayer time with countdown and all daily prayer times</string>
+
+    <!-- Config -->
+    <string name="widget_config_title">Widget Settings</string>
+    <string name="widget_config_theme">Theme</string>
+    <string name="widget_config_theme_light">Light</string>
+    <string name="widget_config_theme_dark">Dark</string>
+    <string name="widget_config_theme_auto">Auto (follow system)</string>
+    <string name="widget_config_language">Language</string>
+    <string name="widget_config_save">Save</string>
+    <string name="widget_config_cancel">Cancel</string>
+
+    <!-- Accessibility -->
+    <string name="widget_a11y_ramadan_pre">%1$d days until Ramadan</string>
+    <string name="widget_a11y_ramadan_during">Day %1$d of Ramadan</string>
+    <string name="widget_a11y_prayer_next">Next prayer is %1$s at %2$s, %3$s remaining</string>
+</resources>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Light-mode widget colours -->
+<resources>
+    <!-- Widget backgrounds -->
+    <color name="widget_bg">#F5F5F0</color>
+    <color name="widget_border">#D6D6CC</color>
+    <color name="widget_highlight">#1A1B5E20</color>
+
+    <!-- Text colours -->
+    <color name="widget_primary_text">#212121</color>
+    <color name="widget_secondary_text">#616161</color>
+    <color name="widget_tertiary_text">#9E9E9E</color>
+
+    <!-- Accent (Islamic green) -->
+    <color name="widget_accent">#1B5E20</color>
+
+    <!-- Progress bar -->
+    <color name="widget_progress_bg">#E0E0E0</color>
+
+    <!-- Config activity -->
+    <color name="widget_config_bg">#FFFFFF</color>
+</resources>

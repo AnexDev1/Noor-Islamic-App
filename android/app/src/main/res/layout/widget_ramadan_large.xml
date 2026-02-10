@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ramadan widget — Large (4×2+): Hijri month calendar grid -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_ramadan_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:background="@drawable/widget_bg_rounded">
+
+    <!-- Header: month title + status -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_marginBottom="4dp">
+
+        <TextView
+            android:id="@+id/tv_month_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/widget_primary_text"
+            android:contentDescription="Hijri month title" />
+
+        <TextView
+            android:id="@+id/tv_status_subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="11sp"
+            android:textColor="@color/widget_accent"
+            android:contentDescription="Ramadan status" />
+    </LinearLayout>
+
+    <!-- Day-of-week header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <TextView android:id="@+id/tv_dow_1" style="@style/WidgetDowCell" />
+        <TextView android:id="@+id/tv_dow_2" style="@style/WidgetDowCell" />
+        <TextView android:id="@+id/tv_dow_3" style="@style/WidgetDowCell" />
+        <TextView android:id="@+id/tv_dow_4" style="@style/WidgetDowCell" />
+        <TextView android:id="@+id/tv_dow_5" style="@style/WidgetDowCell" />
+        <TextView android:id="@+id/tv_dow_6" style="@style/WidgetDowCell" />
+        <TextView android:id="@+id/tv_dow_7" style="@style/WidgetDowCell" />
+    </LinearLayout>
+
+    <!-- Calendar grid: 6 rows × 7 columns = 42 cells -->
+    <!-- Row 1 -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center">
+        <TextView android:id="@+id/tv_cell_1_1" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_1_2" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_1_3" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_1_4" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_1_5" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_1_6" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_1_7" style="@style/WidgetDayCell" />
+    </LinearLayout>
+    <!-- Row 2 -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center">
+        <TextView android:id="@+id/tv_cell_2_1" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_2_2" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_2_3" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_2_4" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_2_5" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_2_6" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_2_7" style="@style/WidgetDayCell" />
+    </LinearLayout>
+    <!-- Row 3 -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center">
+        <TextView android:id="@+id/tv_cell_3_1" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_3_2" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_3_3" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_3_4" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_3_5" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_3_6" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_3_7" style="@style/WidgetDayCell" />
+    </LinearLayout>
+    <!-- Row 4 -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center">
+        <TextView android:id="@+id/tv_cell_4_1" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_4_2" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_4_3" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_4_4" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_4_5" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_4_6" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_4_7" style="@style/WidgetDayCell" />
+    </LinearLayout>
+    <!-- Row 5 -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center">
+        <TextView android:id="@+id/tv_cell_5_1" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_5_2" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_5_3" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_5_4" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_5_5" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_5_6" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_5_7" style="@style/WidgetDayCell" />
+    </LinearLayout>
+    <!-- Row 6 -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center">
+        <TextView android:id="@+id/tv_cell_6_1" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_6_2" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_6_3" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_6_4" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_6_5" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_6_6" style="@style/WidgetDayCell" />
+        <TextView android:id="@+id/tv_cell_6_7" style="@style/WidgetDayCell" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ramadan widget — Medium (2×1 / 2×2): title, detail, dates, progress -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_ramadan_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:gravity="center_vertical"
+    android:background="@drawable/widget_bg_rounded">
+
+    <!-- Crescent icon + title -->
+    <TextView
+        android:id="@+id/tv_ramadan_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/widget_primary_text"
+        android:drawableStart="@drawable/ic_crescent"
+        android:drawablePadding="6dp"
+        android:gravity="start|center_vertical"
+        android:contentDescription="Ramadan title" />
+
+    <!-- Detail text (days to Ramadan / Day X of Y) -->
+    <TextView
+        android:id="@+id/tv_ramadan_detail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="13sp"
+        android:textColor="@color/widget_secondary_text"
+        android:layout_marginTop="2dp"
+        android:contentDescription="Ramadan detail" />
+
+    <!-- Progress bar (visible only during Ramadan) -->
+    <ProgressBar
+        android:id="@+id/pb_ramadan_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        android:layout_marginTop="6dp"
+        android:max="30"
+        android:progress="0"
+        android:progressTint="@color/widget_accent"
+        android:progressBackgroundTint="@color/widget_progress_bg"
+        android:visibility="gone" />
+
+    <!-- Gregorian date -->
+    <TextView
+        android:id="@+id/tv_gregorian_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="11sp"
+        android:textColor="@color/widget_tertiary_text"
+        android:layout_marginTop="6dp"
+        android:contentDescription="Gregorian date" />
+
+    <!-- Hijri date -->
+    <TextView
+        android:id="@+id/tv_hijri_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="11sp"
+        android:textColor="@color/widget_accent"
+        android:contentDescription="Hijri date" />
+
+</LinearLayout>

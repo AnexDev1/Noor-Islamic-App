@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Widget preview placeholder for prayer times widget -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="60dp"
+    android:viewportWidth="120"
+    android:viewportHeight="60">
+    <!-- Mosque dome -->
+    <path
+        android:fillColor="#1B5E20"
+        android:pathData="M20,45 Q20,15 40,15 Q60,15 60,45 Z" />
+    <!-- Minaret -->
+    <path android:fillColor="#2E7D32" android:pathData="M10,45 L10,20 L16,20 L16,45 Z" />
+    <path android:fillColor="#1B5E20" android:pathData="M8,20 L18,20 L13,12 Z" />
+    <!-- Text lines -->
+    <path android:fillColor="#1B5E20" android:pathData="M65,18 L112,18 L112,22 L65,22 Z" />
+    <path android:fillColor="#81C784" android:pathData="M65,27 L105,27 L105,30 L65,30 Z" />
+    <path android:fillColor="#C8E6C9" android:pathData="M65,35 L95,35 L95,38 L65,38 Z" />
+    <path android:fillColor="#E8F5E9" android:pathData="M65,43 L108,43 L108,45 L65,45 Z" />
+</vector>

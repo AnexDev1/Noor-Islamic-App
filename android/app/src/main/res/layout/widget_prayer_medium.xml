@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Prayer widget — Medium (2×1): name, time, countdown, progress -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_prayer_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:gravity="center_vertical"
+    android:background="@drawable/widget_bg_rounded">
+
+    <!-- "Next Prayer" label -->
+    <TextView
+        android:id="@+id/tv_next_prayer_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="11sp"
+        android:textColor="@color/widget_tertiary_text"
+        android:text="Next Prayer"
+        android:contentDescription="Next prayer label" />
+
+    <!-- Prayer name row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="2dp">
+
+        <TextView
+            android:id="@+id/tv_prayer_name_med"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/widget_primary_text"
+            android:contentDescription="Prayer name" />
+
+        <TextView
+            android:id="@+id/tv_prayer_time_med"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/widget_accent"
+            android:contentDescription="Prayer time" />
+    </LinearLayout>
+
+    <!-- Countdown text -->
+    <TextView
+        android:id="@+id/tv_countdown_med"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="@color/widget_secondary_text"
+        android:layout_marginTop="2dp"
+        android:contentDescription="Countdown to next prayer" />
+
+    <!-- Progress bar -->
+    <ProgressBar
+        android:id="@+id/pb_prayer_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:layout_marginTop="6dp"
+        android:progressTint="@color/widget_accent"
+        android:progressBackgroundTint="@color/widget_progress_bg"
+        android:visibility="visible" />
+
+    <!-- City name -->
+    <TextView
+        android:id="@+id/tv_city_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="10sp"
+        android:textColor="@color/widget_tertiary_text"
+        android:layout_marginTop="4dp"
+        android:contentDescription="City name" />
+
+</LinearLayout>

@@ -42,6 +42,18 @@ android {
 
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+
+    // ── Home-screen widget dependencies ──
+    // Prayer-time calculation (Adhan)
+    implementation("com.batoulapps.adhan:adhan:1.2.1")
+    // Hijri / Umm al-Qura calendar
+    implementation("com.github.msarhan:ummalqura-calendar:2.0.2")
+    // WorkManager for periodic widget refresh
+    implementation("androidx.work:work-runtime-ktx:2.9.1")
+    // Kotlin coroutines (needed by WorkManager-ktx)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    // AppCompat for XML-based widgets
+    implementation("androidx.appcompat:appcompat:1.7.0")
 }
 
 flutter {

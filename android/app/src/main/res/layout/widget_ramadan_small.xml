@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ramadan widget — Small (1×1): number + short label -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_ramadan_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="8dp"
+    android:background="@drawable/widget_bg_rounded">
+
+    <!-- Large number (days count or Ramadan day) -->
+    <TextView
+        android:id="@+id/tv_ramadan_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:textColor="@color/widget_primary_text"
+        android:gravity="center"
+        android:contentDescription="Ramadan countdown number" />
+
+    <!-- Short label ("days left" / "Ramadan day") -->
+    <TextView
+        android:id="@+id/tv_ramadan_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="11sp"
+        android:textColor="@color/widget_secondary_text"
+        android:gravity="center"
+        android:maxLines="1"
+        android:contentDescription="Ramadan status label" />
+
+</LinearLayout>

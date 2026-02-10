@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dark-mode overrides for widget colours -->
+<resources>
+    <color name="widget_bg">#1E1E1E</color>
+    <color name="widget_border">#333333</color>
+    <color name="widget_highlight">#331B5E20</color>
+
+    <color name="widget_primary_text">#EEEEEE</color>
+    <color name="widget_secondary_text">#BDBDBD</color>
+    <color name="widget_tertiary_text">#757575</color>
+
+    <color name="widget_accent">#81C784</color>
+
+    <color name="widget_progress_bg">#424242</color>
+
+    <color name="widget_config_bg">#121212</color>
+</resources>

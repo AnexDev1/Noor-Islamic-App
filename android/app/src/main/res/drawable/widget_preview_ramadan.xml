@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Widget preview placeholder (crescent + mosque silhouette outline) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="60dp"
+    android:viewportWidth="120"
+    android:viewportHeight="60">
+    <!-- Simple crescent -->
+    <path
+        android:fillColor="#1B5E20"
+        android:pathData="M30,30m-18,0a18,18 0,1,1 36,0a18,18 0,1,1 -36,0"
+        android:strokeWidth="0" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M36,30m-14,0a14,14 0,1,1 28,0a14,14 0,1,1 -28,0"
+        android:strokeWidth="0" />
+    <!-- Text placeholder lines -->
+    <path android:fillColor="#1B5E20" android:pathData="M60,20 L110,20 L110,24 L60,24 Z" />
+    <path android:fillColor="#81C784" android:pathData="M60,30 L100,30 L100,33 L60,33 Z" />
+    <path android:fillColor="#C8E6C9" android:pathData="M60,38 L90,38 L90,41 L60,41 Z" />
+</vector>

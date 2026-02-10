@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ramadan Countdown widget metadata -->
+<appwidget-provider
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="40dp"
+    android:minHeight="40dp"
+    android:minResizeWidth="40dp"
+    android:minResizeHeight="40dp"
+    android:maxResizeWidth="530dp"
+    android:maxResizeHeight="300dp"
+    android:targetCellWidth="1"
+    android:targetCellHeight="1"
+    android:resizeMode="horizontal|vertical"
+    android:updatePeriodMillis="1800000"
+    android:previewImage="@drawable/widget_preview_ramadan"
+    android:initialLayout="@layout/widget_ramadan_small"
+    android:configure="com.anexon.noor.widget.config.WidgetConfigActivity"
+    android:widgetCategory="home_screen"
+    android:description="@string/widget_ramadan_description" />

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Prayer widget — Small (1×1): next prayer name + time -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_prayer_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="8dp"
+    android:background="@drawable/widget_bg_rounded">
+
+    <!-- Prayer name (e.g. "Asr") -->
+    <TextView
+        android:id="@+id/tv_prayer_name_small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="@color/widget_primary_text"
+        android:gravity="center"
+        android:contentDescription="Next prayer name" />
+
+    <!-- Prayer time (e.g. "3:45 PM") -->
+    <TextView
+        android:id="@+id/tv_prayer_time_small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/widget_accent"
+        android:gravity="center"
+        android:layout_marginTop="2dp"
+        android:contentDescription="Next prayer time" />
+
+</LinearLayout>

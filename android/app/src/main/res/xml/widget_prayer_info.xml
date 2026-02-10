@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Prayer Times widget metadata -->
+<appwidget-provider
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="40dp"
+    android:minHeight="40dp"
+    android:minResizeWidth="40dp"
+    android:minResizeHeight="40dp"
+    android:maxResizeWidth="530dp"
+    android:maxResizeHeight="200dp"
+    android:targetCellWidth="1"
+    android:targetCellHeight="1"
+    android:resizeMode="horizontal|vertical"
+    android:updatePeriodMillis="900000"
+    android:previewImage="@drawable/widget_preview_prayer"
+    android:initialLayout="@layout/widget_prayer_small"
+    android:configure="com.anexon.noor.widget.config.WidgetConfigActivity"
+    android:widgetCategory="home_screen"
+    android:description="@string/widget_prayer_description" />

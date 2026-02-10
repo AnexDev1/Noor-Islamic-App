@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Arabic strings for widgets -->
+<resources>
+    <string name="widget_ramadan_name">عداد رمضان</string>
+    <string name="widget_ramadan_description">يعرض التاريخ الهجري والعد التنازلي لرمضان أو اليوم الحالي من رمضان</string>
+
+    <string name="widget_prayer_name">مواقيت الصلاة</string>
+    <string name="widget_prayer_description">يعرض وقت الصلاة القادمة مع العد التنازلي وجميع مواقيت الصلاة اليومية</string>
+
+    <string name="widget_config_title">إعدادات الأداة</string>
+    <string name="widget_config_theme">المظهر</string>
+    <string name="widget_config_theme_light">فاتح</string>
+    <string name="widget_config_theme_dark">داكن</string>
+    <string name="widget_config_theme_auto">تلقائي (حسب النظام)</string>
+    <string name="widget_config_language">اللغة</string>
+    <string name="widget_config_save">حفظ</string>
+    <string name="widget_config_cancel">إلغاء</string>
+
+    <string name="widget_a11y_ramadan_pre">%1$d يوم حتى رمضان</string>
+    <string name="widget_a11y_ramadan_during">اليوم %1$d من رمضان</string>
+    <string name="widget_a11y_prayer_next">الصلاة القادمة %1$s في %2$s، بقي %3$s</string>
+</resources>
