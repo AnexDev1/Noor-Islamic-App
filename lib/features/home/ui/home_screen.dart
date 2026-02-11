@@ -10,9 +10,11 @@ import '../../../core/services/user_service.dart';
 import '../../../core/providers/app_providers.dart';
 import '../../../core/providers/models.dart';
 import '../../quran/ui/quran_screen.dart';
+import '../../quran/ui/listen_quran_screen.dart';
 import '../../hadith/ui/hadith_home_screen.dart';
 import '../../azkhar/ui/azkhar_home_screen.dart';
-import '../../tasbih/ui/tasbih_screen.dart';
+import '../../tasbih/ui/tasbih_hub_screen.dart';
+import '../../learn_islam/ui/learn_islam_screen.dart';
 import '../../videos/ui/video_hub_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -504,7 +506,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final l10n = AppLocalizations.of(context)!;
 
     // Ensure timer is running if data is available
-    if (ramadanAsync is AsyncData && ramadanAsync.value != null && (_ramadanCountdownTimer == null || !_ramadanCountdownTimer!.isActive)) {
+    if (ramadanAsync is AsyncData &&
+        ramadanAsync.value != null &&
+        (_ramadanCountdownTimer == null || !_ramadanCountdownTimer!.isActive)) {
       final countdown = ramadanAsync.value!;
       _ramadanDays = countdown.countdown['days'] ?? 0;
       _ramadanHours = countdown.countdown['hours'] ?? 0;
@@ -902,7 +906,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         'icon': 'assets/tasbih.png',
         'onTap': () => Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const TasbihScreen()),
+          MaterialPageRoute(builder: (_) => const TasbihHubScreen()),
+        ),
+      },
+      {
+        'title': l10n.listenQuran,
+        'icon': Icons.headphones,
+        'onTap': () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const ListenQuranScreen()),
+        ),
+      },
+      {
+        'title': l10n.learnIslam,
+        'icon': Icons.menu_book_rounded,
+        'onTap': () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const LearnIslamScreen()),
         ),
       },
     ];

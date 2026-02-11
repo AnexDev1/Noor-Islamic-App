@@ -20,12 +20,20 @@ class RecitersApi {
             final uri = Uri.parse(_url);
             final response = await _retryHttpGet(uri, attempts: 3);
             if (response.statusCode == 200) {
-              await prefs.setString(_cacheKey, response.body);
+              await prefs.setString(_cacheKey, utf8.decode(response.bodyBytes));
             }
           } catch (_) {}
         });
 
         final data = json.decode(cached) as Map<String, dynamic>;
+
+        // Remove problematic reciters (missing audio/404)
+        data.removeWhere((key, value) {
+          final name = value.toString().toLowerCase();
+          return name.contains('hani ar rifai') ||
+              name.contains('naseer al qatami');
+        });
+
         return data.map((key, value) => MapEntry(key, value.toString()));
       }
     } catch (_) {}
@@ -35,11 +43,20 @@ class RecitersApi {
       final uri = Uri.parse(_url);
       final response = await _retryHttpGet(uri, attempts: 3);
       if (response.statusCode == 200) {
-        final data = json.decode(response.body) as Map<String, dynamic>;
+        final body = utf8.decode(response.bodyBytes);
+        final data = json.decode(body) as Map<String, dynamic>;
         try {
           final prefs = await SharedPreferences.getInstance();
-          await prefs.setString(_cacheKey, response.body);
+          await prefs.setString(_cacheKey, body);
         } catch (_) {}
+
+        // Remove problematic reciters
+        data.removeWhere((key, value) {
+          final name = value.toString().toLowerCase();
+          return name.contains('hani ar rifai') ||
+              name.contains('naseer al qatami');
+        });
+
         return data.map((key, value) => MapEntry(key, value.toString()));
       }
     } catch (_) {
@@ -69,7 +86,15 @@ class RecitersApi {
     while (true) {
       attempt++;
       try {
-        final resp = await http.get(uri).timeout(const Duration(seconds: 15));
+        final resp = await http
+            .get(
+              uri,
+              headers: {
+                'User-Agent': 'NoorApp/1.0.0 (Flutter; Android)',
+                'Accept': 'application/json',
+              },
+            )
+            .timeout(const Duration(seconds: 15));
         return resp;
       } catch (e) {
         if (attempt >= attempts) rethrow;

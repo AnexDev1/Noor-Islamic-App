@@ -1,0 +1,81 @@
+{
+    "surahName": "Al-Maa'un",
+    "surahNameArabic": "الماعون",
+    "surahNameArabicLong": "سورة الماعون",
+    "surahNameTranslation": "Almsgiving",
+    "revelationPlace": "Mecca",
+    "totalAyah": 7,
+    "surahNo": 107,
+    "audio": {
+        "1": {
+            "reciter": "Mishary Rashid Al Afasy",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/1/107.mp3",
+            "originalUrl": "https://server8.mp3quran.net/afs/107.mp3"
+        },
+        "2": {
+            "reciter": "Abu Bakr Al Shatri",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/2/107.mp3",
+            "originalUrl": "https://server11.mp3quran.net/shatri/107.mp3"
+        },
+        "3": {
+            "reciter": "Nasser Al Qatami",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/3/107.mp3",
+            "originalUrl": "https://server6.mp3quran.net/qtm/107.mp3"
+        },
+        "4": {
+            "reciter": "Yasser Al Dosari",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/4/107.mp3",
+            "originalUrl": "https://server11.mp3quran.net/yasser/107.mp3"
+        },
+        "5": {
+            "reciter": "Hani Ar Rifai",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/5/107.mp3",
+            "originalUrl": "https://server8.mp3quran.net/hani/107.mp3"
+        }
+    },
+    "english": [
+        "Have you seen the one who denies the ˹final˺ Judgment?",
+        "That is the one who repulses the orphan",
+        "and does not encourage the feeding of the poor.",
+        "So woe to those ˹hypocrites˺ who pray",
+        "yet are unmindful of their prayers;",
+        "those who ˹only˺ show off",
+        "and refuse to give ˹even the simplest˺ aid."
+    ],
+    "arabic1": [
+        "أَرَءَيْتَ ٱلَّذِى يُكَذِّبُ بِٱلدِّينِ",
+        "فَذَٰلِكَ ٱلَّذِى يَدُعُّ ٱلْيَتِيمَ",
+        "وَلَا يَحُضُّ عَلَىٰ طَعَامِ ٱلْمِسْكِينِ",
+        "فَوَيْلٌ لِّلْمُصَلِّينَ",
+        "ٱلَّذِينَ هُمْ عَن صَلَاتِهِمْ سَاهُونَ",
+        "ٱلَّذِينَ هُمْ يُرَآءُونَ",
+        "وَيَمْنَعُونَ ٱلْمَاعُونَ"
+    ],
+    "arabic2": [
+        "ارايت الذي يكذب بالدين",
+        "فذلك الذي يدع اليتيم",
+        "ولا يحض على طعام المسكين",
+        "فويل للمصلين",
+        "الذين هم عن صلاتهم ساهون",
+        "الذين هم يراءون",
+        "ويمنعون الماعون"
+    ],
+    "bengali": [
+        "তুমি কি তাকে দেখেছ, যে হিসাব-প্রতিদানকে অস্বীকার করে?",
+        "সে-ই ইয়াতীমকে কঠোরভাবে তাড়িয়ে দেয়,",
+        "আর মিসকীনকে খাদ্যদানে উৎসাহ দেয় না।",
+        "অতএব সেই সালাত আদায়কারীদের জন্য দুর্ভোগ,",
+        "যারা নিজদের সালাতে অমনোযোগী,",
+        "যারা লোক দেখানোর জন্য তা করে,",
+        "এবং ছোট-খাট গৃহসামগ্রী* দানে নিষেধ করে। \n*ماعون গৃহস্থালীর ছোট-খাট সামগ্রী। যেমন, পানি, লবণ, দিয়াশলাই, বালতি ইত্যাদি।"
+    ],
+    "urdu": [
+        "بھلا تم نے اس شخص کو دیکھا جو (روزِ) جزا کو جھٹلاتا ہے؟",
+        "یہ وہی (بدبخت) ہے، جو یتیم کو دھکے دیتا ہے",
+        "اور فقیر کو کھانا کھلانے کے لیے( لوگوں کو) ترغیب نہیں دیتا",
+        "تو ایسے نمازیوں کی خرابی ہے",
+        "جو نماز کی طرف سے غافل رہتے ہیں",
+        "جو ریا کاری کرتے ہیں",
+        "اور برتنے کی چیزیں عاریتہً نہیں دیتے"
+    ]
+}

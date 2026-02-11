@@ -1,0 +1,121 @@
+{
+    "surahName": "Ash-Shams",
+    "surahNameArabic": "الشمس",
+    "surahNameArabicLong": "سورة الشمس",
+    "surahNameTranslation": "The Sun",
+    "revelationPlace": "Mecca",
+    "totalAyah": 15,
+    "surahNo": 91,
+    "audio": {
+        "1": {
+            "reciter": "Mishary Rashid Al Afasy",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/1/91.mp3",
+            "originalUrl": "https://server8.mp3quran.net/afs/091.mp3"
+        },
+        "2": {
+            "reciter": "Abu Bakr Al Shatri",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/2/91.mp3",
+            "originalUrl": "https://server11.mp3quran.net/shatri/091.mp3"
+        },
+        "3": {
+            "reciter": "Nasser Al Qatami",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/3/91.mp3",
+            "originalUrl": "https://server6.mp3quran.net/qtm/091.mp3"
+        },
+        "4": {
+            "reciter": "Yasser Al Dosari",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/4/91.mp3",
+            "originalUrl": "https://server11.mp3quran.net/yasser/091.mp3"
+        },
+        "5": {
+            "reciter": "Hani Ar Rifai",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/5/91.mp3",
+            "originalUrl": "https://server8.mp3quran.net/hani/091.mp3"
+        }
+    },
+    "english": [
+        "By the sun and its brightness",
+        "and the moon as it follows it",
+        "and the day as it unveils it",
+        "and the night as it conceals it!",
+        "And by heaven and ˹the One˺ Who built it",
+        "and the earth and ˹the One˺ Who spread it!",
+        "And by the soul and ˹the One˺ Who fashioned it",
+        "then with ˹the knowledge of˺ right and wrong inspired it!",
+        "Successful indeed is the one who purifies their soul",
+        "and doomed is the one who corrupts it!",
+        "Thamûd rejected ˹the truth˺ out of arrogance",
+        "when the most wicked of them was roused ˹to kill the she-camel˺.",
+        "But the messenger of Allah warned them, “˹Do not disturb˺ Allah’s camel and her ˹turn to˺ drink!”",
+        "Still they defied him and slaughtered her. So their Lord crushed them for their crime, levelling all to the ground.",
+        "He has no fear of consequences."
+    ],
+    "arabic1": [
+        "وَٱلشَّمْسِ وَضُحَىٰهَا",
+        "وَٱلْقَمَرِ إِذَا تَلَىٰهَا",
+        "وَٱلنَّهَارِ إِذَا جَلَّىٰهَا",
+        "وَٱلَّيْلِ إِذَا يَغْشَىٰهَا",
+        "وَٱلسَّمَآءِ وَمَا بَنَىٰهَا",
+        "وَٱلْأَرْضِ وَمَا طَحَىٰهَا",
+        "وَنَفْسٍ وَمَا سَوَّىٰهَا",
+        "فَأَلْهَمَهَا فُجُورَهَا وَتَقْوَىٰهَا",
+        "قَدْ أَفْلَحَ مَن زَكَّىٰهَا",
+        "وَقَدْ خَابَ مَن دَسَّىٰهَا",
+        "كَذَّبَتْ ثَمُودُ بِطَغْوَىٰهَآ",
+        "إِذِ ٱنۢبَعَثَ أَشْقَىٰهَا",
+        "فَقَالَ لَهُمْ رَسُولُ ٱللَّهِ نَاقَةَ ٱللَّهِ وَسُقْيَـٰهَا",
+        "فَكَذَّبُوهُ فَعَقَرُوهَا فَدَمْدَمَ عَلَيْهِمْ رَبُّهُم بِذَنۢبِهِمْ فَسَوَّىٰهَا",
+        "وَلَا يَخَافُ عُقْبَـٰهَا"
+    ],
+    "arabic2": [
+        "والشمس وضحاها",
+        "والقمر اذا تلاها",
+        "والنهار اذا جلاها",
+        "والليل اذا يغشاها",
+        "والسماء وما بناها",
+        "والارض وما طحاها",
+        "ونفس وما سواها",
+        "فالهمها فجورها وتقواها",
+        "قد افلح من زكاها",
+        "وقد خاب من دساها",
+        "كذبت ثمود بطغواها",
+        "اذ انبعث اشقاها",
+        "فقال لهم رسول الله ناقة الله وسقياها",
+        "فكذبوه فعقروها فدمدم عليهم ربهم بذنبهم فسواها",
+        "ولا يخاف عقباها"
+    ],
+    "bengali": [
+        "কসম সূর্যের ও তার কিরণের।",
+        "কসম চাঁদের, যখন তা সূর্যের অনুগামী হয়।",
+        "কসম দিবসের, যখন তা সূর্যকে প্রকাশ করে।",
+        "কসম রাতের, যখন তা সূর্যকে ঢেকে দেয়।",
+        "কসম আসমানের এবং যিনি তা বানিয়েছেন।",
+        "কসম যমীনের এবং যিনি তা বিস্তৃত করেছেন।",
+        "কসম নাফ্সের এবং যিনি তা সুসম করেছেন।",
+        "অতঃপর তিনি তাকে অবহিত করেছেন তার পাপসমূহ ও তার তাকওয়া সম্পর্কে।",
+        "নিঃসন্দেহে সে সফলকাম হয়েছে, যে তাকে পরিশুদ্ধ করেছে।",
+        "এবং সে ব্যর্থ হয়েছে, যে তা (নাফস)-কে কলুষিত করেছে।",
+        "সামূদ জাতি আপন অবাধ্যতাবশত অস্বীকার করেছিল।",
+        "যখন তাদের সর্বাধিক হতভাগা ব্যক্তিটি তৎপর হয়ে উঠল।",
+        "তখন আল্লাহর রাসূল তাদেরকে বলেছিল, ‘আল্লাহর উষ্ট্রী ও তার পানি পান সম্পর্কে সতর্ক হও।’",
+        "কিন্তু তারা তাকে অস্বীকার করল এবং উষ্ট্রীকে যবেহ করল। ফলে তাদের রব তাদের অপরাধের কারণে তাদেরকে সমূলে ধ্বংস করে দিলেন। অতঃপর তা একাকার করে দিলেন।",
+        "আর তিনি এর পরিণামকে ভয় করেন না।"
+    ],
+    "urdu": [
+        "سورج کی قسم اور اس کی روشنی کی",
+        "اور چاند کی جب اس کے پیچھے نکلے",
+        "اور دن کی جب اُسے چمکا دے",
+        "اور رات کی جب اُسے چھپا لے",
+        "اور آسمان کی اور اس ذات کی جس نے اسے بنایا",
+        "اور زمین کی اور اس کی جس نے اسے پھیلایا",
+        "اور انسان کی اور اس کی جس نے اس (کے اعضا) کو برابر کیا",
+        "پھر اس کو بدکاری (سے بچنے) اور پرہیزگاری کرنے کی سمجھ دی",
+        "کہ جس نے (اپنے) نفس (یعنی روح) کو پاک رکھا وہ مراد کو پہنچا",
+        "اور جس نے اسے خاک میں ملایا وہ خسارے میں رہا",
+        "(قوم) ثمود نے اپنی سرکشی کے سبب (پیغمبر کو) جھٹلایا",
+        "جب ان میں سے ایک نہایت بدبخت اٹھا",
+        "تو خدا کے پیغمبر (صالح) نے ان سے کہا کہ خدا کی اونٹنی اور اس کے پانی پینے کی باری سے عذر کرو",
+        "مگر انہوں نے پیغمبر کو جھٹلایا اور اونٹنی کی کونچیں کاٹ دیں تو خدا نے ان کےگناہ کے سبب ان پر عذاب نازل کیا اور سب کو (ہلاک کر کے) برابر کر دیا",
+        "اور اس کو ان کے بدلہ لینے کا کچھ بھی ڈر نہیں"
+    ]
+}

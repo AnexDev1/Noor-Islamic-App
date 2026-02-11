@@ -1,0 +1,76 @@
+{
+    "surahName": "Al-Kaafiroon",
+    "surahNameArabic": "الكافرون",
+    "surahNameArabicLong": "سورة الكافرون",
+    "surahNameTranslation": "The Disbelievers",
+    "revelationPlace": "Mecca",
+    "totalAyah": 6,
+    "surahNo": 109,
+    "audio": {
+        "1": {
+            "reciter": "Mishary Rashid Al Afasy",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/1/109.mp3",
+            "originalUrl": "https://server8.mp3quran.net/afs/109.mp3"
+        },
+        "2": {
+            "reciter": "Abu Bakr Al Shatri",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/2/109.mp3",
+            "originalUrl": "https://server11.mp3quran.net/shatri/109.mp3"
+        },
+        "3": {
+            "reciter": "Nasser Al Qatami",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/3/109.mp3",
+            "originalUrl": "https://server6.mp3quran.net/qtm/109.mp3"
+        },
+        "4": {
+            "reciter": "Yasser Al Dosari",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/4/109.mp3",
+            "originalUrl": "https://server11.mp3quran.net/yasser/109.mp3"
+        },
+        "5": {
+            "reciter": "Hani Ar Rifai",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/5/109.mp3",
+            "originalUrl": "https://server8.mp3quran.net/hani/109.mp3"
+        }
+    },
+    "english": [
+        "Say, ˹O Prophet,˺ “O you disbelievers!",
+        "I do not worship what you worship",
+        "nor do you worship what I worship.",
+        "I will never worship what you worship",
+        "nor will you ever worship what I worship.",
+        "You have your way, and I have my Way.”"
+    ],
+    "arabic1": [
+        "قُلْ يَـٰٓأَيُّهَا ٱلْكَـٰفِرُونَ",
+        "لَآ أَعْبُدُ مَا تَعْبُدُونَ",
+        "وَلَآ أَنتُمْ عَـٰبِدُونَ مَآ أَعْبُدُ",
+        "وَلَآ أَنَا۠ عَابِدٌ مَّا عَبَدتُّمْ",
+        "وَلَآ أَنتُمْ عَـٰبِدُونَ مَآ أَعْبُدُ",
+        "لَكُمْ دِينُكُمْ وَلِىَ دِينِ"
+    ],
+    "arabic2": [
+        "قل يا ايها الكافرون",
+        "لا اعبد ما تعبدون",
+        "ولا انتم عابدون ما اعبد",
+        "ولا انا عابد ما عبدتم",
+        "ولا انتم عابدون ما اعبد",
+        "لكم دينكم ولي دين"
+    ],
+    "bengali": [
+        "বল, ‘হে কাফিররা,",
+        "তোমরা যার ‘ইবাদাত কর আমি তার ‘ইবাদাত করি না’।",
+        "এবং আমি যার ‘ইবাদাত করি তোমরা তার ‘ইবাদাতকারী নও’।",
+        "‘আর তোমরা যার ‘ইবাদত করছ আমি তার ‘ইবাদাতকারী হব না’।",
+        "‘আর আমি যার ‘ইবাদাত করি তোমরা তার ‘ইবাদাতকারী হবে না’।",
+        "‘তোমাদের জন্য তোমাদের দীন আর আমার জন্য আমার দীন।’"
+    ],
+    "urdu": [
+        "(اے پیغمبر ان منکران اسلام سے) کہہ دو کہ اے کافرو!",
+        "جن (بتوں) کو تم پوچتے ہو ان کو میں نہیں پوجتا",
+        "اور جس (خدا) کی میں عبادت کرتا ہوں اس کی تم عبادت نہیں کرتے",
+        "اور( میں پھر کہتا ہوں کہ) جن کی تم پرستش کرتے ہوں ان کی میں پرستش کرنے والا نہیں ہوں",
+        "اور نہ تم اس کی بندگی کرنے والے (معلوم ہوتے) ہو جس کی میں بندگی کرتا ہوں",
+        "تم اپنے دین پر میں اپنے دین پر"
+    ]
+}

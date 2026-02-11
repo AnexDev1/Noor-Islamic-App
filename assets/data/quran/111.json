@@ -1,0 +1,71 @@
+{
+    "surahName": "Al-Masad",
+    "surahNameArabic": "المسد",
+    "surahNameArabicLong": "سورة المسد",
+    "surahNameTranslation": "The Palm Fibre",
+    "revelationPlace": "Mecca",
+    "totalAyah": 5,
+    "surahNo": 111,
+    "audio": {
+        "1": {
+            "reciter": "Mishary Rashid Al Afasy",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/1/111.mp3",
+            "originalUrl": "https://server8.mp3quran.net/afs/111.mp3"
+        },
+        "2": {
+            "reciter": "Abu Bakr Al Shatri",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/2/111.mp3",
+            "originalUrl": "https://server11.mp3quran.net/shatri/111.mp3"
+        },
+        "3": {
+            "reciter": "Nasser Al Qatami",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/3/111.mp3",
+            "originalUrl": "https://server6.mp3quran.net/qtm/111.mp3"
+        },
+        "4": {
+            "reciter": "Yasser Al Dosari",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/4/111.mp3",
+            "originalUrl": "https://server11.mp3quran.net/yasser/111.mp3"
+        },
+        "5": {
+            "reciter": "Hani Ar Rifai",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/5/111.mp3",
+            "originalUrl": "https://server8.mp3quran.net/hani/111.mp3"
+        }
+    },
+    "english": [
+        "May the hands of Abu Lahab perish, and he ˹himself˺ perish!",
+        "Neither his wealth nor ˹worldly˺ gains will benefit him.",
+        "He will burn in a flaming Fire",
+        "and ˹so will˺ his wife, the carrier of ˹thorny˺ kindling",
+        "around her neck will be a rope of palm-fibre."
+    ],
+    "arabic1": [
+        "تَبَّتْ يَدَآ أَبِى لَهَبٍ وَتَبَّ",
+        "مَآ أَغْنَىٰ عَنْهُ مَالُهُۥ وَمَا كَسَبَ",
+        "سَيَصْلَىٰ نَارًا ذَاتَ لَهَبٍ",
+        "وَٱمْرَأَتُهُۥ حَمَّالَةَ ٱلْحَطَبِ",
+        "فِى جِيدِهَا حَبْلٌ مِّن مَّسَدٍۭ"
+    ],
+    "arabic2": [
+        "تبت يدا ابي لهب وتب",
+        "ما اغنى عنه ماله وما كسب",
+        "سيصلى نارا ذات لهب",
+        "وامراته حمالة الحطب",
+        "في جيدها حبل من مسد"
+    ],
+    "bengali": [
+        "ধ্বংস হোক আবূ লাহাবের দু’হাত এবং সে নিজেও ধ্বংস হোক।",
+        "তার ধন-সম্পদ এবং যা সে অর্জন করেছে তা তার কাজে আসবে না।",
+        "অচিরেই সে দগ্ধ হবে লেলিহান আগুনে।",
+        "আর তার স্ত্রী লাকড়ি বহনকারী,",
+        "তার গলায় পাকানো দড়ি।"
+    ],
+    "urdu": [
+        "ابولہب کے ہاتھ ٹوٹیں اور وہ ہلاک ہو",
+        "نہ تو اس کا مال ہی اس کے کچھ کام آیا اور نہ وہ جو اس نے کمایا",
+        "وہ جلد بھڑکتی ہوئی آگ میں داخل ہو گا",
+        "اور اس کی جورو بھی جو ایندھن سر پر اٹھائے پھرتی ہے",
+        "اس کے گلے میں مونج کی رسّی ہو گی"
+    ]
+}

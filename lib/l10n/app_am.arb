@@ -176,5 +176,27 @@
   "secondsUntilRamadan": "ሰከንዶች",
   "ramadanMubarak": "ረመዳን ሙባራክ!",
   "ramadanKareem": "ረመዳን ካሪም!",
-  "ramadanBlessings": "ይህ ረመዳን ሰላም እና በረከት ይመጣል"
+  "ramadanBlessings": "ይህ ረመዳን ሰላም እና በረከት ይመጣል",
+
+  "learnIslam": "እስልምናን ተማር",
+  "listenQuran": "ቁርኣን ያድምጡ",
+  "learnIslamSubtitle": "ወደ ግንዛቤ ጉዞዎ",
+  "salah": "ሶላት",
+  "wudu": "ውዱእ",
+  "rules": "ደንቦች",
+  "videos": "ቪዲዮዎች",
+  "quiz": "ፈተና",
+  "markAsLearned": "እንደተማርኩ ምልክት አድርግ",
+  "learned": "ተምሯል",
+  "testYourKnowledge": "እውቀትዎን ይፈትኑ",
+  "details": "ዝርዝሮች",
+  "tips": "ምክሮች",
+  "markSectionComplete": "ክፍሉን እንደተጠናቀቀ ምልክት አድርግ",
+  "topics": "{count} ርዕሶች",
+  "questionProgress": "ጥያቄ {current}/{total}",
+  "score": "ውጤት: {score}",
+  "excellent": "እጅግ በጣም ጥሩ!",
+  "goodJob": "ጥሩ ሥራ!",
+  "keepLearning": "መማርዎን ቀጥሉ!",
+  "quizResultMessage": "ከ{total} ውስጥ {score} አስመዝግበዋል ({percentage}%)"
 }

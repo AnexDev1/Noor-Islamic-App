@@ -1,0 +1,84 @@
+[
+  {
+    "id": "pillars",
+    "title": "Utubaawwan Islaamaa Shanan",
+    "icon": "mosque",
+    "color": "#0F4C3A",
+    "items": [
+      {
+        "title": "Shahaadaa (Ragaa Bahuu)",
+        "arabic": "الشهادة",
+        "content": "Shahaadaan ragaa bahuu dha: 'Ash-hadu an laa ilaaha illallaah, wa ash-hadu anna Muhammadan Rasuulullaah' — 'Rabbiin malee dhugaan gabbaramaan biraa akka hin jirre nan raga'a, Muhammadimmoo Ergamaa Rabbii ta'uu nan raga'a.'\n\nKuni utubaa duraati. Shahaadaa dhugaan, hubannoo fi amantiin jechuun nama Muslima taasisa. Kuni Tokkichummaa Rabbii (Tawhiida) fi Nabiyyummaa Muhammad (SAW) mirkaneessa.",
+        "reference": "Sahiih al-Bukhaarii 8"
+      },
+      {
+        "title": "Salaata (Salaata)",
+        "arabic": "الصلاة",
+        "content": "Muslimoonni guyyaa keessatti salaata shanan salaatuun dirqama:\n\n• Fajrii (Subii) — Raka'aa 2\n• Zuhrii (Duhrii) — Raka'aa 4\n• Asrii — Raka'aa 4\n• Maghribaa — Raka'aa 3\n• Ishaa'ii — Raka'aa 4\n\nSalaanni qunnamtii kallattiin gidduu gabrichaa fi Rabbii jiruudha.",
+        "reference": "Qur'aana 2:238"
+      },
+      {
+        "title": "Zakaa (Kennaa Dirqamaa)",
+        "arabic": "الزكاة",
+        "content": "Zakaa jechuun qabeenya waggaa guutee fi nisaaba (hange murtaa'aa) ga'e irraa 2.5% baasuudha.\n\nZakaan qabeenyaa fi lubbuu namichaa ni qulqulleessa. Namoota gosa 8 Qur'aana keessatti ibsaman (9:60) qofaf kennama.",
+        "reference": "Qur'aana 9:60"
+      },
+      {
+        "title": "Soomana (Ramadaanaa)",
+        "arabic": "الصيام",
+        "content": "Muslimoonni ji'a Ramadaanaa keessa barii (Fajrii) irraa eegalee hamma aduun lixxutti (Maghrib), nyaata, dhugaatii fi qunnamtii saalaa irraa ni of qusatu.\n\nSomanuun of-to'achuu, galata galchuu fi namoota harka qalleeyyii ta'aniif akka naan'nu nama barsiisa.",
+        "reference": "Qur'aana 2:183-185"
+      },
+      {
+        "title": "Hajji (Imala Gara Makkaa)",
+        "arabic": "الحج",
+        "content": "Hajjiin nama dandeettii qaamaa fi maallaqaa qabuuf umrii keessatti yeroo tokko deemuu dirqama (waajiba).\n\nSirnoota gurguddoo:\n• Xawaafa: Ka'abaa yeroo 7 naanna'uu\n• Sa'ii: Safaa fi Marwaa gidduu yeroo 7 deddeebi'uu\n• Arafaa: Guyyaa guddaa Hajjii\n\nHajjiin tokkummaa fi wal-qixxummaa agarsiisa.",
+        "reference": "Qur'aana 3:97"
+      }
+    ]
+  },
+  {
+    "id": "articles_of_faith",
+    "title": "Utubaawwan Iimaanaa Jaha",
+    "icon": "favorite",
+    "color": "#D4AF37",
+    "items": [
+      {
+        "title": "Rabbitti Amanuu",
+        "arabic": "الإيمان بالله",
+        "content": "Rabbitti amanuun jiraachuu Isaa, Tokkichummaa Isaa (Tawhiida), Maqootaa fi Sifoota Isaa, fi Inni qofti gabbaramuu akka qabu amanuu dabalata.",
+        "reference": "Qur'aana 112:1-4"
+      },
+      {
+        "title": "Malaaykootatti Amanuu",
+        "arabic": "الإيمان بالملائكة",
+        "content": "Malaaykonni uumama ifa irraa uumamaniidha. Rabbii ni ajajamu, hin faallessan. Fkn: Jibriil, Miikaa'iil.",
+        "reference": "Qur'aana 2:98"
+      },
+      {
+        "title": "Kitaabbanitti Amanuu",
+        "arabic": "الإيمان بالكتب",
+        "content": "Kitaabban Rabbiin Nabiyyoota Isaatiif buuse hundaitti amanuu.\n\n• Tawraat (Muusaa)\n• Zabuur (Daawud)\n• Injiil (Iisaa)\n• Qur'aana (Muhammad - Kitaaba xumuraa)",
+        "reference": "Qur'aana 2:4"
+      },
+      {
+        "title": "Ergamtoota (Rasuloota)tti Amanuu",
+        "arabic": "الإيمان بالرسل",
+        "content": "Ergamtoota Rabbii hundaitti amanuu. Aadam irraa eegalee hamma Muhammad (SAW).",
+        "reference": "Qur'aana 4:164"
+      },
+      {
+        "title": "Guyyaa Aakhiraatti Amanuu",
+        "arabic": "الإيمان باليوم الآخر",
+        "content": "Du'aan booda ka'umsa, Qiyaamaa, Qorannoo, Jannataa fi Jahannamitti amanuu.",
+        "reference": "Qur'aana 2:62"
+      },
+      {
+        "title": "Qadaa fi Qadaratti Amanuu",
+        "arabic": "الإيمان بالقدر",
+        "content": "Wanti gaariinis ta'e hamni hundi murtee fi beekumsa Rabbiitiin ta'uu amanuu.",
+        "reference": "Sahiih Muslim"
+      }
+    ]
+  }
+]

@@ -1,13 +1,13 @@
 package com.anexon.noor
 
 import androidx.annotation.NonNull
-import io.flutter.embedding.android.FlutterActivity
+import com.ryanheise.audioservice.AudioServiceActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import java.util.TimeZone
 import com.anexon.noor.widget.WidgetMethodChannel
 
-class MainActivity: FlutterActivity() {
+class MainActivity: AudioServiceActivity() {
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)

@@ -1,0 +1,91 @@
+{
+    "surahName": "Al-Humaza",
+    "surahNameArabic": "الهمزة",
+    "surahNameArabicLong": "سورة الهمزة",
+    "surahNameTranslation": "The Traducer",
+    "revelationPlace": "Mecca",
+    "totalAyah": 9,
+    "surahNo": 104,
+    "audio": {
+        "1": {
+            "reciter": "Mishary Rashid Al Afasy",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/1/104.mp3",
+            "originalUrl": "https://server8.mp3quran.net/afs/104.mp3"
+        },
+        "2": {
+            "reciter": "Abu Bakr Al Shatri",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/2/104.mp3",
+            "originalUrl": "https://server11.mp3quran.net/shatri/104.mp3"
+        },
+        "3": {
+            "reciter": "Nasser Al Qatami",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/3/104.mp3",
+            "originalUrl": "https://server6.mp3quran.net/qtm/104.mp3"
+        },
+        "4": {
+            "reciter": "Yasser Al Dosari",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/4/104.mp3",
+            "originalUrl": "https://server11.mp3quran.net/yasser/104.mp3"
+        },
+        "5": {
+            "reciter": "Hani Ar Rifai",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/5/104.mp3",
+            "originalUrl": "https://server8.mp3quran.net/hani/104.mp3"
+        }
+    },
+    "english": [
+        "Woe to every backbiter, slanderer",
+        "who amasses wealth ˹greedily˺ and counts it ˹repeatedly˺",
+        "thinking that their wealth will make them immortal!",
+        "Not at all! Such a person will certainly be tossed into the Crusher.",
+        "And what will make you realize what the Crusher is?",
+        "˹It is˺ Allah’s kindled Fire",
+        "which rages over the hearts.",
+        "It will be sealed over them",
+        "˹tightly secured˺ with long braces."
+    ],
+    "arabic1": [
+        "وَيْلٌ لِّكُلِّ هُمَزَةٍ لُّمَزَةٍ",
+        "ٱلَّذِى جَمَعَ مَالًا وَعَدَّدَهُۥ",
+        "يَحْسَبُ أَنَّ مَالَهُۥٓ أَخْلَدَهُۥ",
+        "كَلَّا ۖ لَيُنۢبَذَنَّ فِى ٱلْحُطَمَةِ",
+        "وَمَآ أَدْرَىٰكَ مَا ٱلْحُطَمَةُ",
+        "نَارُ ٱللَّهِ ٱلْمُوقَدَةُ",
+        "ٱلَّتِى تَطَّلِعُ عَلَى ٱلْأَفْـِٔدَةِ",
+        "إِنَّهَا عَلَيْهِم مُّؤْصَدَةٌ",
+        "فِى عَمَدٍ مُّمَدَّدَةٍۭ"
+    ],
+    "arabic2": [
+        "ويل لكل همزة لمزة",
+        "الذي جمع مالا وعدده",
+        "يحسب ان ماله اخلده",
+        "كلا لينبذن في الحطمة",
+        "وما ادراك ما الحطمة",
+        "نار الله الموقدة",
+        "التي تطلع على الافئدة",
+        "انها عليهم مؤصدة",
+        "في عمد ممددة"
+    ],
+    "bengali": [
+        "দুর্ভোগ প্রত্যেকের যে সামনে নিন্দাকারী ও পেছনে গীবতকারী।",
+        "যে সম্পদ জমা করে এবং বার বার গণনা করে।",
+        "সে মনে করে তার সম্পদ তাকে চিরজীবি করবে।",
+        "কখনো নয়, অবশ্যই সে নিক্ষিপ্ত হবে হুতামা’য়।",
+        "আর কিসে তোমাকে জানাবে হুতামা কি?",
+        "আল্লাহর প্রজ্জ্বলিত আগুন।",
+        "যা হৃৎপিন্ড পর্যন্ত পৌঁছে যাবে।",
+        "নিশ্চয় তা তাদেরকে আবদ্ধ করে রাখবে।",
+        "প্রলম্বিত স্তম্ভসমূহে।"
+    ],
+    "urdu": [
+        "ہر طعن آمیز اشارتیں کرنے والے چغل خور کی خرابی ہے",
+        "جو مال جمع کرتا اور اس کو گن گن کر رکھتا ہے",
+        "(اور) خیال کرتا ہے کہ اس کا مال اس کی ہمیشہ کی زندگی کا موجب ہو گا",
+        "ہر گز نہیں وہ ضرور حطمہ میں ڈالا جائے گا",
+        "اور تم کیا سمجھے حطمہ کیا ہے؟",
+        "وہ خدا کی بھڑکائی ہوئی آگ ہے",
+        "جو دلوں پر جا لپٹے گی",
+        "(اور) وہ اس میں بند کر دیئے جائیں گے",
+        "(یعنی آگ کے) لمبے لمبے ستونوں میں"
+    ]
+}

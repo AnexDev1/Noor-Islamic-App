@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../domain/surah_detail.dart';
 
@@ -13,7 +14,18 @@ class SurahApi {
   }) async {
     final url = 'https://quranapi.pages.dev/api/$surahNo.json';
 
-    // If cached detail exists return it immediately
+    // 1. Try to load from Assets (Fastest & Guaranteed Offline)
+    try {
+      final jsonString = await rootBundle.loadString(
+        'assets/data/quran/$surahNo.json',
+      );
+      final Map<String, dynamic> data = json.decode(jsonString);
+      return SurahDetail.fromJson(data);
+    } catch (_) {
+      // If asset likely doesn't exist or error, proceed to Cache/Network
+    }
+
+    // 2. If cached detail exists (fallback from previous validation)
     try {
       final prefs = await SharedPreferences.getInstance();
       final cached = prefs.getString('$_detailCachePrefix$surahNo');

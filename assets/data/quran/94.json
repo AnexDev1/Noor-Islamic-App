@@ -1,0 +1,86 @@
+{
+    "surahName": "Ash-Sharh",
+    "surahNameArabic": "الشرح",
+    "surahNameArabicLong": "سورة الشرح",
+    "surahNameTranslation": "The Consolation",
+    "revelationPlace": "Mecca",
+    "totalAyah": 8,
+    "surahNo": 94,
+    "audio": {
+        "1": {
+            "reciter": "Mishary Rashid Al Afasy",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/1/94.mp3",
+            "originalUrl": "https://server8.mp3quran.net/afs/094.mp3"
+        },
+        "2": {
+            "reciter": "Abu Bakr Al Shatri",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/2/94.mp3",
+            "originalUrl": "https://server11.mp3quran.net/shatri/094.mp3"
+        },
+        "3": {
+            "reciter": "Nasser Al Qatami",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/3/94.mp3",
+            "originalUrl": "https://server6.mp3quran.net/qtm/094.mp3"
+        },
+        "4": {
+            "reciter": "Yasser Al Dosari",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/4/94.mp3",
+            "originalUrl": "https://server11.mp3quran.net/yasser/094.mp3"
+        },
+        "5": {
+            "reciter": "Hani Ar Rifai",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/5/94.mp3",
+            "originalUrl": "https://server8.mp3quran.net/hani/094.mp3"
+        }
+    },
+    "english": [
+        "Have We not uplifted your heart for you ˹O Prophet˺",
+        "relieved you of the burden",
+        "which weighed so heavily on your back",
+        "and elevated your renown for you?",
+        "So, surely with hardship comes ease.",
+        "Surely with ˹that˺ hardship comes ˹more˺ ease.",
+        "So once you have fulfilled ˹your duty˺, strive ˹in devotion˺",
+        "turning to your Lord ˹alone˺ with hope."
+    ],
+    "arabic1": [
+        "أَلَمْ نَشْرَحْ لَكَ صَدْرَكَ",
+        "وَوَضَعْنَا عَنكَ وِزْرَكَ",
+        "ٱلَّذِىٓ أَنقَضَ ظَهْرَكَ",
+        "وَرَفَعْنَا لَكَ ذِكْرَكَ",
+        "فَإِنَّ مَعَ ٱلْعُسْرِ يُسْرًا",
+        "إِنَّ مَعَ ٱلْعُسْرِ يُسْرًا",
+        "فَإِذَا فَرَغْتَ فَٱنصَبْ",
+        "وَإِلَىٰ رَبِّكَ فَٱرْغَب"
+    ],
+    "arabic2": [
+        "الم نشرح لك صدرك",
+        "ووضعنا عنك وزرك",
+        "الذي انقض ظهرك",
+        "ورفعنا لك ذكرك",
+        "فان مع العسر يسرا",
+        "ان مع العسر يسرا",
+        "فاذا فرغت فانصب",
+        "والى ربك فارغب"
+    ],
+    "bengali": [
+        "আমি কি তোমার জন্য তোমার বক্ষ প্রশস্ত করিনি?",
+        "আর আমি নামিয়ে দিয়েছি তোমার থেকে তোমার বোঝা,",
+        "যা তোমার পিঠ ভেঙ্গে দিচ্ছিল।",
+        "আর আমি তোমার (মর্যাদার) জন্য তোমার স্মরণকে সমুন্নত করেছি।",
+        "সুতরাং কষ্টের সাথেই রয়েছে সুখ।",
+        "নিশ্চয় কষ্টের সাথেই রয়েছে সুখ।",
+        "অতএব যখনই তুমি অবসর পাবে, তখনই কঠোর ইবাদাতে রত হও।",
+        "আর তোমার রবের প্রতি আকৃষ্ট হও।"
+    ],
+    "urdu": [
+        "(اے محمدﷺ) کیا ہم نے تمہارا سینہ کھول نہیں دیا؟ (بےشک کھول دیا)",
+        "اور تم پر سے بوجھ بھی اتار دیا",
+        "جس نے تمہاری پیٹھ توڑ رکھی تھی",
+        "اور تمہارا ذکر بلند کیا",
+        "ہاں ہاں مشکل کے ساتھ آسانی بھی ہے",
+        "(اور) بے شک مشکل کے ساتھ آسانی ہے",
+        "تو جب فارغ ہوا کرو تو (عبادت میں) محنت کیا کرو",
+        "اور اپنے پروردگار کی طرف متوجہ ہو جایا کرو"
+    ]
+}

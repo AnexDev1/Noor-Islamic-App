@@ -1,0 +1,101 @@
+{
+    "surahName": "Ad-Dhuhaa",
+    "surahNameArabic": "الضحى",
+    "surahNameArabicLong": "سورة الضحى",
+    "surahNameTranslation": "The Morning Hours",
+    "revelationPlace": "Mecca",
+    "totalAyah": 11,
+    "surahNo": 93,
+    "audio": {
+        "1": {
+            "reciter": "Mishary Rashid Al Afasy",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/1/93.mp3",
+            "originalUrl": "https://server8.mp3quran.net/afs/093.mp3"
+        },
+        "2": {
+            "reciter": "Abu Bakr Al Shatri",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/2/93.mp3",
+            "originalUrl": "https://server11.mp3quran.net/shatri/093.mp3"
+        },
+        "3": {
+            "reciter": "Nasser Al Qatami",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/3/93.mp3",
+            "originalUrl": "https://server6.mp3quran.net/qtm/093.mp3"
+        },
+        "4": {
+            "reciter": "Yasser Al Dosari",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/4/93.mp3",
+            "originalUrl": "https://server11.mp3quran.net/yasser/093.mp3"
+        },
+        "5": {
+            "reciter": "Hani Ar Rifai",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/5/93.mp3",
+            "originalUrl": "https://server8.mp3quran.net/hani/093.mp3"
+        }
+    },
+    "english": [
+        "By the morning sunlight",
+        "and the night when it falls still!",
+        "Your Lord ˹O Prophet˺ has not abandoned you, nor has He become hateful ˹of you˺.",
+        "And the next life is certainly far better for you than this one.",
+        "And ˹surely˺ your Lord will give so much to you that you will be pleased.",
+        "Did He not find you as an orphan then sheltered you?",
+        "Did He not find you unguided then guided you?",
+        "And did He not find you needy then satisfied your needs?",
+        "So do not oppress the orphan",
+        "nor repulse the beggar.",
+        "And proclaim the blessings of your Lord."
+    ],
+    "arabic1": [
+        "وَٱلضُّحَىٰ",
+        "وَٱلَّيْلِ إِذَا سَجَىٰ",
+        "مَا وَدَّعَكَ رَبُّكَ وَمَا قَلَىٰ",
+        "وَلَلْـَٔاخِرَةُ خَيْرٌ لَّكَ مِنَ ٱلْأُولَىٰ",
+        "وَلَسَوْفَ يُعْطِيكَ رَبُّكَ فَتَرْضَىٰٓ",
+        "أَلَمْ يَجِدْكَ يَتِيمًا فَـَٔاوَىٰ",
+        "وَوَجَدَكَ ضَآلًّا فَهَدَىٰ",
+        "وَوَجَدَكَ عَآئِلًا فَأَغْنَىٰ",
+        "فَأَمَّا ٱلْيَتِيمَ فَلَا تَقْهَرْ",
+        "وَأَمَّا ٱلسَّآئِلَ فَلَا تَنْهَرْ",
+        "وَأَمَّا بِنِعْمَةِ رَبِّكَ فَحَدِّثْ"
+    ],
+    "arabic2": [
+        "والضحى",
+        "والليل اذا سجى",
+        "ما ودعك ربك وما قلى",
+        "وللاخرة خير لك من الاولى",
+        "ولسوف يعطيك ربك فترضى",
+        "الم يجدك يتيما فاوى",
+        "ووجدك ضالا فهدى",
+        "ووجدك عائلا فاغنى",
+        "فاما اليتيم فلا تقهر",
+        "واما السائل فلا تنهر",
+        "واما بنعمة ربك فحدث"
+    ],
+    "bengali": [
+        "কসম পূর্বা‎‎হ্নের,",
+        "কসম রাতের যখন তা অন্ধকারাচ্ছন্ন হয়।",
+        "তোমার রব তোমাকে পরিত্যাগ করেননি এবং অসন্তুষ্টও হননি।",
+        "আর অবশ্যই তোমার জন্য পরবর্তী সময় পূর্ববর্তী সময়ের চেয়ে উত্তম।",
+        "আর অচিরেই তোমার রব তোমাকে দান করবেন, ফলে তুমি সন্তুষ্ট হবে।",
+        "তিনি কি তোমাকে ইয়াতীম অবস্থায় পাননি? অতঃপর তিনি আশ্রয় দিয়েছেন।",
+        "আর তিনি তোমাকে পেয়েছেন পথ না জানা অবস্থায়। অতঃপর তিনি পথনির্দেশ দিয়েছেন।",
+        "তিনি তোমাকে পেয়েছেন নিঃস্ব। অতঃপর তিনি সমৃদ্ধ করেছেন।",
+        "সুতরাং তুমি ইয়াতীমের প্রতি কঠোর হয়ো না।",
+        "আর ভিক্ষুককে তুমি ধমক দিওনা।",
+        "আর তোমার রবের অনুগ্রহ তুমি বর্ণনা কর।"
+    ],
+    "urdu": [
+        "آفتاب کی روشنی کی قسم",
+        "اور رات (کی تاریکی) کی جب چھا جائے",
+        "کہ (اے محمدﷺ) تمہارے پروردگار نے نہ تو تم کو چھوڑا اور نہ( تم سے )ناراض ہوا",
+        "اور آخرت تمہارے لیے پہلی (حالت یعنی دنیا) سے کہیں بہتر ہے",
+        "اور تمہیں پروردگار عنقریب وہ کچھ عطا فرمائے گا کہ تم خوش ہو جاؤ گے",
+        "بھلا اس نے تمہیں یتیم پا کر جگہ نہیں دی؟ (بےشک دی)",
+        "اور رستے سے ناواقف دیکھا تو رستہ دکھایا",
+        "اور تنگ دست پایا تو غنی کر دیا",
+        "تو تم بھی یتیم پر ستم نہ کرنا",
+        "اور مانگنے والے کو جھڑکی نہ دینا",
+        "اور اپنے پروردگار کی نعمتوں کا بیان کرتے رہنا"
+    ]
+}

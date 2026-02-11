@@ -1,0 +1,157 @@
+[
+  {
+    "step": 1,
+    "title": "Standing (Qiyam)",
+    "arabicTitle": "القيام",
+    "description": "Stand upright facing the Qibla. Place your hands below the navel (Hanafi) or on the chest (Shafi'i/Hanbali). Focus your gaze on the place of prostration.",
+    "duaArabic": "اللَّهُ أَكْبَرُ",
+    "duaTranslation": "Allah is the Greatest",
+    "duaTransliteration": "Allahu Akbar",
+    "details": "This is the opening of the prayer (Takbirat al-Ihram). Raise both hands up to the ears (or shoulders) with palms facing the Qibla, then fold them.",
+    "icon": "standing",
+    "tips": [
+      "Keep your feet shoulder-width apart",
+      "Lower your gaze to the place of prostration",
+      "After Takbir, recite the opening supplication (Du'a al-Istiftah) silently"
+    ]
+  },
+  {
+    "step": 2,
+    "title": "Recitation (Qira'ah)",
+    "arabicTitle": "القراءة",
+    "description": "Recite Surah Al-Fatiha, then follow with any short surah or verses from the Quran.",
+    "duaArabic": "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\nالْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ\nالرَّحْمَٰنِ الرَّحِيمِ\nمَالِكِ يَوْمِ الدِّينِ\nإِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ\nاهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ\nصِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ",
+    "duaTranslation": "In the name of Allah, the Most Gracious, the Most Merciful.\nAll praise is due to Allah, Lord of all the worlds.\nThe Most Gracious, the Most Merciful.\nMaster of the Day of Judgment.\nYou alone we worship, and You alone we ask for help.\nGuide us on the Straight Path.\nThe path of those You have blessed, not of those who earned anger, nor of those who went astray.",
+    "duaTransliteration": "Bismillahir Rahmanir Raheem.\nAlhamdu lillahi Rabbil 'aalameen.\nAr-Rahmanir Raheem.\nMaaliki yawmid-deen.\nIyyaka na'budu wa iyyaka nasta'een.\nIhdinas-siraatal mustaqeem.\nSiraatal ladheena an'amta 'alayhim, ghayril maghdoobi 'alayhim wa lad-daalleen.",
+    "details": "Al-Fatiha is obligatory in every rak'ah. Say 'Ameen' after completing it. In the first two rak'ahs, recite an additional short surah (e.g. Al-Ikhlas, Al-Falaq, An-Nas).",
+    "icon": "recitation",
+    "tips": [
+      "Recite Al-Fatiha slowly and with reflection (tadabbur)",
+      "Pause briefly after each verse",
+      "In congregational prayer (Salah with Imam), listen when the Imam recites aloud"
+    ]
+  },
+  {
+    "step": 3,
+    "title": "Bowing (Ruku')",
+    "arabicTitle": "الركوع",
+    "description": "Bow down with your hands on your knees, keeping your back straight and head level with your back.",
+    "duaArabic": "سُبْحَانَ رَبِّيَ الْعَظِيمِ",
+    "duaTranslation": "Glory be to my Lord, the Almighty",
+    "duaTransliteration": "Subhana Rabbiyal 'Adheem",
+    "details": "Say 'Allahu Akbar' while bowing. Recite the dhikr at least 3 times. Keep your back flat and fingers spread on your knees.",
+    "icon": "bowing",
+    "tips": [
+      "Keep your back and head at the same level (horizontal)",
+      "Do not bend your knees",
+      "Say the dhikr an odd number of times (3, 5, or 7)"
+    ]
+  },
+  {
+    "step": 4,
+    "title": "Rising from Ruku'",
+    "arabicTitle": "الاعتدال",
+    "description": "Rise back to standing position after bowing.",
+    "duaArabic": "سَمِعَ اللَّهُ لِمَنْ حَمِدَهُ\nرَبَّنَا وَلَكَ الْحَمْدُ",
+    "duaTranslation": "Allah hears whoever praises Him.\nOur Lord, and to You is all praise.",
+    "duaTransliteration": "Sami'Allahu liman hamidah.\nRabbana wa lakal hamd.",
+    "details": "While rising, say 'Sami'Allahu liman hamidah'. Once fully standing, say 'Rabbana wa lakal hamd'. Stand briefly in this position (I'tidal).",
+    "icon": "standing",
+    "tips": [
+      "Stand completely straight — do not rush to sajdah",
+      "This brief standing (I'tidal) is an obligatory pillar of prayer"
+    ]
+  },
+  {
+    "step": 5,
+    "title": "Prostration (Sujud)",
+    "arabicTitle": "السجود",
+    "description": "Go down to the ground with seven body parts touching the floor: forehead with nose, both palms, both knees, and the toes of both feet.",
+    "duaArabic": "سُبْحَانَ رَبِّيَ الْأَعْلَى",
+    "duaTranslation": "Glory be to my Lord, the Most High",
+    "duaTransliteration": "Subhana Rabbiyal A'la",
+    "details": "Say 'Allahu Akbar' while going down. Prostrate on seven bones. Your arms should not touch the ground flat — keep elbows raised. This is the closest position to Allah.",
+    "icon": "prostration",
+    "tips": [
+      "Make du'a in this position — it is the closest you are to Allah",
+      "Say the dhikr at least 3 times",
+      "Keep your arms away from your sides, do not rest them on the ground"
+    ]
+  },
+  {
+    "step": 6,
+    "title": "Sitting Between Sajdahs",
+    "arabicTitle": "الجلوس بين السجدتين",
+    "description": "Sit upright between the two prostrations with your hands on your thighs.",
+    "duaArabic": "رَبِّ اغْفِرْ لِي، رَبِّ اغْفِرْ لِي",
+    "duaTranslation": "My Lord, forgive me. My Lord, forgive me.",
+    "duaTransliteration": "Rabbighfir lee, Rabbighfir lee.",
+    "details": "Sit on your left foot with the right foot upright. Place hands on thighs near the knees. This brief sitting is a pillar of prayer — do not rush past it.",
+    "icon": "sitting",
+    "tips": [
+      "Sit calmly and don't rush — this is often neglected",
+      "You can also say: 'Allahummaghfir lee, warhamni, wahdini, warzuqni' (O Allah forgive me, have mercy on me, guide me, and provide for me)"
+    ]
+  },
+  {
+    "step": 7,
+    "title": "Second Prostration",
+    "arabicTitle": "السجدة الثانية",
+    "description": "Perform the second prostration exactly like the first one.",
+    "duaArabic": "سُبْحَانَ رَبِّيَ الْأَعْلَى",
+    "duaTranslation": "Glory be to my Lord, the Most High",
+    "duaTransliteration": "Subhana Rabbiyal A'la",
+    "details": "Say 'Allahu Akbar' while going down. Repeat the same dhikr as the first sajdah. After this, you have completed one full rak'ah.",
+    "icon": "prostration",
+    "tips": [
+      "This completes one rak'ah",
+      "Rise to standing (Qiyam) for the next rak'ah by saying 'Allahu Akbar'"
+    ]
+  },
+  {
+    "step": 8,
+    "title": "Sitting for Tashahhud",
+    "arabicTitle": "التشهد",
+    "description": "After the 2nd rak'ah (and 4th rak'ah in 4-rak'ah prayers), sit for the Tashahhud/Attahiyyat.",
+    "duaArabic": "التَّحِيَّاتُ لِلَّهِ وَالصَّلَوَاتُ وَالطَّيِّبَاتُ\nالسَّلَامُ عَلَيْكَ أَيُّهَا النَّبِيُّ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ\nالسَّلَامُ عَلَيْنَا وَعَلَىٰ عِبَادِ اللَّهِ الصَّالِحِينَ\nأَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ",
+    "duaTranslation": "All greetings, prayers, and good things are for Allah.\nPeace be upon you, O Prophet, and the mercy of Allah and His blessings.\nPeace be upon us and upon the righteous servants of Allah.\nI bear witness that there is no god but Allah, and I bear witness that Muhammad is His servant and messenger.",
+    "duaTransliteration": "At-tahiyyatu lillahi was-salawatu wat-tayyibat.\nAs-salamu 'alayka ayyuhan-nabiyyu wa rahmatullahi wa barakatuh.\nAs-salamu 'alayna wa 'ala 'ibadillahis-saliheen.\nAsh-hadu an la ilaha illAllah, wa ash-hadu anna Muhammadan 'abduhu wa rasuluh.",
+    "details": "Point your right index finger during the shahada (testimony). In the final sitting, add the Salawat upon the Prophet (Ibrahimiyyah) after the Tashahhud.",
+    "icon": "sitting",
+    "tips": [
+      "Point your right index finger when saying 'ash-hadu an la ilaha illAllah'",
+      "In 3 or 4 rak'ah prayers, stand up after the first Tashahhud for the remaining rak'ahs"
+    ]
+  },
+  {
+    "step": 9,
+    "title": "Salawat upon the Prophet",
+    "arabicTitle": "الصلاة الإبراهيمية",
+    "description": "In the final sitting, after Tashahhud, recite the Ibrahimiyyah (Salawat).",
+    "duaArabic": "اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ وَعَلَىٰ آلِ مُحَمَّدٍ كَمَا صَلَّيْتَ عَلَىٰ إِبْرَاهِيمَ وَعَلَىٰ آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ\nاللَّهُمَّ بَارِكْ عَلَىٰ مُحَمَّدٍ وَعَلَىٰ آلِ مُحَمَّدٍ كَمَا بَارَكْتَ عَلَىٰ إِبْرَاهِيمَ وَعَلَىٰ آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ",
+    "duaTranslation": "O Allah, send Your grace upon Muhammad and upon the family of Muhammad, as You sent Your grace upon Ibrahim and the family of Ibrahim. Truly, You are Praiseworthy, Glorious.\nO Allah, bless Muhammad and the family of Muhammad, as You blessed Ibrahim and the family of Ibrahim. Truly, You are Praiseworthy, Glorious.",
+    "duaTransliteration": "Allahumma salli 'ala Muhammadin wa 'ala ali Muhammad, kama sallayta 'ala Ibrahima wa 'ala ali Ibrahim, innaka Hamidun Majeed.\nAllahumma barik 'ala Muhammadin wa 'ala ali Muhammad, kama barakta 'ala Ibrahima wa 'ala ali Ibrahim, innaka Hamidun Majeed.",
+    "details": "This is said only in the final sitting of the prayer. After the Salawat, you may make personal du'a before ending the prayer.",
+    "icon": "sitting",
+    "tips": [
+      "After the Salawat, make du'a for yourself, your family, and the ummah",
+      "A recommended du'a is seeking refuge from the torment of the grave and Hellfire"
+    ]
+  },
+  {
+    "step": 10,
+    "title": "Ending the Prayer (Tasleem)",
+    "arabicTitle": "التسليم",
+    "description": "Turn your head to the right, then to the left, saying the salam each time.",
+    "duaArabic": "السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ",
+    "duaTranslation": "Peace and mercy of Allah be upon you",
+    "duaTransliteration": "As-salamu 'alaykum wa rahmatullah",
+    "details": "Turn to the right first saying 'As-salamu 'alaykum wa rahmatullah', then to the left with the same words. This completes the prayer.",
+    "icon": "tasleem",
+    "tips": [
+      "Look over your right shoulder, then your left",
+      "After finishing, say the post-prayer adhkar (dhikr)",
+      "SubhanAllah ×33, Alhamdulillah ×33, Allahu Akbar ×34"
+    ]
+  }
+]

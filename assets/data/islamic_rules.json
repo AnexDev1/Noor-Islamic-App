@@ -1,0 +1,142 @@
+[
+  {
+    "id": "pillars",
+    "title": "Five Pillars of Islam",
+    "icon": "mosque",
+    "color": "#0F4C3A",
+    "items": [
+      {
+        "title": "Shahada (Declaration of Faith)",
+        "arabic": "الشهادة",
+        "content": "The Shahada is the declaration: 'Ash-hadu an la ilaha illAllah, wa ash-hadu anna Muhammadan Rasulullah' — 'I bear witness that there is no god but Allah, and I bear witness that Muhammad is the messenger of Allah.'\n\nThis is the first and most fundamental pillar. Sincerely declaring the Shahada with understanding and conviction is what makes one a Muslim. It affirms the oneness of Allah (Tawhid) and the prophethood of Muhammad ﷺ.",
+        "reference": "Sahih al-Bukhari 8, Sahih Muslim 16"
+      },
+      {
+        "title": "Salah (Prayer)",
+        "arabic": "الصلاة",
+        "content": "Muslims are obligated to perform five daily prayers:\n\n• Fajr (Dawn) — 2 rak'ahs\n• Dhuhr (Noon) — 4 rak'ahs\n• Asr (Afternoon) — 4 rak'ahs\n• Maghrib (Sunset) — 3 rak'ahs\n• Isha (Night) — 4 rak'ahs\n\nPrayer is the direct link between the servant and Allah. It was the only commandment given directly to the Prophet ﷺ during the Night Journey (Isra' and Mi'raj).",
+        "reference": "Quran 2:238, Sahih al-Bukhari 528"
+      },
+      {
+        "title": "Zakat (Charity)",
+        "arabic": "الزكاة",
+        "content": "Zakat is the obligatory charity of 2.5% on wealth that has been held for one lunar year above the nisab (minimum threshold).\n\n• Nisab for gold: 85 grams\n• Nisab for silver: 595 grams\n• Cash: based on the equivalent value of nisab in gold or silver\n\nZakat purifies the wealth and soul of the giver, and supports those in need. It is distributed to 8 categories of recipients mentioned in the Quran (9:60).",
+        "reference": "Quran 9:60, Quran 2:267"
+      },
+      {
+        "title": "Sawm (Fasting in Ramadan)",
+        "arabic": "الصيام",
+        "content": "Muslims fast during the month of Ramadan from dawn (Fajr) to sunset (Maghrib), abstaining from food, drink, and marital relations.\n\nFasting teaches self-discipline, gratitude, and empathy for those less fortunate. It is also a time of increased worship, Quran recitation, and generosity.\n\nExemptions: travelers, the sick, pregnant/nursing women, elderly, and young children. Those who miss fasting days must make them up later (Qadah) or pay Fidya if unable.",
+        "reference": "Quran 2:183-185"
+      },
+      {
+        "title": "Hajj (Pilgrimage)",
+        "arabic": "الحج",
+        "content": "Hajj is the annual pilgrimage to Makkah, obligatory once in a lifetime for those who are physically and financially able.\n\nKey rituals include:\n• Tawaf: Circling the Ka'bah 7 times\n• Sa'i: Walking between Safa and Marwah 7 times\n• Standing at Arafat: The most important day of Hajj\n• Stoning the Jamarat\n• Sacrificing an animal (Udhiyyah)\n\nHajj symbolizes unity, equality, and devotion — all pilgrims wear simple white garments (Ihram), removing all distinctions of wealth and status.",
+        "reference": "Quran 3:97, Quran 2:196-203"
+      }
+    ]
+  },
+  {
+    "id": "articles_of_faith",
+    "title": "Six Articles of Faith",
+    "icon": "favorite",
+    "color": "#D4AF37",
+    "items": [
+      {
+        "title": "Belief in Allah",
+        "arabic": "الإيمان بالله",
+        "content": "Belief in Allah encompasses His existence, His oneness (Tawhid), His names and attributes, and His right to be worshipped alone without any partners.\n\nTawhid has three categories:\n1. Tawhid ar-Rububiyyah — Allah is the sole Creator, Sustainer, and Manager of all affairs\n2. Tawhid al-Uluhiyyah — Allah alone deserves worship\n3. Tawhid al-Asma' was-Sifat — Allah's names and attributes are unique and perfect",
+        "reference": "Quran 112:1-4, Quran 2:255"
+      },
+      {
+        "title": "Belief in the Angels",
+        "arabic": "الإيمان بالملائكة",
+        "content": "Angels are created from light and serve Allah with complete obedience. Notable angels include:\n\n• Jibril (Gabriel) — delivers revelation\n• Mikail — manages rain and sustenance\n• Israfil — will blow the trumpet on the Day of Judgment\n• Malik — guardian of Hellfire\n• Kiraman Katibin — the recording angels\n• Angel of Death (Malak al-Mawt)",
+        "reference": "Quran 2:285, Quran 66:6"
+      },
+      {
+        "title": "Belief in the Books",
+        "arabic": "الإيمان بالكتب",
+        "content": "Allah revealed divine scriptures to His messengers:\n\n• The Scrolls (Suhuf) — given to Ibrahim\n• The Torah (Tawrat) — given to Musa\n• The Psalms (Zabur) — given to Dawud\n• The Gospel (Injeel) — given to 'Isa\n• The Quran — given to Muhammad ﷺ\n\nMuslims believe the Quran is the final, preserved, and unaltered word of Allah.",
+        "reference": "Quran 2:136, Quran 5:48"
+      },
+      {
+        "title": "Belief in the Prophets",
+        "arabic": "الإيمان بالرسل",
+        "content": "Allah sent prophets to every nation to guide humanity. Muslims believe in all prophets without distinction. The Quran mentions 25 by name, including Adam, Nuh, Ibrahim, Musa, 'Isa, and Muhammad ﷺ.\n\nMuhammad ﷺ is the final messenger (Seal of the Prophets), and his message is for all of humanity until the Day of Judgment.",
+        "reference": "Quran 2:136, Quran 33:40"
+      },
+      {
+        "title": "Belief in the Day of Judgment",
+        "arabic": "الإيمان باليوم الآخر",
+        "content": "Every soul will be resurrected and held accountable for their deeds. This includes:\n\n• Life in the grave (Barzakh)\n• The blowing of the trumpet (As-Sur)\n• Resurrection and gathering (Al-Hashr)\n• The reckoning and scale of deeds (Al-Mizan)\n• The bridge over Hellfire (As-Sirat)\n• Paradise (Jannah) and Hellfire (Jahannam)\n\nBelief in the afterlife motivates righteous conduct and patience in trials.",
+        "reference": "Quran 99:1-8, Quran 21:47"
+      },
+      {
+        "title": "Belief in Divine Decree (Qadr)",
+        "arabic": "الإيمان بالقدر",
+        "content": "Belief in Qadr means accepting that Allah has knowledge of everything that will happen, has written it in the Preserved Tablet (Al-Lawh Al-Mahfuz), has willed it, and has created it.\n\nThis includes belief in both good and what may seem bad — all is from Allah's wisdom. However, this does not negate free will; humans have the ability to choose their actions and are accountable for them.",
+        "reference": "Quran 54:49, Sahih Muslim 8"
+      }
+    ]
+  },
+  {
+    "id": "daily_etiquette",
+    "title": "Islamic Etiquette (Adab)",
+    "icon": "handshake",
+    "color": "#2D5A87",
+    "items": [
+      {
+        "title": "Greeting (Salam)",
+        "arabic": "السلام",
+        "content": "The Islamic greeting is 'As-salamu 'alaykum wa rahmatullahi wa barakatuh' (Peace, mercy, and blessings of Allah be upon you).\n\nThe response is: 'Wa 'alaykum as-salam wa rahmatullahi wa barakatuh.'\n\nThe Prophet ﷺ said giving salam is one of the best deeds in Islam and spreading it brings love between hearts.",
+        "reference": "Sahih al-Bukhari 12, Sahih al-Bukhari 6235"
+      },
+      {
+        "title": "Eating & Drinking",
+        "arabic": "آداب الطعام والشراب",
+        "content": "• Say 'Bismillah' before eating\n• Eat with the right hand\n• Eat from what is nearest to you\n• Do not waste food\n• After finishing, say 'Alhamdulillah'\n• Sit while drinking\n• Drink in three sips, breathing outside the glass",
+        "reference": "Sahih al-Bukhari 5376, Sahih Muslim 2020"
+      },
+      {
+        "title": "Entering & Leaving Home",
+        "arabic": "آداب دخول البيت والخروج منه",
+        "content": "When entering: Say 'Bismillah' and 'As-salamu 'alaykum' to those inside, and enter with the right foot.\n\nWhen leaving: Step out with the left foot and say: 'Bismillahi tawakkaltu 'alAllah, wa la hawla wa la quwwata illa billah' (In the name of Allah, I put my trust in Allah. There is no power except with Allah).",
+        "reference": "Abu Dawud 5095, At-Tirmidhi 3427"
+      },
+      {
+        "title": "Sleeping",
+        "arabic": "آداب النوم",
+        "content": "• Sleep on your right side\n• Place your right hand under your cheek\n• Recite Ayatul Kursi, the last two verses of Al-Baqarah, and the three Quls (Al-Ikhlas, Al-Falaq, An-Nas)\n• Say: 'Bismika Allahumma amutu wa ahya' (In Your name, O Allah, I die and I live)\n• Dust off the bed before lying down",
+        "reference": "Sahih al-Bukhari 6314, Sahih Muslim 2710"
+      }
+    ]
+  },
+  {
+    "id": "purification",
+    "title": "Purification (Taharah)",
+    "icon": "water_drop",
+    "color": "#06B6D4",
+    "items": [
+      {
+        "title": "Types of Purification",
+        "arabic": "أنواع الطهارة",
+        "content": "Islamic purification includes:\n\n1. Wudu (Minor ablution) — required before prayer, touching the Quran\n2. Ghusl (Major ablution) — required after sexual discharge, menstruation, postpartum bleeding\n3. Tayammum (Dry ablution) — performed with clean earth/dust when water is unavailable or harmful",
+        "reference": "Quran 5:6, Quran 4:43"
+      },
+      {
+        "title": "Things That Break Wudu",
+        "arabic": "نواقض الوضوء",
+        "content": "Wudu is broken by:\n\n• Natural discharge (urine, stool, gas)\n• Deep sleep (lying down)\n• Loss of consciousness\n• Touching private parts directly (Shafi'i, Hanbali opinion)\n• Eating camel meat (Hanbali opinion based on hadith)\n• Vomiting in large amounts (Hanafi opinion)",
+        "reference": "Sahih al-Bukhari 135, Sahih Muslim 277"
+      },
+      {
+        "title": "When Ghusl is Required",
+        "arabic": "موجبات الغسل",
+        "content": "Ghusl (full body purification) is obligatory after:\n\n• Sexual intercourse\n• Seminal discharge (even in a dream)\n• End of menstruation (hayd)\n• End of postpartum bleeding (nifas)\n• Death (washing the deceased)\n• Embracing Islam (recommended by many scholars)\n\nSteps: Intention → wash private parts → perform full wudu → pour water over the entire body three times (right side first, then left)",
+        "reference": "Sahih al-Bukhari 248, Sahih Muslim 316"
+      }
+    ]
+  }
+]

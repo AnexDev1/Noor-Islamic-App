@@ -1,0 +1,86 @@
+{
+    "surahName": "At-Takaathur",
+    "surahNameArabic": "التكاثر",
+    "surahNameArabicLong": "سورة التكاثر",
+    "surahNameTranslation": "Competition",
+    "revelationPlace": "Mecca",
+    "totalAyah": 8,
+    "surahNo": 102,
+    "audio": {
+        "1": {
+            "reciter": "Mishary Rashid Al Afasy",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/1/102.mp3",
+            "originalUrl": "https://server8.mp3quran.net/afs/102.mp3"
+        },
+        "2": {
+            "reciter": "Abu Bakr Al Shatri",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/2/102.mp3",
+            "originalUrl": "https://server11.mp3quran.net/shatri/102.mp3"
+        },
+        "3": {
+            "reciter": "Nasser Al Qatami",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/3/102.mp3",
+            "originalUrl": "https://server6.mp3quran.net/qtm/102.mp3"
+        },
+        "4": {
+            "reciter": "Yasser Al Dosari",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/4/102.mp3",
+            "originalUrl": "https://server11.mp3quran.net/yasser/102.mp3"
+        },
+        "5": {
+            "reciter": "Hani Ar Rifai",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/5/102.mp3",
+            "originalUrl": "https://server8.mp3quran.net/hani/102.mp3"
+        }
+    },
+    "english": [
+        "Competition for more ˹gains˺ diverts you ˹from Allah˺",
+        "until you end up in ˹your˺ graves.",
+        "But no! You will soon come to know.",
+        "Again, no! You will soon come to know.",
+        "Indeed, if you were to know ˹your fate˺ with certainty, ˹you would have acted differently˺.",
+        "˹But˺ you will surely see the Hellfire.",
+        "Again, you will surely see it with the eye of certainty.",
+        "Then, on that Day, you will definitely be questioned about ˹your worldly˺ pleasures."
+    ],
+    "arabic1": [
+        "أَلْهَىٰكُمُ ٱلتَّكَاثُرُ",
+        "حَتَّىٰ زُرْتُمُ ٱلْمَقَابِرَ",
+        "كَلَّا سَوْفَ تَعْلَمُونَ",
+        "ثُمَّ كَلَّا سَوْفَ تَعْلَمُونَ",
+        "كَلَّا لَوْ تَعْلَمُونَ عِلْمَ ٱلْيَقِينِ",
+        "لَتَرَوُنَّ ٱلْجَحِيمَ",
+        "ثُمَّ لَتَرَوُنَّهَا عَيْنَ ٱلْيَقِينِ",
+        "ثُمَّ لَتُسْـَٔلُنَّ يَوْمَئِذٍ عَنِ ٱلنَّعِيمِ"
+    ],
+    "arabic2": [
+        "الهاكم التكاثر",
+        "حتى زرتم المقابر",
+        "كلا سوف تعلمون",
+        "ثم كلا سوف تعلمون",
+        "كلا لو تعلمون علم اليقين",
+        "لترون الجحيم",
+        "ثم لترونها عين اليقين",
+        "ثم لتسالن يومئذ عن النعيم"
+    ],
+    "bengali": [
+        "প্রাচুর্যের প্রতিযোগিতা তোমাদেরকে ভুলিয়ে রেখেছে।",
+        "যতক্ষণ না তোমরা কবরের সাক্ষাৎ করবে।",
+        "কখনো নয়, শীঘ্রই তোমরা জানবে,",
+        "তারপর কখনো নয়, তোমরা শীঘ্রই জানতে পারবে।",
+        "কখনো নয়, তোমরা যদি নিশ্চিত জ্ঞানে জানতে!",
+        "তোমরা অবশ্যই জাহান্নাম দেখবে;",
+        "তারপর তোমরা তা নিশ্চিত চাক্ষুষ দেখবে।",
+        "তারপর সেদিন অবশ্যই তোমরা নিআমত সম্পর্কে জিজ্ঞাসিত হবে।"
+    ],
+    "urdu": [
+        "(لوگو) تم کو(مال کی) بہت سی طلب نے غافل کر دیا",
+        "یہاں تک کہ تم نے قبریں جا دیکھیں",
+        "دیکھو تمہیں عنقریب معلوم ہو جائے گا",
+        "پھر دیکھو تمہیں عنقریب معلوم ہو جائے گا",
+        "دیکھو اگر تم جانتے (یعنی) علم الیقین (رکھتے تو غفلت نہ کرتے)",
+        "تم ضرور دوزخ کو دیکھو گے",
+        "پھر اس کو (ایسا) دیکھو گے (کہ) عین الیقین (آ جائے گا )",
+        "پھر اس روز تم سے (شکر) نعمت کے بارے میں پرسش ہو گی"
+    ]
+}

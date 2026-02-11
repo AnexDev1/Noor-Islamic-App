@@ -1119,6 +1119,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'May this Ramadan bring you peace and blessings'**
   String get ramadanBlessings;
+
+  /// No description provided for @learnIslam.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn Islam'**
+  String get learnIslam;
+
+  /// No description provided for @listenQuran.
+  ///
+  /// In en, this message translates to:
+  /// **'Listen Quran'**
+  String get listenQuran;
+
+  /// No description provided for @learnIslamSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your journey to understanding'**
+  String get learnIslamSubtitle;
+
+  /// No description provided for @salah.
+  ///
+  /// In en, this message translates to:
+  /// **'Salah'**
+  String get salah;
+
+  /// No description provided for @wudu.
+  ///
+  /// In en, this message translates to:
+  /// **'Wudu'**
+  String get wudu;
+
+  /// No description provided for @rules.
+  ///
+  /// In en, this message translates to:
+  /// **'Rules'**
+  String get rules;
+
+  /// No description provided for @videos.
+  ///
+  /// In en, this message translates to:
+  /// **'Videos'**
+  String get videos;
+
+  /// No description provided for @quiz.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz'**
+  String get quiz;
+
+  /// No description provided for @markAsLearned.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Learned'**
+  String get markAsLearned;
+
+  /// No description provided for @learned.
+  ///
+  /// In en, this message translates to:
+  /// **'Learned'**
+  String get learned;
+
+  /// No description provided for @testYourKnowledge.
+  ///
+  /// In en, this message translates to:
+  /// **'Test Your Knowledge'**
+  String get testYourKnowledge;
+
+  /// No description provided for @details.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get details;
+
+  /// No description provided for @tips.
+  ///
+  /// In en, this message translates to:
+  /// **'Tips'**
+  String get tips;
+
+  /// No description provided for @markSectionComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark Section Complete'**
+  String get markSectionComplete;
+
+  /// No description provided for @topics.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} topics'**
+  String topics(int count);
+
+  /// No description provided for @questionProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Question {current}/{total}'**
+  String questionProgress(int current, int total);
+
+  /// No description provided for @score.
+  ///
+  /// In en, this message translates to:
+  /// **'Score: {score}'**
+  String score(int score);
+
+  /// No description provided for @excellent.
+  ///
+  /// In en, this message translates to:
+  /// **'Excellent!'**
+  String get excellent;
+
+  /// No description provided for @goodJob.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Job!'**
+  String get goodJob;
+
+  /// No description provided for @keepLearning.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Learning!'**
+  String get keepLearning;
+
+  /// No description provided for @quizResultMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You scored {score} out of {total} ({percentage}%)'**
+  String quizResultMessage(int score, int total, int percentage);
 }
 
 class _AppLocalizationsDelegate

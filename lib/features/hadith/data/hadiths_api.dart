@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:async';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../domain/hadith.dart';
@@ -41,7 +42,32 @@ class HadithsApi {
 
     final cacheKey = _cacheKeyFor(params);
 
-    // Return cached data immediately if available
+    // 1. Try local assets first (Offline Content)
+    // This allows bundling popular chapters (like first chapters) directly with the app
+    if (bookSlug != null && chapterNumber != null) {
+      try {
+        final String assetPath =
+            'assets/data/hadiths/$bookSlug/$chapterNumber.json';
+        final String jsonString = await rootBundle.loadString(assetPath);
+        final data = json.decode(jsonString);
+
+        var hadithsRaw = data['hadiths'];
+        List<dynamic> hadithsList = [];
+        if (hadithsRaw is Map && hadithsRaw['data'] is List) {
+          hadithsList = hadithsRaw['data'] as List;
+        } else if (hadithsRaw is List) {
+          hadithsList = hadithsRaw;
+        }
+
+        if (hadithsList.isNotEmpty) {
+          return hadithsList.map((h) => Hadith.fromJson(h)).toList();
+        }
+      } catch (_) {
+        // Asset not found, continue to cache/network
+      }
+    }
+
+    // 2. Return cached data immediately if available
     try {
       final prefs = await SharedPreferences.getInstance();
       final legacyKey =
@@ -63,10 +89,16 @@ class HadithsApi {
           try {
             final uri = Uri.https('hadithapi.com', '/api/hadiths', params);
             final response = await http
-                .get(uri)
+                .get(
+                  uri,
+                  headers: {
+                    'Accept': 'application/json',
+                    'User-Agent': 'NoorApp/1.0.0 (Flutter; Android)',
+                  },
+                )
                 .timeout(const Duration(seconds: 15));
             if (response.statusCode == 200) {
-              await prefs.setString(cacheKey, response.body);
+              await prefs.setString(cacheKey, utf8.decode(response.bodyBytes));
             }
           } catch (_) {}
         });
@@ -88,11 +120,12 @@ class HadithsApi {
     try {
       final response = await _retryHttpGet(uri, attempts: 3);
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final body = utf8.decode(response.bodyBytes);
+        final data = json.decode(body);
         // Cache the response
         try {
           final prefs = await SharedPreferences.getInstance();
-          await prefs.setString(cacheKey, response.body);
+          await prefs.setString(cacheKey, body);
         } catch (_) {}
 
         var hadithsRaw = data['hadiths'];
@@ -150,7 +183,15 @@ class HadithsApi {
     while (true) {
       attempt++;
       try {
-        final resp = await http.get(uri).timeout(const Duration(seconds: 15));
+        final resp = await http
+            .get(
+              uri,
+              headers: {
+                'Accept': 'application/json',
+                'User-Agent': 'NoorApp/1.0.0 (Flutter; Android)',
+              },
+            )
+            .timeout(const Duration(seconds: 15));
         return resp;
       } catch (e) {
         if (attempt >= attempts) rethrow;

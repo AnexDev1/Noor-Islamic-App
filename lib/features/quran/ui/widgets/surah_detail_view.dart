@@ -49,6 +49,21 @@ class _SurahDetailViewState extends State<SurahDetailView> {
   }
 
   Future<void> _fetchAudioUrl() async {
+    // 1. Check if audio URL is available in the cached SurahDetail
+    // This provides instant access without network calls
+    if (widget.surahDetail.audio.containsKey(widget.reciterId)) {
+      final dynamic audioEntry = widget.surahDetail.audio[widget.reciterId];
+      // It can be a Map (most likely) or maybe just string if schema changed,
+      // but based on 1.json it is a Map with "url" key.
+      if (audioEntry is Map && audioEntry['url'] != null) {
+        setState(() {
+          _audioUrl = audioEntry['url'].toString();
+          _isLoadingAudio = false;
+        });
+        return;
+      }
+    }
+
     setState(() {
       _isLoadingAudio = true;
     });
@@ -206,7 +221,7 @@ class _SurahDetailViewState extends State<SurahDetailView> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.symmetric(horizontal: 2, vertical: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -314,10 +329,13 @@ class _SurahDetailViewState extends State<SurahDetailView> {
 
   Widget _buildArabicOnlyVerses() {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 10,
+      ), // Small padding for text
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(0),
         boxShadow: [
           BoxShadow(
             color: AppColors.shadowLight,
@@ -334,8 +352,8 @@ class _SurahDetailViewState extends State<SurahDetailView> {
             Center(
               child: Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 16,
+                  horizontal: 16,
+                  vertical: 12,
                 ),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -371,7 +389,7 @@ class _SurahDetailViewState extends State<SurahDetailView> {
                 return TextSpan(
                   children: [
                     TextSpan(
-                      text: arabicText,
+                      text: arabicText.trim(), // Trim current verse
                       style: AppTextStyles.arabicLarge.copyWith(
                         fontSize: 26,
                         height: 2.2,
@@ -390,7 +408,7 @@ class _SurahDetailViewState extends State<SurahDetailView> {
                 );
               }).toList(),
             ),
-            textAlign: TextAlign.right,
+            textAlign: TextAlign.center, // Center aligned
             textDirection: TextDirection.rtl,
           ),
         ],
@@ -489,7 +507,7 @@ class _SurahDetailViewState extends State<SurahDetailView> {
 
                 // Content
                 Padding(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -498,7 +516,7 @@ class _SurahDetailViewState extends State<SurahDetailView> {
                           translation.arabicText!.isNotEmpty)
                         Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.all(20),
+                          padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: AppColors.accent.withOpacity(0.04),
                             borderRadius: BorderRadius.circular(16),

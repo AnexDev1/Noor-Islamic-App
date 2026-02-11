@@ -201,5 +201,27 @@
   "secondsUntilRamadan": "Sekondii",
   "ramadanMubarak": "Ramadaan Mubaarak!",
   "ramadanKareem": "Ramadaan Kariim!",
-  "ramadanBlessings": "Ramadaan kana nagaan fi barakaa haa siif haatu"
+  "ramadanBlessings": "Ramadaan kana nagaan fi barakaa haa siif haatu",
+
+  "learnIslam": "Islaamaa Baradi",
+  "listenQuran": "Qur'aana Dhageeffadhu",
+  "learnIslamSubtitle": "Imala hubannoo keessaniif",
+  "salah": "Salaata",
+  "wudu": "Wuduu'a",
+  "rules": "Seerawwan",
+  "videos": "Viidiyoowwan",
+  "quiz": "Qormaata",
+  "markAsLearned": "Akka Baratametti Mallatteessi",
+  "learned": "Baratameera",
+  "testYourKnowledge": "Beekumsa Kee Qori",
+  "details": "Bal'inaan",
+  "tips": "Gorsaawwan",
+  "markSectionComplete": "Kutaa Xumurametti Mallatteessi",
+  "topics": "Mata duree {count}",
+  "questionProgress": "Gaaffii {current}/{total}",
+  "score": "Qabxii: {score}",
+  "excellent": "Baay'ee Gaarii!",
+  "goodJob": "Hojii Gaarii!",
+  "keepLearning": "Baruu Itti Fufi!",
+  "quizResultMessage": "{total} keessaa {score} argattan ({percentage}%)"
 }

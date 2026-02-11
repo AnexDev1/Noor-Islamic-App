@@ -527,4 +527,75 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get ramadanBlessings => 'ይህ ረመዳን ሰላም እና በረከት ይመጣል';
+
+  @override
+  String get learnIslam => 'እስልምናን ተማር';
+
+  @override
+  String get listenQuran => 'ቁርኣን ያድምጡ';
+
+  @override
+  String get learnIslamSubtitle => 'ወደ ግንዛቤ ጉዞዎ';
+
+  @override
+  String get salah => 'ሶላት';
+
+  @override
+  String get wudu => 'ውዱእ';
+
+  @override
+  String get rules => 'ደንቦች';
+
+  @override
+  String get videos => 'ቪዲዮዎች';
+
+  @override
+  String get quiz => 'ፈተና';
+
+  @override
+  String get markAsLearned => 'እንደተማርኩ ምልክት አድርግ';
+
+  @override
+  String get learned => 'ተምሯል';
+
+  @override
+  String get testYourKnowledge => 'እውቀትዎን ይፈትኑ';
+
+  @override
+  String get details => 'ዝርዝሮች';
+
+  @override
+  String get tips => 'ምክሮች';
+
+  @override
+  String get markSectionComplete => 'ክፍሉን እንደተጠናቀቀ ምልክት አድርግ';
+
+  @override
+  String topics(int count) {
+    return '$count ርዕሶች';
+  }
+
+  @override
+  String questionProgress(int current, int total) {
+    return 'ጥያቄ $current/$total';
+  }
+
+  @override
+  String score(int score) {
+    return 'ውጤት: $score';
+  }
+
+  @override
+  String get excellent => 'እጅግ በጣም ጥሩ!';
+
+  @override
+  String get goodJob => 'ጥሩ ሥራ!';
+
+  @override
+  String get keepLearning => 'መማርዎን ቀጥሉ!';
+
+  @override
+  String quizResultMessage(int score, int total, int percentage) {
+    return 'ከ$total ውስጥ $score አስመዝግበዋል ($percentage%)';
+  }
 }

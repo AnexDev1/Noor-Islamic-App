@@ -1,0 +1,86 @@
+{
+    "surahName": "At-Tin",
+    "surahNameArabic": "التين",
+    "surahNameArabicLong": "سورة التين",
+    "surahNameTranslation": "The Fig",
+    "revelationPlace": "Mecca",
+    "totalAyah": 8,
+    "surahNo": 95,
+    "audio": {
+        "1": {
+            "reciter": "Mishary Rashid Al Afasy",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/1/95.mp3",
+            "originalUrl": "https://server8.mp3quran.net/afs/095.mp3"
+        },
+        "2": {
+            "reciter": "Abu Bakr Al Shatri",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/2/95.mp3",
+            "originalUrl": "https://server11.mp3quran.net/shatri/095.mp3"
+        },
+        "3": {
+            "reciter": "Nasser Al Qatami",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/3/95.mp3",
+            "originalUrl": "https://server6.mp3quran.net/qtm/095.mp3"
+        },
+        "4": {
+            "reciter": "Yasser Al Dosari",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/4/95.mp3",
+            "originalUrl": "https://server11.mp3quran.net/yasser/095.mp3"
+        },
+        "5": {
+            "reciter": "Hani Ar Rifai",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/5/95.mp3",
+            "originalUrl": "https://server8.mp3quran.net/hani/095.mp3"
+        }
+    },
+    "english": [
+        "By the fig and the olive ˹of Jerusalem˺",
+        "and Mount Sinai",
+        "and this secure city ˹of Mecca˺!",
+        "Indeed, We created humans in the best form.",
+        "But We will reduce them to the lowest of the low ˹in Hell˺",
+        "except those who believe and do good—they will have a never-ending reward.",
+        "Now, what makes you deny the ˹final˺ Judgment?",
+        "Is Allah not the most just of all judges?"
+    ],
+    "arabic1": [
+        "وَٱلتِّينِ وَٱلزَّيْتُونِ",
+        "وَطُورِ سِينِينَ",
+        "وَهَـٰذَا ٱلْبَلَدِ ٱلْأَمِينِ",
+        "لَقَدْ خَلَقْنَا ٱلْإِنسَـٰنَ فِىٓ أَحْسَنِ تَقْوِيمٍ",
+        "ثُمَّ رَدَدْنَـٰهُ أَسْفَلَ سَـٰفِلِينَ",
+        "إِلَّا ٱلَّذِينَ ءَامَنُوا۟ وَعَمِلُوا۟ ٱلصَّـٰلِحَـٰتِ فَلَهُمْ أَجْرٌ غَيْرُ مَمْنُونٍ",
+        "فَمَا يُكَذِّبُكَ بَعْدُ بِٱلدِّينِ",
+        "أَلَيْسَ ٱللَّهُ بِأَحْكَمِ ٱلْحَـٰكِمِينَ"
+    ],
+    "arabic2": [
+        "والتين والزيتون",
+        "وطور سينين",
+        "وهذا البلد الامين",
+        "لقد خلقنا الانسان في احسن تقويم",
+        "ثم رددناه اسفل سافلين",
+        "الا الذين امنوا وعملوا الصالحات فلهم اجر غير ممنون",
+        "فما يكذبك بعد بالدين",
+        "اليس الله باحكم الحاكمين"
+    ],
+    "bengali": [
+        "কসম ‘তীন ও যায়তূন’ এর।",
+        "কসম ‘সিনাই’ পর্বতের,",
+        "কসম এই নিরাপদ নগরীর।",
+        "অবশ্যই আমি মানুষকে সৃষ্টি করেছি সর্বোত্তম গঠনে।",
+        "তারপর আমি তাকে ফিরিয়ে দিয়েছি হীনদের হীনতম রূপে।",
+        "তবে যারা ঈমান এনেছে এবং সৎকর্ম করেছে, তাদের জন্য রয়েছে নিরবচ্ছিন্ন পুরস্কার।",
+        "সুতরাং এরপরও কিসে তোমাকে কর্মফল সম্পর্কে অবিশ্বাসী করে তোলে?",
+        "আল্লাহ কি বিচারকদের শ্রেষ্ঠ বিচারক নন?"
+    ],
+    "urdu": [
+        "انجیر کی قسم اور زیتون کی",
+        "اور طور سینین کی",
+        "اور اس امن والے شہر کی",
+        "کہ ہم نے انسان کو بہت اچھی صورت میں پیدا کیا ہے",
+        "پھر (رفتہ رفتہ) اس (کی حالت) کو (بدل کر) پست سے پست کر دیا",
+        "مگر جو لوگ ایمان لائے اور نیک عمل کرتے رہے انکے لیے بےانتہا اجر ہے",
+        "تو (اے آدم زاد) پھر تو جزا کے دن کو کیوں جھٹلاتا ہے؟",
+        "کیا خدا سب سے بڑا حاکم نہیں ہے؟"
+    ]
+}

@@ -1,0 +1,142 @@
+{
+  "project_info": {
+    "project_number": "1099158978905",
+    "project_id": "onlineldanchool",
+    "storage_bucket": "onlineldanchool.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1099158978905:android:ba9c6e4d09501b09798c48",
+        "android_client_info": {
+          "package_name": "com.anexon.noor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1099158978905-rf6mfo9t4ohsk0qcplkhgf72ehqf53ai.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlCPFGRKLYwmTEaksrWsk_Jqxu6Mhu-vM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "107020640755492128648",
+              "client_type": 3
+            },
+            {
+              "client_id": "1099158978905-uggv0tq2i2p8glpqfd50ucudhqj4fkha.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.buddyfind"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1099158978905:android:45bd8c42d3551330798c48",
+        "android_client_info": {
+          "package_name": "com.example.buddyfind"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1099158978905-rf6mfo9t4ohsk0qcplkhgf72ehqf53ai.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlCPFGRKLYwmTEaksrWsk_Jqxu6Mhu-vM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "107020640755492128648",
+              "client_type": 3
+            },
+            {
+              "client_id": "1099158978905-uggv0tq2i2p8glpqfd50ucudhqj4fkha.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.buddyfind"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1099158978905:android:96bbf9b73e7ceef0798c48",
+        "android_client_info": {
+          "package_name": "com.skylink.audiva"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1099158978905-do96cistietvbp7odbh9ksa4pjjk6s1f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.skylink.audiva",
+            "certificate_hash": "80044b84f0016b6054fc1a07bdb8994cfd77c7e2"
+          }
+        },
+        {
+          "client_id": "1099158978905-lkr4re52tvign4qor455c1peoqjc96kd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.skylink.audiva",
+            "certificate_hash": "f9cfa53643b04e7bad2dc9e9f6c68032aeee0d49"
+          }
+        },
+        {
+          "client_id": "1099158978905-uvt6pcsf3i25qasd0ita1ba2ukh9s4ia.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.skylink.audiva",
+            "certificate_hash": "387dc8d055f106ea1b15095e2f0b713dbda61963"
+          }
+        },
+        {
+          "client_id": "1099158978905-rf6mfo9t4ohsk0qcplkhgf72ehqf53ai.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlCPFGRKLYwmTEaksrWsk_Jqxu6Mhu-vM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "107020640755492128648",
+              "client_type": 3
+            },
+            {
+              "client_id": "1099158978905-uggv0tq2i2p8glpqfd50ucudhqj4fkha.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.buddyfind"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

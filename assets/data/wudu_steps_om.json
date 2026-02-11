@@ -1,0 +1,107 @@
+[
+  {
+    "step": 1,
+    "title": "Niyyah (Yaaduu)",
+    "arabicTitle": "النية",
+    "description": "Wudu'a gochuuf qalbiin Rabbii jedhanii yaaduu. Niyyaan afaaniin jechuu hin barbaachisu.",
+    "duaArabic": "بِسْمِ اللَّهِ",
+    "duaTranslation": "Maqaa Rabbiitiin",
+    "duaTransliteration": "Bismillah",
+    "details": "Niyyaan ulaagaa wudu'aati akkaataa 3ulamaa'ii baay'eetti. Osoo hin jalqabin dura 'Bismillah' jedhaa.",
+    "tips": [
+      "Bakki niyyaa qalbii dha",
+      "Jalqaba irratti 'Bismillah' jechuun sunnaadha"
+    ]
+  },
+  {
+    "step": 2,
+    "title": "Harka Dhiqachuu",
+    "arabicTitle": "غسل اليدين",
+    "description": "Harka lamaan hamma buusaa harkaatti yeroo sadi dhiqachuu, mirgaan jalqabuu.",
+    "details": "Bishaan gidduu quba keessanii ga'uu isaa mirkaneeffadhaa.",
+    "tips": [
+      "Gidduu qubaa bishaanin dhiqa",
+      "Yeroo hunda harka mirgaatin jalqabaa"
+    ]
+  },
+  {
+    "step": 3,
+    "title": "Lugaagachuu (Afuufuu)",
+    "arabicTitle": "المضمضة",
+    "description": "Bishaan afaanitti qabatanii, of keessa naannessuu, sana booda tufuu. Yeroo sadi godhaa.",
+    "details": "Harka mirgaatiin bishaan afaanitti qabadhaa. Yeroo soomaa, lugaagachuu irratti baay'ee hin daangessinaa.",
+    "tips": [
+      "Bishaan afaan keessa naannessaa",
+      "Yeroo soomaa of eeggadhaa"
+    ]
+  },
+  {
+    "step": 4,
+    "title": "Bishaan Funyaanitti Hiruu",
+    "arabicTitle": "الاستنشاق",
+    "description": "Bishaan suuta funyaanitti ol harkisuu, sana booda gadi baasuu (huufuu). Yeroo sadi godhaa.",
+    "details": "Harka mirgaatin bishaan ol harkisaa, harka bitaatin immoo gadi baasaa.",
+    "tips": [
+      "Baay'ee gadi hin harkisinaa, suuta godhaa",
+      "Funyaan qulqulleessuuf harka bitaa fayyadamaa"
+    ]
+  },
+  {
+    "step": 5,
+    "title": "Fuula Dhiqachuu",
+    "arabicTitle": "غسل الوجه",
+    "description": "Guutummaa fuulaa, biqila rifeensaa irraa hamma areedaatti, gurraa hamma gurraatti yeroo sadi dhiqachuu.",
+    "details": "Guutummaan isaa biishaanin tuqamuu mirkaneeffadhaa.",
+    "tips": [
+      "Bakki gogaan hafe akka hin jiraanne mirkaneeffadhaa",
+      "Areeda keessa qubaan seensisaa"
+    ]
+  },
+  {
+    "step": 6,
+    "title": "Ciigilee Dhiqachuu",
+    "arabicTitle": "غسل اليدين إلى المرفقين",
+    "description": "Harka hamma ciigileetti dhiqachuu. Mirgaan jalqabaa. Yeroo 3 godhaa.",
+    "details": "Ciigileenillee dhiqamuu qaba.",
+    "tips": [
+      "Bishaan ciigilee irra darbuu isaa mirkaneeffadhaa",
+      "Mirgaan jalqabaa, booda bitaa"
+    ]
+  },
+  {
+    "step": 7,
+    "title": "Mataa Haquu (Masaa)",
+    "arabicTitle": "مسح الرأس",
+    "description": "Harka jiidhaan adda irraa hamma mormaatti haquu, sana booda gara duraatti deebisuu.",
+    "details": "Kuni yeroo tokko qofa godhama. Gurras qulqulleessuu dabalata.",
+    "tips": [
+      "Bishaan haaraa hin fudhatinaa, jiidhuma harkaa san fayyadamaa",
+      "Dubartoonnis akkuma dhiiraa godhu"
+    ]
+  },
+  {
+    "step": 8,
+    "title": "Miila Dhiqachuu",
+    "arabicTitle": "غسل الرجلين",
+    "description": "Miila lamaan hamma kumbuuraatti (buusaa miilaa) yeroo sadi dhiqachuu. Mirgaan jalqabaa.",
+    "details": "Gidduu qubaa fi duuba kumbuuraa dhiqachuu mirkaneeffadhaa.",
+    "tips": [
+      "Koomee dhiqachuu hin irraanfatinaa",
+      "Gidduu quba miilaa harka bitaatin dhiqaa"
+    ]
+  },
+  {
+    "step": 9,
+    "title": "Du'aa'ii",
+    "arabicTitle": "الدعاء",
+    "description": "Wudu'a booda du'aa'ii godhamu.",
+    "duaArabic": "أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ",
+    "duaTranslation": "Allaah malee dhugaan gabbaramaan biraa akka hin jirre, Inni tokkichafi shariika (hiriyyaa) akka hin qabne nan raga'a. Muhammadis gabricha Isaafi ergamaa Isaa ta'uu nan raga'a.",
+    "duaTransliteration": "Ash-hadu an laa ilaaha illallaah, wahdahu laa shariika lah, wa ash-hadu anna Muhammadan abduhu wa radiilu.",
+    "details": "Namni du'aa'ii kana jedhe balballi Jannataa saddeetanitu isaaf banama.",
+    "tips": [
+      "Gara Qiblaa garagalanii jechuun jaallatamaadha",
+      "Sagalee ol kaasuu hin barbaachisu"
+    ]
+  }
+]

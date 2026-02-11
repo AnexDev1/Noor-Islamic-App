@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:flutter/services.dart' show rootBundle;
 import '../domain/quran_enc_translation.dart';
 
 class QuranEncTranslationApi {
@@ -12,6 +13,19 @@ class QuranEncTranslationApi {
     final url =
         'https://quranenc.com/api/v1/translation/sura/$translationKey/$surahNo';
 
+    // 1. Try Assets (Offline)
+    try {
+      final jsonString = await rootBundle.loadString(
+        'assets/data/translations/$translationKey/$surahNo.json',
+      );
+      final data = json.decode(jsonString);
+      final List translations = data['result'] ?? [];
+      return translations.map((e) => QuranEncTranslation.fromJson(e)).toList();
+    } catch (_) {
+      // Fallback to network
+    }
+
+    // 2. Network
     for (int attempt = 1; attempt <= retries; attempt++) {
       try {
         final response = await http

@@ -1,0 +1,86 @@
+{
+    "surahName": "Az-Zalzala",
+    "surahNameArabic": "الزلزلة",
+    "surahNameArabicLong": "سورة الزلزلة",
+    "surahNameTranslation": "The Earthquake",
+    "revelationPlace": "Madina",
+    "totalAyah": 8,
+    "surahNo": 99,
+    "audio": {
+        "1": {
+            "reciter": "Mishary Rashid Al Afasy",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/1/99.mp3",
+            "originalUrl": "https://server8.mp3quran.net/afs/099.mp3"
+        },
+        "2": {
+            "reciter": "Abu Bakr Al Shatri",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/2/99.mp3",
+            "originalUrl": "https://server11.mp3quran.net/shatri/099.mp3"
+        },
+        "3": {
+            "reciter": "Nasser Al Qatami",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/3/99.mp3",
+            "originalUrl": "https://server6.mp3quran.net/qtm/099.mp3"
+        },
+        "4": {
+            "reciter": "Yasser Al Dosari",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/4/99.mp3",
+            "originalUrl": "https://server11.mp3quran.net/yasser/099.mp3"
+        },
+        "5": {
+            "reciter": "Hani Ar Rifai",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/5/99.mp3",
+            "originalUrl": "https://server8.mp3quran.net/hani/099.mp3"
+        }
+    },
+    "english": [
+        "When the earth is shaken ˹in˺ its ultimate quaking",
+        "and when the earth throws out ˹all˺ its contents",
+        "and humanity cries, “What is wrong with it?”—",
+        "on that Day the earth will recount everything",
+        "having been inspired by your Lord ˹to do so˺.",
+        "On that Day people will proceed in separate groups to be shown ˹the consequences of˺ their deeds.",
+        "So whoever does an atom’s weight of good will see it.",
+        "And whoever does an atom’s weight of evil will see it."
+    ],
+    "arabic1": [
+        "إِذَا زُلْزِلَتِ ٱلْأَرْضُ زِلْزَالَهَا",
+        "وَأَخْرَجَتِ ٱلْأَرْضُ أَثْقَالَهَا",
+        "وَقَالَ ٱلْإِنسَـٰنُ مَا لَهَا",
+        "يَوْمَئِذٍ تُحَدِّثُ أَخْبَارَهَا",
+        "بِأَنَّ رَبَّكَ أَوْحَىٰ لَهَا",
+        "يَوْمَئِذٍ يَصْدُرُ ٱلنَّاسُ أَشْتَاتًا لِّيُرَوْا۟ أَعْمَـٰلَهُمْ",
+        "فَمَن يَعْمَلْ مِثْقَالَ ذَرَّةٍ خَيْرًا يَرَهُۥ",
+        "وَمَن يَعْمَلْ مِثْقَالَ ذَرَّةٍ شَرًّا يَرَهُۥ"
+    ],
+    "arabic2": [
+        "اذا زلزلت الارض زلزالها",
+        "واخرجت الارض اثقالها",
+        "وقال الانسان ما لها",
+        "يومئذ تحدث اخبارها",
+        "بان ربك اوحى لها",
+        "يومئذ يصدر الناس اشتاتا ليروا اعمالهم",
+        "فمن يعمل مثقال ذرة خيرا يره",
+        "ومن يعمل مثقال ذرة شرا يره"
+    ],
+    "bengali": [
+        "যখন প্রচন্ড কম্পনে যমীন প্রকম্পিত হবে।",
+        "আর যমীন তার বোঝা বের করে দেবে,",
+        "আর মানুষ বলবে, ‘এর কী হল?’",
+        "সেদিন যমীন তার বৃত্তান্ত বর্ণনা করবে,",
+        "যেহেতু তোমার রব তাকে নির্দেশ দিয়েছেন।",
+        "সেদিন মানুষ বিক্ষিপ্তভাবে বের হয়ে আসবে যাতে দেখানো যায় তাদেরকে তাদের নিজদের কৃতকর্ম।",
+        "অতএব, কেউ অণু পরিমাণ ভালকাজ করলে তা সে দেখবে,",
+        "আর কেউ অণু পরিমাণ খারাপ কাজ করলে তাও সে দেখবে।"
+    ],
+    "urdu": [
+        "جب زمین بھونچال سے ہلا دی جائے گی",
+        "اور زمین اپنے (اندر) کے بوجھ نکال ڈالے گی",
+        "اور انسان کہے گا کہ اس کو کیا ہوا ہے؟",
+        "اس روز وہ اپنے حالات بیان کردے گی",
+        "کیونکہ تمہارے پروردگار نے اس کو حکم بھیجا (ہوگا )",
+        "اس دن لوگ گروہ گروہ ہو کر آئیں گے تاکہ ان کو ان کے اعمال دکھا دیئے جائیں",
+        "تو جس نے ذرہ بھر نیکی کی ہو گی وہ اس کو دیکھ لے گا",
+        "اور جس نے ذرہ بھر برائی کی ہوگی وہ اسے دیکھ لے گا"
+    ]
+}

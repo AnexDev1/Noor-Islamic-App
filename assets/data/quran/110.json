@@ -1,0 +1,61 @@
+{
+    "surahName": "An-Nasr",
+    "surahNameArabic": "النصر",
+    "surahNameArabicLong": "سورة النصر",
+    "surahNameTranslation": "Divine Support",
+    "revelationPlace": "Madina",
+    "totalAyah": 3,
+    "surahNo": 110,
+    "audio": {
+        "1": {
+            "reciter": "Mishary Rashid Al Afasy",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/1/110.mp3",
+            "originalUrl": "https://server8.mp3quran.net/afs/110.mp3"
+        },
+        "2": {
+            "reciter": "Abu Bakr Al Shatri",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/2/110.mp3",
+            "originalUrl": "https://server11.mp3quran.net/shatri/110.mp3"
+        },
+        "3": {
+            "reciter": "Nasser Al Qatami",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/3/110.mp3",
+            "originalUrl": "https://server6.mp3quran.net/qtm/110.mp3"
+        },
+        "4": {
+            "reciter": "Yasser Al Dosari",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/4/110.mp3",
+            "originalUrl": "https://server11.mp3quran.net/yasser/110.mp3"
+        },
+        "5": {
+            "reciter": "Hani Ar Rifai",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/5/110.mp3",
+            "originalUrl": "https://server8.mp3quran.net/hani/110.mp3"
+        }
+    },
+    "english": [
+        "When Allah’s ˹ultimate˺ help comes and the victory ˹over Mecca is achieved˺",
+        "and you ˹O Prophet˺ see the people embracing Allah’s Way in crowds",
+        "then glorify the praises of your Lord and seek His forgiveness, for certainly He is ever Accepting of Repentance."
+    ],
+    "arabic1": [
+        "إِذَا جَآءَ نَصْرُ ٱللَّهِ وَٱلْفَتْحُ",
+        "وَرَأَيْتَ ٱلنَّاسَ يَدْخُلُونَ فِى دِينِ ٱللَّهِ أَفْوَاجًا",
+        "فَسَبِّحْ بِحَمْدِ رَبِّكَ وَٱسْتَغْفِرْهُ ۚ إِنَّهُۥ كَانَ تَوَّابًۢا"
+    ],
+    "arabic2": [
+        "اذا جاء نصر الله والفتح",
+        "ورايت الناس يدخلون في دين الله افواجا",
+        "فسبح بحمد ربك واستغفره انه كان توابا"
+    ],
+    "bengali": [
+        "যখন আল্লাহর সাহায্য ও বিজয় আসবে,",
+        "আর তুমি লোকদেরকে দলে দলে আল্লাহর দীনে দাখিল হতে দেখবে,",
+        "তখন তুমি তোমার রবের সপ্রশংস তাসবীহ পাঠ কর এবং তাঁর কাছে ক্ষমা চাও নিশ্চয় তিনি তাওবা কবূলকারী।"
+    ],
+    "urdu": [
+        "جب خدا کی مدد آ پہنچی اور فتح (حاصل ہو گئی)",
+        "اور تم نے دیکھ لیا کہ لوگ غول کے غول خدا کے دین میں داخل ہو رہے ہیں",
+        "تو اپنے پروردگار کی تعریف کے ساتھ تسبیح کرو اور اس سے مغفرت مانگو، بے شک وہ معاف کرنے والا ہے"
+    ]
+}

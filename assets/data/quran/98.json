@@ -1,0 +1,86 @@
+{
+    "surahName": "Al-Bayyina",
+    "surahNameArabic": "البينة",
+    "surahNameArabicLong": "سورة البينة",
+    "surahNameTranslation": "The Evidence",
+    "revelationPlace": "Madina",
+    "totalAyah": 8,
+    "surahNo": 98,
+    "audio": {
+        "1": {
+            "reciter": "Mishary Rashid Al Afasy",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/1/98.mp3",
+            "originalUrl": "https://server8.mp3quran.net/afs/098.mp3"
+        },
+        "2": {
+            "reciter": "Abu Bakr Al Shatri",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/2/98.mp3",
+            "originalUrl": "https://server11.mp3quran.net/shatri/098.mp3"
+        },
+        "3": {
+            "reciter": "Nasser Al Qatami",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/3/98.mp3",
+            "originalUrl": "https://server6.mp3quran.net/qtm/098.mp3"
+        },
+        "4": {
+            "reciter": "Yasser Al Dosari",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/4/98.mp3",
+            "originalUrl": "https://server11.mp3quran.net/yasser/098.mp3"
+        },
+        "5": {
+            "reciter": "Hani Ar Rifai",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/5/98.mp3",
+            "originalUrl": "https://server8.mp3quran.net/hani/098.mp3"
+        }
+    },
+    "english": [
+        "The disbelievers from the People of the Book and the polytheists were not going to desist ˹from disbelief˺ until the clear proof came to them:",
+        "a messenger from Allah, reciting scrolls of ˹utmost˺ purity",
+        "containing upright commandments.",
+        "It was not until this clear proof came to the People of the Book that they became divided ˹about his prophethood˺—",
+        "even though they were only commanded to worship Allah ˹alone˺ with sincere devotion to Him in all uprightness, establish prayer, and pay alms-tax. That is the upright Way.",
+        "Indeed, those who disbelieve from the People of the Book and the polytheists will be in the Fire of Hell, to stay there forever. They are the worst of ˹all˺ beings.",
+        "Indeed, those who believe and do good—they are the best of ˹all˺ beings.",
+        "Their reward with their Lord will be Gardens of Eternity, under which rivers flow, to stay there for ever and ever. Allah is pleased with them and they are pleased with Him. This is ˹only˺ for those in awe of their Lord."
+    ],
+    "arabic1": [
+        "لَمْ يَكُنِ ٱلَّذِينَ كَفَرُوا۟ مِنْ أَهْلِ ٱلْكِتَـٰبِ وَٱلْمُشْرِكِينَ مُنفَكِّينَ حَتَّىٰ تَأْتِيَهُمُ ٱلْبَيِّنَةُ",
+        "رَسُولٌ مِّنَ ٱللَّهِ يَتْلُوا۟ صُحُفًا مُّطَهَّرَةً",
+        "فِيهَا كُتُبٌ قَيِّمَةٌ",
+        "وَمَا تَفَرَّقَ ٱلَّذِينَ أُوتُوا۟ ٱلْكِتَـٰبَ إِلَّا مِنۢ بَعْدِ مَا جَآءَتْهُمُ ٱلْبَيِّنَةُ",
+        "وَمَآ أُمِرُوٓا۟ إِلَّا لِيَعْبُدُوا۟ ٱللَّهَ مُخْلِصِينَ لَهُ ٱلدِّينَ حُنَفَآءَ وَيُقِيمُوا۟ ٱلصَّلَوٰةَ وَيُؤْتُوا۟ ٱلزَّكَوٰةَ ۚ وَذَٰلِكَ دِينُ ٱلْقَيِّمَةِ",
+        "إِنَّ ٱلَّذِينَ كَفَرُوا۟ مِنْ أَهْلِ ٱلْكِتَـٰبِ وَٱلْمُشْرِكِينَ فِى نَارِ جَهَنَّمَ خَـٰلِدِينَ فِيهَآ ۚ أُو۟لَـٰٓئِكَ هُمْ شَرُّ ٱلْبَرِيَّةِ",
+        "إِنَّ ٱلَّذِينَ ءَامَنُوا۟ وَعَمِلُوا۟ ٱلصَّـٰلِحَـٰتِ أُو۟لَـٰٓئِكَ هُمْ خَيْرُ ٱلْبَرِيَّةِ",
+        "جَزَآؤُهُمْ عِندَ رَبِّهِمْ جَنَّـٰتُ عَدْنٍ تَجْرِى مِن تَحْتِهَا ٱلْأَنْهَـٰرُ خَـٰلِدِينَ فِيهَآ أَبَدًا ۖ رَّضِىَ ٱللَّهُ عَنْهُمْ وَرَضُوا۟ عَنْهُ ۚ ذَٰلِكَ لِمَنْ خَشِىَ رَبَّهُۥ"
+    ],
+    "arabic2": [
+        "لم يكن الذين كفروا من اهل الكتاب والمشركين منفكين حتى تاتيهم البينة",
+        "رسول من الله يتلو صحفا مطهرة",
+        "فيها كتب قيمة",
+        "وما تفرق الذين اوتوا الكتاب الا من بعد ما جاءتهم البينة",
+        "وما امروا الا ليعبدوا الله مخلصين له الدين حنفاء ويقيموا الصلاة ويؤتوا الزكاة وذلك دين القيمة",
+        "ان الذين كفروا من اهل الكتاب والمشركين في نار جهنم خالدين فيها اولئك هم شر البرية",
+        "ان الذين امنوا وعملوا الصالحات اولئك هم خير البرية",
+        "جزاؤهم عند ربهم جنات عدن تجري من تحتها الانهار خالدين فيها ابدا رضي الله عنهم ورضوا عنه ذلك لمن خشي ربه"
+    ],
+    "bengali": [
+        "কিতাবীদের মধ্যে যারা কুফরী করে তারা ও মুশরিকরা, তাদের কাছে সুস্পষ্ট প্রমাণ না আসা পর্যন্ত (নিজদের অবিশ্বাসে) অটল থাকবে।",
+        "আল্লাহর পক্ষ থেকে এক রাসূল পবিত্র কিতাবসমূহ তিলাওয়াত করে।",
+        "তাতে রয়েছে সঠিক বিধিবদ্ধ বিধান।",
+        "আর কিতাবীরা তাদের কাছে সুস্পষ্ট প্রমাণ আসার পরই কেবল মতভেদ করেছে।",
+        "আর তাদেরকে কেবল এই নির্দেশ দেয়া হয়েছিল যে, তারা যেন আল্লাহর ‘ইবাদাত করে তাঁরই জন্য দীনকে একনিষ্ঠ করে, সালাত কায়েম করে এবং যাকাত দেয়; আর এটিই হল সঠিক দীন।",
+        "নিশ্চয় কিতাবীদের মধ্যে যারা কুফরী করেছে ও মুশরিকরা, জাহান্নামের আগুনে থাকবে স্থায়ীভাবে। ওরাই হল নিকৃষ্ট সৃষ্টি।",
+        "নিশ্চয় যারা ঈমান এনেছে ও সৎকাজ করেছে তারাই সৃষ্টির সর্বোৎকৃষ্ট।",
+        "তাদের রবের কাছে তাদের পুরস্কার হবে স্থায়ী জান্নাত, যার পাদদেশে নহরসমূহ প্রবাহিত, সেখানে তারা থাকবে স্থায়ীভাবে। আল্লাহ তাদের উপর সন্তুষ্ট হয়েছেন তারাও আল্লাহর উপর সন্তুষ্ট হয়েছে। এটি তার জন্য, যে স্বীয় রবকে ভয় করে।"
+    ],
+    "urdu": [
+        "جو لوگ کافر ہیں (یعنی) اہل کتاب اور مشرک وہ (کفر سے) باز رہنے والے نہ تھے جب تک ان کے پاس کھلی دلیل (نہ) آتی",
+        "(یعنی) خدا کے پیغمبر جو پاک اوراق پڑھتے ہیں",
+        "جن میں( مستحکم) آیتیں لکھی ہوئی ہیں",
+        "اور اہل کتاب جو متفرق (و مختلف) ہوئے ہیں تو دلیل واضح آنے کے بعد( ہوئے ہیں)",
+        "اور ان کو حکم تو یہی ہوا تھا کہ اخلاص عمل کے ساتھ خدا کی عبادت کریں (اور) یکسو ہو کراورنماز پڑھیں اور زکوٰة دیں اور یہی سچا دین ہے",
+        "جو لوگ کافر ہیں (یعنی) اہل کتاب اور مشرک وہ دوزخ کی آگ میں پڑیں گے (اور) ہمیشہ اس میں رہیں گے۔ یہ لوگ سب مخلوق سے بدتر ہیں",
+        "(اور) جو لوگ ایمان لائے اور نیک عمل کرتے رہے وہ تمام خلقت سے بہتر ہیں",
+        "ان کا صلہ ان کے پروردگار کے ہاں ہمیشہ رہنے کے باغ ہیں جن کے نیچے نہریں بہہ رہی ہیں ابدالاباد ان میں رہیں گے۔ خدا ان سے خوش اور وہ اس سے خوش۔ یہ (صلہ) اس کے لیے ہے جو اپنے پروردگار سے ڈرتا رہا"
+    ]
+}

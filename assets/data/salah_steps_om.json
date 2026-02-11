@@ -1,0 +1,126 @@
+[
+  {
+    "step": 1,
+    "title": "Dhabachuu (Qiyaama)",
+    "arabicTitle": "القيام",
+    "description": "Gara Qiblaa garagaluun qajeelanii dhaabbachuu. Harka handhuura gadi yookiin qoma irratti kaa'uu. Ija bakka sujuudaa irratti xiyyeeffachuu.",
+    "duaArabic": "اللَّهُ أَكْبَرُ",
+    "duaTranslation": "Alli hunda caalaa guddaadha",
+    "duaTransliteration": "Allahu Akbar",
+    "details": "Kun banafama salaataati (Takbiirat al-Ihraam). Harka lamaan gara gurraa (ykn ceekuu) ol kaasuun, ganaa harka gara Qiblaa gochuu, sana booda walirra kaa'uu.",
+    "icon": "standing",
+    "tips": [
+      "Miila keessan hamma ceekuu keessanii baballisaa",
+      "Ija keessan bakka sujuudaa irratti gadi qabaa",
+      "Takbiiraa booda, du'aa'ii banafamaa (Du'aa al-Istiftaah) callisaan qara'aa"
+    ]
+  },
+  {
+    "step": 2,
+    "title": "Qara'uu (Qiraa'ah)",
+    "arabicTitle": "القراءة",
+    "description": "Suuraa Faatihaa qara'aa, itti aansuun suuraa gabaabaa ykn aayata Qur'aanaa irraa dubbisaa.",
+    "duaArabic": "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\nالْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ\nالرَّحْمَٰنِ الرَّحِيمِ\nمَالِكِ يَوْمِ الدِّينِ\nإِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ\nاهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ\nصِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ",
+    "duaTranslation": "Maqaa Rabbii Rahmaan (mararfataa) fi Rahiim (tol-oilaa) ta'eetiin.\nFaaruun hundi kan Rabbiiti, Gooftaa aalamaan hundaati.\nRahmaan fi Rahiim kan ta'e.\nMootii guyyaa murtii (Qiyaamaa) kan ta'e.\nSi qofa gabbarra; Si qofas gargaarsifanna.\nKaraa qajeelaa nu qajeelchi.\nKaraa warra isaan irratti tola ooltee, kan isaan irratti hin dallanaminii fi hin jallatiniis san (nu qajeelchi).",
+    "duaTransliteration": "Bismillaahir Rahmaanir Rahiim\nAlhamdu lillaahi Rabbil 'aalamiin\nAr-Rahmaanir Rahiim\nMaaliki yawmid-diin\nIyyaaka na'budu wa iyyaaka nasta'iin\nIhdinas-siraatal mustaqiim\nSiraatal ladhiina an'amta 'alayhim, ghayril maghduubi 'alayhim wa lad-daalliin.",
+    "details": "Fatihaan raka'aa hunda keessatti dirqama (Waajiba). Erga xumurtanii booda 'Aamiin' jedhaa.",
+    "icon": "recitation",
+    "tips": [
+      "Faatihaa suuta jedhaa tadabbuuraan (iteen yaaduun) qara'aa",
+      "Aayata hunda booda xiqqoo dhaabbadhaa",
+      "Salaata Jama'aa keessatti, yeroo Imaamni ol kaasee qara'u dhaggeeffadhaa"
+    ]
+  },
+  {
+    "step": 3,
+    "title": "Jilbeenfachuu (Rukuu'a)",
+    "arabicTitle": "الركوع",
+    "description": "Harka jilba irra kaa'uun gadi jechuu, dugda qajeelchuu fi mataa dugda wajjin wal qixxeessuu.",
+    "duaArabic": "سُبْحَانَ رَبِّيَ الْعَظِيمِ",
+    "duaTranslation": "Subhaana Rabbiyal Aziim",
+    "duaTransliteration": "Subhaana Rabbiyal Aziim",
+    "details": "Utuu gadi jettanuu 'Allahu Akbar' jedhaa. Zikrii kana yoo xiqqaate yeroo 3 jedhaa.",
+    "icon": "bowing",
+    "tips": [
+      "Dugda fi mataa keessan sadarkaa tokko (hojjaa tokko) irra taasisaa",
+      "Jilba keessan hin dabsinaa",
+      "Zikrii lakkoofsa witrii (3, 5, ykn 7) jedhaa"
+    ]
+  },
+  {
+    "step": 4,
+    "title": "Ol jechuu (I'itidaala)",
+    "arabicTitle": "الاعتدال",
+    "description": "Rukuu'a irraa ol jedhaa qajeelaa.",
+    "duaArabic": "سَمِعَ اللَّهُ لِمَنْ حَمِدَهُ",
+    "duaTranslation": "Rabbiin nama Isa faarse ni dhagahaaf",
+    "duaTransliteration": "Sami'allaahu liman hamidah",
+    "details": "Yeroo ol jettan du'aa'ii kana jedhaa. Guutumatti erga dhaabbattanii booda 'Rabbanaa walakal hamd' jedhaa.",
+    "icon": "standing_up",
+    "tips": [
+      "Gara sujuudaa utuu hin bu'in dura guutumatti qajeelaa dhaabbadhaa",
+      "Qaamni keessan hamma tasgabbaa'utti xiqqoo turaa"
+    ]
+  },
+  {
+    "step": 5,
+    "title": "Sujuuda",
+    "arabicTitle": "السجود",
+    "description": "Qaama torbaan: addaa fi funyaan, harka lamaan, jilba lamaan fi quba miila lamaanii lafa tuqsiisuun sujuuda godhaa.",
+    "duaArabic": "سُبْحَانَ رَبِّيَ الْأَعْلَى",
+    "duaTranslation": "Gooftaa koo isa hunda caalaa ol ta'eetan qulqulleessa",
+    "duaTransliteration": "Subhaana Rabbiyal A'alaa",
+    "details": "'Allahu Akbar' jechaa gara sujuudaa bu'aa. Zikrii kana yoo xiqqaate yeroo 3 jedhaa.",
+    "icon": "prostration",
+    "tips": [
+      "Addaa fi funyaan keessan lafa tuquu isaanii mirkaneeffadhaa",
+      "Miila keessan walitti qabaa",
+      "Yeroo sujuudaa du'aa'ii baay'isaa"
+    ]
+  },
+  {
+    "step": 6,
+    "title": "Taa'uu (Jalsaa)",
+    "arabicTitle": "الجلوس بين السجدتين",
+    "description": "Sujuuda jalqabaa irraa ol jedhaa taa'aa.",
+    "duaArabic": "رَبِّ اغْفِرْ لِي",
+    "duaTranslation": "Yaa Gooftaa na maari",
+    "duaTransliteration": "Rabbighfir lii",
+    "details": "Miila bitaa irra taa'aa, miila mirgaa immoo dhaabaa. Harka keessan cinaacha irra kaa'aa.",
+    "icon": "sitting",
+    "tips": [
+      "Dugda keessan qajeelchuu",
+      "Sujuuda lammaffaa dura xiqqoo tasgabbaa'aa"
+    ]
+  },
+  {
+    "step": 7,
+    "title": "Tashahhuuda",
+    "arabicTitle": "التشهد",
+    "description": "Raka'aa lammaffaa fi xumuraa irratti taa'uun tashahhuuda qara'uu.",
+    "duaArabic": "التَّحِيَّاتُ لِلَّهِ وَالصَّلَوَاتُ وَالطَّيِّبَاتُ...",
+    "duaTranslation": "Kabajni, salaanni fi wantoonni gaggaariin hundi kan Rabbiiti. Yaa Nabiyyii, nageenyi,rahmanni Rabbii fi barakaan Isaa si irra haa jiraatu...",
+    "duaTransliteration": "At-tahiyyaatu lillaahi was-salawaatu wat-tayyibaatu...",
+    "details": "Quba shahadaa (quba qaraa) gara Qiblaa qabuun sochoosaa.",
+    "icon": "sitting",
+    "tips": [
+      "Yeroo teessan ija keessan quba shahaadaa irra kaa'aa",
+      "Tashahhuuda xumuraa irratti salaamtaa dura du'aa'ii godhachuun ni jaallatama"
+    ]
+  },
+  {
+    "step": 8,
+    "title": "Salaamtaa (Tasliima)",
+    "arabicTitle": "التسليم",
+    "description": "Fuula gara mirgaa fi bitaatti garagalchuun salaamtaa dhiyeessuu.",
+    "duaArabic": "السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ",
+    "duaTranslation": "Nageenyi fi rahmanni Rabbii isin irra haa jiraatu",
+    "duaTransliteration": "Assalaamu 'alaykum wa rahmatullaah",
+    "details": "Salaata xumuruuf jalqaba gara mirgaa, sana booda gara bitaatti garagalaa.",
+    "icon": "salam",
+    "tips": [
+      "Yeroo garagaltan nama isin duuba jiru ilaaluuf yaalaa",
+      "Kuni xumura salaataati"
+    ]
+  }
+]

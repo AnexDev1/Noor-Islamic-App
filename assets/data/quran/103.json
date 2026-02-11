@@ -1,0 +1,61 @@
+{
+    "surahName": "Al-Asr",
+    "surahNameArabic": "العصر",
+    "surahNameArabicLong": "سورة العصر",
+    "surahNameTranslation": "The Declining Day, Epoch",
+    "revelationPlace": "Mecca",
+    "totalAyah": 3,
+    "surahNo": 103,
+    "audio": {
+        "1": {
+            "reciter": "Mishary Rashid Al Afasy",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/1/103.mp3",
+            "originalUrl": "https://server8.mp3quran.net/afs/103.mp3"
+        },
+        "2": {
+            "reciter": "Abu Bakr Al Shatri",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/2/103.mp3",
+            "originalUrl": "https://server11.mp3quran.net/shatri/103.mp3"
+        },
+        "3": {
+            "reciter": "Nasser Al Qatami",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/3/103.mp3",
+            "originalUrl": "https://server6.mp3quran.net/qtm/103.mp3"
+        },
+        "4": {
+            "reciter": "Yasser Al Dosari",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/4/103.mp3",
+            "originalUrl": "https://server11.mp3quran.net/yasser/103.mp3"
+        },
+        "5": {
+            "reciter": "Hani Ar Rifai",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/5/103.mp3",
+            "originalUrl": "https://server8.mp3quran.net/hani/103.mp3"
+        }
+    },
+    "english": [
+        "By the ˹passage of˺ time!",
+        "Surely humanity is in ˹grave˺ loss",
+        "except those who have faith, do good, and urge each other to the truth, and urge each other to perseverance."
+    ],
+    "arabic1": [
+        "وَٱلْعَصْرِ",
+        "إِنَّ ٱلْإِنسَـٰنَ لَفِى خُسْرٍ",
+        "إِلَّا ٱلَّذِينَ ءَامَنُوا۟ وَعَمِلُوا۟ ٱلصَّـٰلِحَـٰتِ وَتَوَاصَوْا۟ بِٱلْحَقِّ وَتَوَاصَوْا۟ بِٱلصَّبْرِ"
+    ],
+    "arabic2": [
+        "والعصر",
+        "ان الانسان لفي خسر",
+        "الا الذين امنوا وعملوا الصالحات وتواصوا بالحق وتواصوا بالصبر"
+    ],
+    "bengali": [
+        "সময়ের কসম,",
+        "নিশ্চয় সকল মানুষ ক্ষতিগ্রস্ততায় নিপতিত।",
+        "তবে তারা ছাড়া যারা ঈমান এনেছে, সৎকাজ করেছে, পরস্পরকে সত্যের উপদেশ দিয়েছে এবং পরস্পরকে ধৈর্যের উপদেশ দিয়েছে।"
+    ],
+    "urdu": [
+        "عصر کی قسم",
+        "کہ انسان نقصان میں ہے",
+        "مگر وہ لوگ جو ایمان لائے اور نیک عمل کرتے رہے اور آپس میں حق (بات) کی تلقین اور صبر کی تاکید کرتے رہے"
+    ]
+}

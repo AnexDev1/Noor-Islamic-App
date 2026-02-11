@@ -1,0 +1,61 @@
+{
+    "surahName": "Al-Kawthar",
+    "surahNameArabic": "الكوثر",
+    "surahNameArabicLong": "سورة الكوثر",
+    "surahNameTranslation": "Abundance",
+    "revelationPlace": "Mecca",
+    "totalAyah": 3,
+    "surahNo": 108,
+    "audio": {
+        "1": {
+            "reciter": "Mishary Rashid Al Afasy",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/1/108.mp3",
+            "originalUrl": "https://server8.mp3quran.net/afs/108.mp3"
+        },
+        "2": {
+            "reciter": "Abu Bakr Al Shatri",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/2/108.mp3",
+            "originalUrl": "https://server11.mp3quran.net/shatri/108.mp3"
+        },
+        "3": {
+            "reciter": "Nasser Al Qatami",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/3/108.mp3",
+            "originalUrl": "https://server6.mp3quran.net/qtm/108.mp3"
+        },
+        "4": {
+            "reciter": "Yasser Al Dosari",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/4/108.mp3",
+            "originalUrl": "https://server11.mp3quran.net/yasser/108.mp3"
+        },
+        "5": {
+            "reciter": "Hani Ar Rifai",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/5/108.mp3",
+            "originalUrl": "https://server8.mp3quran.net/hani/108.mp3"
+        }
+    },
+    "english": [
+        "Indeed, We have granted you ˹O Prophet˺ abundant goodness.",
+        "So pray and sacrifice to your Lord ˹alone˺.",
+        "Only the one who hates you is truly cut off ˹from any goodness˺."
+    ],
+    "arabic1": [
+        "إِنَّآ أَعْطَيْنَـٰكَ ٱلْكَوْثَرَ",
+        "فَصَلِّ لِرَبِّكَ وَٱنْحَرْ",
+        "إِنَّ شَانِئَكَ هُوَ ٱلْأَبْتَرُ"
+    ],
+    "arabic2": [
+        "انا اعطيناك الكوثر",
+        "فصل لربك وانحر",
+        "ان شانئك هو الابتر"
+    ],
+    "bengali": [
+        "নিশ্চয় আমি তোমাকে আল-কাউসার দান করেছি।",
+        "অতএব তোমার রবের উদ্দেশ্যেই সালাত পড় এবং নহর কর*। \n*অর্থ কুরবানী কর।",
+        "নিশ্চয় তোমার প্রতি শত্রুতা পোষণকারীই নির্বংশ।"
+    ],
+    "urdu": [
+        "(اے محمدﷺ) ہم نے تم کو کوثر عطا فرمائی ہے",
+        "تو اپنے پروردگار کے لیے نماز پڑھا کرو اور قربانی دیا کرو",
+        "کچھ شک نہیں کہ تمہارا دشمن ہی بےاولاد رہے گا"
+    ]
+}

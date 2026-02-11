@@ -1,0 +1,71 @@
+{
+    "surahName": "Al-Falaq",
+    "surahNameArabic": "الفلق",
+    "surahNameArabicLong": "سورة الفلق",
+    "surahNameTranslation": "The Dawn",
+    "revelationPlace": "Mecca",
+    "totalAyah": 5,
+    "surahNo": 113,
+    "audio": {
+        "1": {
+            "reciter": "Mishary Rashid Al Afasy",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/1/113.mp3",
+            "originalUrl": "https://server8.mp3quran.net/afs/113.mp3"
+        },
+        "2": {
+            "reciter": "Abu Bakr Al Shatri",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/2/113.mp3",
+            "originalUrl": "https://server11.mp3quran.net/shatri/113.mp3"
+        },
+        "3": {
+            "reciter": "Nasser Al Qatami",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/3/113.mp3",
+            "originalUrl": "https://server6.mp3quran.net/qtm/113.mp3"
+        },
+        "4": {
+            "reciter": "Yasser Al Dosari",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/4/113.mp3",
+            "originalUrl": "https://server11.mp3quran.net/yasser/113.mp3"
+        },
+        "5": {
+            "reciter": "Hani Ar Rifai",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/5/113.mp3",
+            "originalUrl": "https://server8.mp3quran.net/hani/113.mp3"
+        }
+    },
+    "english": [
+        "Say, ˹O Prophet,˺ “I seek refuge in the Lord of the daybreak",
+        "from the evil of whatever He has created",
+        "and from the evil of the night when it grows dark",
+        "and from the evil of those ˹witches casting spells by˺ blowing onto knots",
+        "and from the evil of an envier when they envy.”"
+    ],
+    "arabic1": [
+        "قُلْ أَعُوذُ بِرَبِّ ٱلْفَلَقِ",
+        "مِن شَرِّ مَا خَلَقَ",
+        "وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ",
+        "وَمِن شَرِّ ٱلنَّفَّـٰثَـٰتِ فِى ٱلْعُقَدِ",
+        "وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ"
+    ],
+    "arabic2": [
+        "قل اعوذ برب الفلق",
+        "من شر ما خلق",
+        "ومن شر غاسق اذا وقب",
+        "ومن شر النفاثات في العقد",
+        "ومن شر حاسد اذا حسد"
+    ],
+    "bengali": [
+        "বল, ‘আমি আশ্রয় প্রার্থনা করছি ঊষার রবের কাছে,",
+        "তিনি যা সৃষ্টি করেছেন তার অনিষ্ট থেকে,",
+        "আর রাতের অন্ধকারের অনিষ্ট থেকে যখন তা গভীর হয়,",
+        "আর গিরায় ফুঁ-দানকারী নারীদের অনিষ্ট থেকে,",
+        "আর হিংসুকের অনিষ্ট থেকে যখন সে হিংসা করে’।"
+    ],
+    "urdu": [
+        "کہو کہ میں صبح کے پروردگار کی پناہ مانگتا ہوں",
+        "ہر چیز کی بدی سے جو اس نے پیدا کی",
+        "اور شب تاریکی کی برائی سے جب اس کااندھیرا چھا جائے",
+        "اور گنڈوں پر (پڑھ پڑھ کر) پھونکنے والیوں کی برائی سے",
+        "اور حسد کرنے والے کی برائی سے جب حسد کرنے لگے"
+    ]
+}

@@ -532,4 +532,75 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get ramadanBlessings =>
       'May this Ramadan bring you peace and blessings';
+
+  @override
+  String get learnIslam => 'Learn Islam';
+
+  @override
+  String get listenQuran => 'Listen Quran';
+
+  @override
+  String get learnIslamSubtitle => 'Your journey to understanding';
+
+  @override
+  String get salah => 'Salah';
+
+  @override
+  String get wudu => 'Wudu';
+
+  @override
+  String get rules => 'Rules';
+
+  @override
+  String get videos => 'Videos';
+
+  @override
+  String get quiz => 'Quiz';
+
+  @override
+  String get markAsLearned => 'Mark as Learned';
+
+  @override
+  String get learned => 'Learned';
+
+  @override
+  String get testYourKnowledge => 'Test Your Knowledge';
+
+  @override
+  String get details => 'Details';
+
+  @override
+  String get tips => 'Tips';
+
+  @override
+  String get markSectionComplete => 'Mark Section Complete';
+
+  @override
+  String topics(int count) {
+    return '$count topics';
+  }
+
+  @override
+  String questionProgress(int current, int total) {
+    return 'Question $current/$total';
+  }
+
+  @override
+  String score(int score) {
+    return 'Score: $score';
+  }
+
+  @override
+  String get excellent => 'Excellent!';
+
+  @override
+  String get goodJob => 'Good Job!';
+
+  @override
+  String get keepLearning => 'Keep Learning!';
+
+  @override
+  String quizResultMessage(int score, int total, int percentage) {
+    return 'You scored $score out of $total ($percentage%)';
+  }
 }

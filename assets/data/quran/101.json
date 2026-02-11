@@ -1,0 +1,101 @@
+{
+    "surahName": "Al-Qaari'a",
+    "surahNameArabic": "القارعة",
+    "surahNameArabicLong": "سورة القارعة",
+    "surahNameTranslation": "The Calamity",
+    "revelationPlace": "Mecca",
+    "totalAyah": 11,
+    "surahNo": 101,
+    "audio": {
+        "1": {
+            "reciter": "Mishary Rashid Al Afasy",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/1/101.mp3",
+            "originalUrl": "https://server8.mp3quran.net/afs/101.mp3"
+        },
+        "2": {
+            "reciter": "Abu Bakr Al Shatri",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/2/101.mp3",
+            "originalUrl": "https://server11.mp3quran.net/shatri/101.mp3"
+        },
+        "3": {
+            "reciter": "Nasser Al Qatami",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/3/101.mp3",
+            "originalUrl": "https://server6.mp3quran.net/qtm/101.mp3"
+        },
+        "4": {
+            "reciter": "Yasser Al Dosari",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/4/101.mp3",
+            "originalUrl": "https://server11.mp3quran.net/yasser/101.mp3"
+        },
+        "5": {
+            "reciter": "Hani Ar Rifai",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/5/101.mp3",
+            "originalUrl": "https://server8.mp3quran.net/hani/101.mp3"
+        }
+    },
+    "english": [
+        "The Striking Disaster!",
+        "What is the Striking Disaster?",
+        "And what will make you realize what the Striking Disaster is?",
+        "˹It is˺ the Day people will be like scattered moths",
+        "and the mountains will be like carded wool.",
+        "So as for those whose scale is heavy ˹with good deeds˺",
+        "they will be in a life of bliss.",
+        "And as for those whose scale is light",
+        "their home will be the abyss.",
+        "And what will make you realize what that is?",
+        "˹It is˺ a scorching Fire."
+    ],
+    "arabic1": [
+        "ٱلْقَارِعَةُ",
+        "مَا ٱلْقَارِعَةُ",
+        "وَمَآ أَدْرَىٰكَ مَا ٱلْقَارِعَةُ",
+        "يَوْمَ يَكُونُ ٱلنَّاسُ كَٱلْفَرَاشِ ٱلْمَبْثُوثِ",
+        "وَتَكُونُ ٱلْجِبَالُ كَٱلْعِهْنِ ٱلْمَنفُوشِ",
+        "فَأَمَّا مَن ثَقُلَتْ مَوَٰزِينُهُۥ",
+        "فَهُوَ فِى عِيشَةٍ رَّاضِيَةٍ",
+        "وَأَمَّا مَنْ خَفَّتْ مَوَٰزِينُهُۥ",
+        "فَأُمُّهُۥ هَاوِيَةٌ",
+        "وَمَآ أَدْرَىٰكَ مَا هِيَهْ",
+        "نَارٌ حَامِيَةٌۢ"
+    ],
+    "arabic2": [
+        "القارعة",
+        "ما القارعة",
+        "وما ادراك ما القارعة",
+        "يوم يكون الناس كالفراش المبثوث",
+        "وتكون الجبال كالعهن المنفوش",
+        "فاما من ثقلت موازينه",
+        "فهو في عيشة راضية",
+        "واما من خفت موازينه",
+        "فامه هاوية",
+        "وما ادراك ما هيه",
+        "نار حامية"
+    ],
+    "bengali": [
+        "মহাভীতিপ্রদ শব্দ।",
+        "মহাভীতিপ্রদ শব্দ কী?",
+        "তোমাকে কিসে জানাবে মহা ভীতিপ্রদ শব্দ কী?",
+        "যেদিন মানুষ হবে বিক্ষিপ্ত পতঙ্গের মত,",
+        "আর পর্বতরাজি হবে ধুনা রঙিন পশমের মত।",
+        "অতঃপর যার পাল্লা ভারী হবে,",
+        "সে থাকবে সন্তোষজনক জীবনে;",
+        "আর যার পাল্লা হালকা হবে,",
+        "তার আবাস হবে হাবিয়া।",
+        "আর তোমাকে কিসে জানাবে হাবিয়া কী?",
+        "প্রজ্জ্বলিত অগ্নি।"
+    ],
+    "urdu": [
+        "کھڑ کھڑانے والی",
+        "کھڑ کھڑانے والی کیا ہے؟",
+        "اور تم کیا جانوں کھڑ کھڑانے والی کیا ہے؟",
+        "(وہ قیامت ہے) جس دن لوگ ایسے ہوں گے جیسے بکھرے ہوئے پتنگے",
+        "اور پہاڑ ایسے ہو جائیں گے جیسے دھنکی ہوئی رنگ برنگ کی اون",
+        "تو جس کے (اعمال کے) وزن بھاری نکلیں گے",
+        "وہ دل پسند عیش میں ہو گا",
+        "اور جس کے وزن ہلکے نکلیں گے",
+        "اس کا مرجع ہاویہ ہے",
+        "اور تم کیا سمجھے کہ ہاویہ کیا چیز ہے؟",
+        "دہکتی ہوئی آگ ہے"
+    ]
+}

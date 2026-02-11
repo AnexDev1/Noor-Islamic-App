@@ -60,12 +60,26 @@ dependencies:
   hijri_calendar: ^1.0.7+7
   liquid_pull_to_refresh: ^3.0.1
   
+  # Firebase
+  firebase_core: ^3.13.0
+  firebase_messaging: ^15.2.5
+
   # Notifications
   flutter_local_notifications: ^18.0.1
   timezone: ^0.10.0
 
   youtube_player_flutter: ^9.0.1
   youtube_explode_dart: ^2.2.1
+
+  # New features
+  fl_chart: ^0.69.2
+  wakelock_plus: ^1.2.8
+  screenshot: ^3.0.0
+  path_provider: ^2.1.5
+  vibration: ^2.0.0
+  hive_flutter: ^1.1.0
+  hive: ^2.2.3
+  audio_service: ^0.18.18
 
 dev_dependencies:
   flutter_test:
@@ -106,6 +120,22 @@ flutter:
     - assets/icon.png
     - assets/masjid.png
     - assets/qibla.png
+    - assets/data/
+    - assets/data/hadith_chapters/
+    - assets/data/hadiths/sahih-bukhari/
+    - assets/data/hadiths/sahih-muslim/
+    - assets/data/hadiths/al-tirmidhi/
+    - assets/data/hadiths/abu-dawood/
+    - assets/data/hadiths/ibn-e-majah/
+    - assets/data/hadiths/sunan-nasai/
+    - assets/data/hadiths/mishkat/
+    - assets/data/hadiths/musnad-ahmad/
+    - assets/data/quran/
+    - assets/data/translations/
+    - assets/data/translations/amharic_zain/
+    - assets/data/translations/oromo_ababor/
+    - assets/data/translations/english_rwwad/
+    - assets/audio/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

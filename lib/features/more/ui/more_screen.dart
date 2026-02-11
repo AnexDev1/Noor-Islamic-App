@@ -13,6 +13,15 @@ import '../../../core/providers/app_providers.dart';
 import '../../../core/providers/models.dart';
 import '../../../l10n/app_localizations.dart'; // Import localization
 import '../../qadah/ui/qadah_screen.dart'; // Import Qadah screen
+import '../../tasbih/ui/tasbih_hub_screen.dart';
+import '../../quran_streak/ui/quran_streak_screen.dart';
+import '../../reflections/ui/reflections_screen.dart';
+import '../../ayah_card/ui/ayah_card_screen.dart';
+import '../../ramadan_habits/ui/ramadan_habits_screen.dart';
+import '../../prayer_mat/ui/prayer_mat_screen.dart';
+import '../../noor_wrap/ui/noor_wrap_screen.dart';
+import '../../learn_islam/ui/learn_islam_screen.dart';
+import '../../quran/ui/listen_quran_screen.dart';
 import 'settings_screen.dart';
 import 'islamic_calendar_screen.dart';
 import 'about_screen.dart';
@@ -93,6 +102,10 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
                 _buildSectionHeader(l10n.progressAnalytics), // Localized header
                 const SizedBox(height: 12),
                 _buildAnalyticsSection(l10n), // Pass l10n
+                const SizedBox(height: 24),
+                _buildSectionHeader('Spiritual Tools'),
+                const SizedBox(height: 12),
+                _buildSpiritualToolsSection(),
                 const SizedBox(height: 24),
                 _buildSectionHeader(l10n.settingsTitle), // Localized header
                 const SizedBox(height: 12),
@@ -215,6 +228,96 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
             MaterialPageRoute(
               builder: (context) => const IslamicCalendarScreen(),
             ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSpiritualToolsSection() {
+    return Column(
+      children: [
+        _buildMenuTile(
+          icon: Icons.radio_button_checked,
+          title: 'Tasbih Hub',
+          subtitle: 'Counter, Nafas Dhikr & Bead Flow',
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const TasbihHubScreen()),
+          ),
+        ),
+        _buildMenuTile(
+          icon: Icons.menu_book,
+          title: AppLocalizations.of(context)!.learnIslam,
+          subtitle: 'Salah, Wudu, rules & video lessons',
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const LearnIslamScreen()),
+          ),
+        ),
+        _buildMenuTile(
+          icon: Icons.headphones_rounded,
+          title: AppLocalizations.of(context)!.listenQuran,
+          subtitle: 'Stream audio with background play',
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const ListenQuranScreen(),
+            ), // Import needed
+          ),
+        ),
+        _buildMenuTile(
+          icon: Icons.local_fire_department,
+          title: 'Mushaf Streak',
+          subtitle: 'Track your daily Quran reading',
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const QuranStreakScreen()),
+          ),
+        ),
+        _buildMenuTile(
+          icon: Icons.edit_note,
+          title: 'Salah Reflections',
+          subtitle: 'Journal your prayer experiences',
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const ReflectionsScreen()),
+          ),
+        ),
+        _buildMenuTile(
+          icon: Icons.auto_stories,
+          title: 'Ayah of the Day',
+          subtitle: 'Beautiful shareable Quran cards',
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const AyahCardScreen()),
+          ),
+        ),
+        _buildMenuTile(
+          icon: Icons.grid_view_rounded,
+          title: 'Ramadan Habits',
+          subtitle: '30-day challenge board',
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const RamadanHabitsScreen()),
+          ),
+        ),
+        _buildMenuTile(
+          icon: Icons.self_improvement,
+          title: 'Prayer Mat Mode',
+          subtitle: 'Distraction-free focus timer',
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const PrayerMatScreen()),
+          ),
+        ),
+        _buildMenuTile(
+          icon: Icons.auto_awesome,
+          title: 'Noor Wrap',
+          subtitle: 'Your spiritual journey summary',
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const NoorWrapScreen()),
           ),
         ),
       ],

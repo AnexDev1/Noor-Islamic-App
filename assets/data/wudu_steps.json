@@ -1,0 +1,122 @@
+[
+  {
+    "step": 1,
+    "title": "Intention (Niyyah)",
+    "arabicTitle": "النية",
+    "description": "Make the intention in your heart to perform wudu for the sake of Allah. The intention does not need to be spoken aloud.",
+    "duaArabic": "بِسْمِ اللَّهِ",
+    "duaTranslation": "In the name of Allah",
+    "duaTransliteration": "Bismillah",
+    "details": "The intention is a condition of wudu according to the majority of scholars (Shafi'i, Hanbali, Maliki). The Hanafi school considers it recommended (sunnah) but not a condition. Say 'Bismillah' before beginning.",
+    "tips": [
+      "The niyyah is in the heart, not spoken",
+      "Saying 'Bismillah' before starting is a sunnah"
+    ]
+  },
+  {
+    "step": 2,
+    "title": "Wash Hands",
+    "arabicTitle": "غسل اليدين",
+    "description": "Wash both hands up to the wrists three times, starting with the right hand.",
+    "details": "Ensure water reaches between your fingers. This step removes any impurities before you begin washing the face.",
+    "tips": [
+      "Interlace your fingers to ensure water reaches between them",
+      "Always start with the right hand"
+    ]
+  },
+  {
+    "step": 3,
+    "title": "Rinse Mouth",
+    "arabicTitle": "المضمضة",
+    "description": "Take water into your mouth, swirl it around thoroughly, then spit it out. Do this three times.",
+    "details": "Use your right hand to cup water and bring it to your mouth. During fasting, be gentle and avoid excessive gargling.",
+    "tips": [
+      "Swirl water around all parts of the mouth",
+      "Be moderate — don't gargle excessively while fasting"
+    ]
+  },
+  {
+    "step": 4,
+    "title": "Sniff Water into Nose",
+    "arabicTitle": "الاستنشاق",
+    "description": "Sniff water gently into the nostrils, then blow it out. Do this three times.",
+    "details": "Use your right hand to inhale water and your left hand to blow the water out of your nose.",
+    "tips": [
+      "Don't sniff too hard — be gentle",
+      "Use the left hand to clean the nose"
+    ]
+  },
+  {
+    "step": 5,
+    "title": "Wash Face",
+    "arabicTitle": "غسل الوجه",
+    "description": "Wash the entire face three times — from the hairline to the chin, and from one ear to the other.",
+    "details": "The face area includes from the top of the forehead (where the hairline begins) to the bottom of the chin, and from ear to ear sideways. Men with beards should run wet fingers through the beard.",
+    "tips": [
+      "Ensure water reaches the entire face area",
+      "Men: pass wet fingers through the beard (takhallul)",
+      "Cover from hairline to chin and ear to ear"
+    ]
+  },
+  {
+    "step": 6,
+    "title": "Wash Arms",
+    "arabicTitle": "غسل اليدين إلى المرفقين",
+    "description": "Wash both arms from the fingertips to just above the elbows, three times each. Start with the right arm.",
+    "details": "Begin with the right arm. Make sure water flows over the entire arm including the elbows. The elbows must be included in the washing.",
+    "tips": [
+      "Start with the right arm (sunnah)",
+      "Include the elbows — they are part of the obligatory wash area",
+      "Wash each arm three times"
+    ]
+  },
+  {
+    "step": 7,
+    "title": "Wipe Head (Masah)",
+    "arabicTitle": "مسح الرأس",
+    "description": "With wet hands, wipe over the head from the front to the back and then back to the front. Do this once.",
+    "details": "Wet your hands, place them at the front of the head, wipe to the back, then return them to the front. This is done only once, not three times. The Maliki and Hanbali schools require wiping the entire head; the Hanafi school allows wiping a quarter of the head.",
+    "tips": [
+      "Wipe, do not wash — use remaining wetness on hands",
+      "Done once, not three times",
+      "Wipe from front of head to back, then back to front"
+    ]
+  },
+  {
+    "step": 8,
+    "title": "Wipe Ears",
+    "arabicTitle": "مسح الأذنين",
+    "description": "Wipe the inside and outside of both ears with wet fingers.",
+    "details": "Use your index fingers to wipe the inner part of the ears and your thumbs for the outer part. This is done once with the same water used for wiping the head.",
+    "tips": [
+      "Index finger inside, thumb outside",
+      "Use the same wetness from wiping the head"
+    ]
+  },
+  {
+    "step": 9,
+    "title": "Wash Feet",
+    "arabicTitle": "غسل القدمين",
+    "description": "Wash both feet up to and including the ankles, three times each. Start with the right foot.",
+    "details": "Begin with the right foot. Make sure water reaches between the toes — use your little finger to wash between them. The ankles must be included.",
+    "tips": [
+      "Start with the right foot",
+      "Wash between the toes using the little finger of the left hand",
+      "Include the ankle bones"
+    ]
+  },
+  {
+    "step": 10,
+    "title": "Du'a After Wudu",
+    "arabicTitle": "الدعاء بعد الوضوء",
+    "description": "After completing wudu, recite the du'a while looking up at the sky.",
+    "duaArabic": "أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ\nاللَّهُمَّ اجْعَلْنِي مِنَ التَّوَّابِينَ وَاجْعَلْنِي مِنَ الْمُتَطَهِّرِينَ",
+    "duaTranslation": "I bear witness that there is no god but Allah alone, with no partner, and I bear witness that Muhammad is His servant and messenger.\nO Allah, make me among those who repent and make me among those who purify themselves.",
+    "duaTransliteration": "Ash-hadu an la ilaha illAllahu wahdahu la shareeka lah, wa ash-hadu anna Muhammadan 'abduhu wa rasuluh.\nAllahummaj'alni minat-tawwabeena waj'alni minal-mutatahhireen.",
+    "details": "The Prophet (peace be upon him) said: 'Whoever performs wudu and then says this du'a, all eight gates of Paradise will be opened for him, and he may enter through whichever one he wishes.' (Sahih Muslim)",
+    "tips": [
+      "This du'a is highly recommended after every wudu",
+      "Pray two rak'ahs after wudu for extra reward (Salat al-Wudu)"
+    ]
+  }
+]

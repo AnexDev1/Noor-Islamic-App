@@ -535,4 +535,75 @@ class AppLocalizationsOm extends AppLocalizations {
   @override
   String get ramadanBlessings =>
       'Ramadaan kana nagaan fi barakaa haa siif haatu';
+
+  @override
+  String get learnIslam => 'Islaamaa Baradi';
+
+  @override
+  String get listenQuran => 'Qur\'aana Dhageeffadhu';
+
+  @override
+  String get learnIslamSubtitle => 'Imala hubannoo keessaniif';
+
+  @override
+  String get salah => 'Salaata';
+
+  @override
+  String get wudu => 'Wuduu\'a';
+
+  @override
+  String get rules => 'Seerawwan';
+
+  @override
+  String get videos => 'Viidiyoowwan';
+
+  @override
+  String get quiz => 'Qormaata';
+
+  @override
+  String get markAsLearned => 'Akka Baratametti Mallatteessi';
+
+  @override
+  String get learned => 'Baratameera';
+
+  @override
+  String get testYourKnowledge => 'Beekumsa Kee Qori';
+
+  @override
+  String get details => 'Bal\'inaan';
+
+  @override
+  String get tips => 'Gorsaawwan';
+
+  @override
+  String get markSectionComplete => 'Kutaa Xumurametti Mallatteessi';
+
+  @override
+  String topics(int count) {
+    return 'Mata duree $count';
+  }
+
+  @override
+  String questionProgress(int current, int total) {
+    return 'Gaaffii $current/$total';
+  }
+
+  @override
+  String score(int score) {
+    return 'Qabxii: $score';
+  }
+
+  @override
+  String get excellent => 'Baay\'ee Gaarii!';
+
+  @override
+  String get goodJob => 'Hojii Gaarii!';
+
+  @override
+  String get keepLearning => 'Baruu Itti Fufi!';
+
+  @override
+  String quizResultMessage(int score, int total, int percentage) {
+    return '$total keessaa $score argattan ($percentage%)';
+  }
 }

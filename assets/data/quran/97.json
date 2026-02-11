@@ -1,0 +1,71 @@
+{
+    "surahName": "Al-Qadr",
+    "surahNameArabic": "القدر",
+    "surahNameArabicLong": "سورة القدر",
+    "surahNameTranslation": "The Power, Fate",
+    "revelationPlace": "Mecca",
+    "totalAyah": 5,
+    "surahNo": 97,
+    "audio": {
+        "1": {
+            "reciter": "Mishary Rashid Al Afasy",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/1/97.mp3",
+            "originalUrl": "https://server8.mp3quran.net/afs/097.mp3"
+        },
+        "2": {
+            "reciter": "Abu Bakr Al Shatri",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/2/97.mp3",
+            "originalUrl": "https://server11.mp3quran.net/shatri/097.mp3"
+        },
+        "3": {
+            "reciter": "Nasser Al Qatami",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/3/97.mp3",
+            "originalUrl": "https://server6.mp3quran.net/qtm/097.mp3"
+        },
+        "4": {
+            "reciter": "Yasser Al Dosari",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/4/97.mp3",
+            "originalUrl": "https://server11.mp3quran.net/yasser/097.mp3"
+        },
+        "5": {
+            "reciter": "Hani Ar Rifai",
+            "url": "https://github.com/The-Quran-Project/Quran-Audio-Chapters/raw/refs/heads/main/Data/5/97.mp3",
+            "originalUrl": "https://server8.mp3quran.net/hani/097.mp3"
+        }
+    },
+    "english": [
+        "Indeed, ˹it is˺ We ˹Who˺ sent this ˹Quran˺ down on the Night of Glory.",
+        "And what will make you realize what the Night of Glory is?",
+        "The Night of Glory is better than a thousand months.",
+        "That night the angels and the ˹holy˺ spirit descend, by the permission of their Lord, for every ˹decreed˺ matter.",
+        "It is all peace until the break of dawn."
+    ],
+    "arabic1": [
+        "إِنَّآ أَنزَلْنَـٰهُ فِى لَيْلَةِ ٱلْقَدْرِ",
+        "وَمَآ أَدْرَىٰكَ مَا لَيْلَةُ ٱلْقَدْرِ",
+        "لَيْلَةُ ٱلْقَدْرِ خَيْرٌ مِّنْ أَلْفِ شَهْرٍ",
+        "تَنَزَّلُ ٱلْمَلَـٰٓئِكَةُ وَٱلرُّوحُ فِيهَا بِإِذْنِ رَبِّهِم مِّن كُلِّ أَمْرٍ",
+        "سَلَـٰمٌ هِىَ حَتَّىٰ مَطْلَعِ ٱلْفَجْرِ"
+    ],
+    "arabic2": [
+        "انا انزلناه في ليلة القدر",
+        "وما ادراك ما ليلة القدر",
+        "ليلة القدر خير من الف شهر",
+        "تنزل الملائكة والروح فيها باذن ربهم من كل امر",
+        "سلام هي حتى مطلع الفجر"
+    ],
+    "bengali": [
+        "নিশ্চয়ই আমি এটি নাযিল করেছি ‘লাইলাতুল ক্বাদরে।’",
+        "তোমাকে কিসে জানাবে ‘লাইলাতুল ক্বাদর’ কী?",
+        "‘লাইলাতুল কদর’ হাজার মাস অপেক্ষা উত্তম।",
+        "সে রাতে ফেরেশতারা ও রূহ (জিবরাইল) তাদের রবের অনুমতিক্রমে সকল সিদ্ধান্ত নিয়ে অবতরণ করে।",
+        "শান্তিময় সেই রাত, ফজরের সূচনা পর্যন্ত।"
+    ],
+    "urdu": [
+        "ہم نے اس( قرآن) کو شب قدر میں نازل (کرنا شروع) کیا",
+        "اور تمہیں کیا معلوم کہ شب قدر کیا ہے؟",
+        "شب قدر ہزار مہینے سے بہتر ہے",
+        "اس میں روح (الامین) اور فرشتے ہر کام کے (انتظام کے) لیے اپنے پروردگار کے حکم سے اترتے ہیں",
+        "یہ( رات) طلوع صبح تک (امان اور) سلامتی ہے"
+    ]
+}
