@@ -505,7 +505,7 @@ class AppLocalizationsOm extends AppLocalizations {
       'Kallattii Qiblaa argachuu hin dandeenye. Maaloo walqunnamtii keessan mirkaneeffadhaa.';
 
   @override
-  String get islamicVideos => 'Viidiyoo Islaamaa';
+  String get islamicVideos => 'Hadiisa Islaamaa';
 
   @override
   String get curatedIslamicContent =>

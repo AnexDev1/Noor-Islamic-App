@@ -926,7 +926,7 @@ String _formatDateTime(DateTime dateTime) {
 
 // Locale Provider for app localization
 class LocaleNotifier extends StateNotifier<Locale> {
-  LocaleNotifier(this._prefs) : super(const Locale('en')) {
+  LocaleNotifier(this._prefs) : super(const Locale('am')) {
     _loadSavedLocale();
   }
 

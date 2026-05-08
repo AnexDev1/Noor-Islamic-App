@@ -155,11 +155,13 @@ class QuranAudioHandler extends BaseAudioHandler
     required String title,
     required String artist,
     String? artUri,
+    String? album,
+    Map<String, String>? headers,
   }) async {
     try {
       final item = MediaItem(
         id: url,
-        album: "Quran",
+        album: album ?? "Quran",
         title: title,
         artist: artist,
         artUri: artUri != null ? Uri.tryParse(artUri) : null,
@@ -168,7 +170,10 @@ class QuranAudioHandler extends BaseAudioHandler
       mediaItem.add(item);
 
       // Set audio source
-      await _player.setAudioSource(AudioSource.uri(Uri.parse(url)));
+      await _player.setAudioSource(AudioSource.uri(
+        Uri.parse(url),
+        headers: headers,
+      ));
       await _player.setSpeed(_speed);
       await _player.play();
     } catch (e) {

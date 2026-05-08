@@ -258,169 +258,165 @@ class AppLocalizationsAm extends AppLocalizations {
   String get afanOromo => 'Afaan Oromoo';
 
   @override
-  String get undoPrayerConfirmationTitle => 'Undo prayer?';
+  String get undoPrayerConfirmationTitle => 'ሶላትን ሰርዝ?';
 
   @override
-  String get undoPrayerConfirmationDesc =>
-      'Do you want to undo this prayer entry?';
+  String get undoPrayerConfirmationDesc => 'ይህንን የሶላት መዝገብ መሰረዝ ይፈልጋሉ?';
 
   @override
-  String get undo => 'Undo';
+  String get undo => 'ሰርዝ';
 
   @override
-  String get aiChat => 'AI Chat';
+  String get aiChat => 'AI ውይይት';
 
   @override
-  String get madhabPreference => 'Madhab Preference';
+  String get madhabPreference => 'የመዝሀብ ምርጫ';
 
   @override
-  String get selectMadhab => 'Select Madhab';
+  String get selectMadhab => 'መዝሀብ ይምረጡ';
 
   @override
-  String get updateLocation => 'Update Location';
+  String get updateLocation => 'አካባቢን ያዘምኑ';
 
   @override
-  String get updateLocationDesc =>
-      'Update your location to get accurate prayer times';
+  String get updateLocationDesc => 'ትክክለኛ የሶላት ሰዓቶችን ለማግኘት አካባቢዎን ያዘምኑ';
 
   @override
-  String get tapToTestNotification => 'Tap to test notifications';
+  String get tapToTestNotification => 'ማሳወቂያዎችን ለመሞከር ይንኩ';
 
   @override
-  String get testAdhanNotification => 'Test Adhan Notification';
+  String get testAdhanNotification => 'የአዛን ማሳወቂያን ይሞክሩ';
 
   @override
-  String get testReminderNotification => 'Test Reminder Notification';
+  String get testReminderNotification => 'የማስታወሻ ማሳወቂያን ይሞክሩ';
 
   @override
-  String get adhanNotificationSent => 'Adhan test notification sent';
+  String get adhanNotificationSent => 'የአዛን ሙከራ ማሳወቂያ ተልኳል';
 
   @override
-  String get reminderNotificationSent => 'Reminder test notification sent';
+  String get reminderNotificationSent => 'የማስታወሻ ሙከራ ማሳወቂያ ተልኳል';
 
   @override
-  String get refreshPrayerTimes => 'Refresh Prayer Times';
+  String get refreshPrayerTimes => 'የሶላት ሰዓቶችን ያድሱ';
 
   @override
-  String get refreshPrayerTimesDesc =>
-      'Fetch latest prayer times from the server';
+  String get refreshPrayerTimesDesc => 'አዳዲስ የሶላት ሰዓቶችን ከሰርቨር ያግኙ';
 
   @override
-  String get refreshingPrayerTimes => 'Refreshing prayer times...';
+  String get refreshingPrayerTimes => 'የሶላት ሰዓቶችን በማደስ ላይ...';
 
   @override
-  String get updatingLocation => 'Updating location...';
+  String get updatingLocation => 'አካባቢን በማዘመን ላይ...';
 
   @override
-  String get resetStatistics => 'Reset Statistics';
+  String get resetStatistics => 'መረጃዎችን ዳግም አስጀምር';
 
   @override
-  String get statisticsReset => 'Statistics reset successfully';
+  String get statisticsReset => 'መረጃዎች በተሳካ ሁኔታ ዳግም ተጀምረዋል';
 
   @override
-  String get resetPrayerStatisticsDesc =>
-      'This will reset your prayer statistics.';
+  String get resetPrayerStatisticsDesc => 'ይህ የሶላት መረጃዎችዎን ዳግም ያስጀምራል።';
 
   @override
-  String get quranChapters => 'Holy Quran Chapters';
+  String get quranChapters => 'የቅዱስ ቁርኣን ምዕራፎች';
 
   @override
   String surahCount(int count) {
-    return '$count Surahs';
+    return '$count ሱራዎች';
   }
 
   @override
-  String get noSurahsFound => 'No Surahs found';
+  String get noSurahsFound => 'ምንም ሱራ አልተገኘም';
 
   @override
-  String get moreTitle => 'More';
+  String get moreTitle => 'ተጨማሪ';
 
   @override
-  String get progressAnalytics => 'Progress & Analytics';
+  String get progressAnalytics => 'እድገት እና ትንታኔ';
 
   @override
-  String get islamicCalendarTitle => 'Islamic Calendar';
+  String get islamicCalendarTitle => 'የእስልምና ቀን መቁጠሪያ';
 
   @override
-  String get islamicCalendarSubtitle => 'Hijri dates and Islamic events';
+  String get islamicCalendarSubtitle => 'የሂጅሪያ ቀናት እና የእስልምና ክስተቶች';
 
   @override
-  String get settingsTitle => 'App Settings';
+  String get settingsTitle => 'የመተግበሪያ ቅንብሮች';
 
   @override
-  String get settingsSubtitle => 'Notifications, theme, language';
+  String get settingsSubtitle => 'ማሳወቂያዎች፣ ገጽታ፣ ቋንቋ';
 
   @override
-  String get locationSettingsTitle => 'Location Settings';
+  String get locationSettingsTitle => 'የአካባቢ ቅንብሮች';
 
   @override
-  String get locationSettingsSubtitle => 'Update prayer location';
+  String get locationSettingsSubtitle => 'የሶላት አካባቢን ያዘምኑ';
 
   @override
-  String get backupTitle => 'Backup & Sync';
+  String get backupTitle => 'ምትኬ እና ማመሳሰል';
 
   @override
-  String get backupSubtitle => 'Save your progress';
+  String get backupSubtitle => 'እድገትዎን ያስቀምጡ';
 
   @override
-  String get supportCommunity => 'Support & Community';
+  String get supportCommunity => 'ድጋፍ እና ማህበረሰብ';
 
   @override
-  String get rateAppTitle => 'Rate Noor';
+  String get rateAppTitle => 'ኑርን ይገምግሙ';
 
   @override
-  String get rateAppSubtitle => 'Love the app? Rate us!';
+  String get rateAppSubtitle => 'መተግበሪያውን ወድደውታል? ይገምግሙን!';
 
   @override
-  String get shareAppTitle => 'Share with Friends';
+  String get shareAppTitle => 'ለጓደኞች ያጋሩ';
 
   @override
-  String get shareAppSubtitle => 'Spread the word';
+  String get shareAppSubtitle => 'ስለመተግበሪያው ያሳውቁ';
 
   @override
-  String get feedbackTitle => 'Feedback';
+  String get feedbackTitle => 'አስተያየት';
 
   @override
-  String get feedbackSubtitle => 'Help us improve';
+  String get feedbackSubtitle => 'እንድናሻሽል ያግዙን';
 
   @override
-  String get aboutAppTitle => 'About Noor';
+  String get aboutAppTitle => 'ስለ ኑር';
 
   @override
-  String get aboutAppSubtitle => 'App info, privacy & terms';
+  String get aboutAppSubtitle => 'የመተግበሪያ መረጃ፣ ግላዊነት እና ውሎች';
 
   @override
-  String get qadahTitle => 'Qadah Tracker';
+  String get qadahTitle => 'የቀዳ መከታተያ';
 
   @override
-  String get qadahSubtitle => 'Track and make up missed fasts';
+  String get qadahSubtitle => 'ያመለጡ ጾሞችን ይከታተሉ እና ይክፈሉ';
 
   @override
-  String get totalMissed => 'Total Missed';
+  String get totalMissed => 'ጠቅላላ ያመለጡ';
 
   @override
-  String get totalPaid => 'Total Paid';
+  String get totalPaid => 'ጠቅላላ የተከፈሉ';
 
   @override
-  String get remainingDays => 'Remaining Days';
+  String get remainingDays => 'ቀሪ ቀናት';
 
   @override
-  String get fastingReminders => 'Fasting Reminders';
+  String get fastingReminders => 'የጾም ማስታወሻዎች';
 
   @override
-  String get remindMeOn => 'Remind me on';
+  String get remindMeOn => 'አስታውሰኝ በ';
 
   @override
-  String get reminderTime => 'Reminder Time';
+  String get reminderTime => 'የማስታወሻ ሰዓት';
 
   @override
-  String get incrementPaid => 'Mark Fast as Paid';
+  String get incrementPaid => 'ጾምን እንደተከፈለ ምልክት ያድርጉ';
 
   @override
-  String get setupQadah => 'Setup Qadah';
+  String get setupQadah => 'ቀዳን ያዋቅሩ';
 
   @override
-  String get howManyMissed => 'How many days did you miss?';
+  String get howManyMissed => 'ስንት ቀናት አመለጡዎት?';
 
   @override
   String get timeLeft => 'ቀሪ ጊዜ';
@@ -499,7 +495,7 @@ class AppLocalizationsAm extends AppLocalizations {
       'የቂብላን አቅጣጫ ማግኘት አልተቻለም። እባክዎ የበመረብ ግንኙነትዎን ያረጋግጡ።';
 
   @override
-  String get islamicVideos => 'እስላማዊ ቪዲዮዎች';
+  String get islamicVideos => 'ኢስላማዊ ሀዲስ';
 
   @override
   String get curatedIslamicContent => 'የተራገፉ እስላማዊ ይዘቶች እና ማስታወሻዎች';

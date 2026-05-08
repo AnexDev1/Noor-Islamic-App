@@ -4,7 +4,7 @@ import '../features/home/ui/home_screen.dart';
 import '../features/qibla/ui/qibla_screen.dart';
 import '../features/ai_chat/ui/ai_chat_screen.dart';
 import '../features/more/ui/more_screen.dart';
-import '../features/videos/ui/video_hub_screen.dart';
+import '../features/videos/ui/ustaz_list_screen.dart';
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_text_styles.dart';
 
@@ -20,24 +20,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   final List<Widget> _screens = [
     const HomeScreen(),
-    const VideoHubScreen(
-      channelIds: [
-        // Verified Islamic Content Channel IDs (expanded)
-        'UCTX8ZbNDi_HBoyjTWRw9fAg',
-        'UCNHaE-HxyC7PMqB-7QJEScg',
-        'UCQQWZ1IeswjheSTSEXKcQsA',
-        'UCNB_OaI4524fASt8h0IL8dw',
-        'UCHGAqdQBKTVON_FUCIYCh3Q',
-        'UCeauc7tPkzHBgMS7VAVrlYw',
-        'UC8pcJy3m3BuL1I6v4IxW5qQ',
-        'UCim5Xh1yf46OEYiw6SmlqeQ',
-        'UCfDzAhe49MJr4K1GSmfapOA',
-        'UChaEok3DJU_5sAd44AwxFSA',
-        'UCriMjuMrhDlxSzieh5NnLYQ',
-        'UCDIi_4EqI8j8e8rAyIIoPsQ',
-        'UCUvIsHZLh9maRJzCT6H5wyg',
-      ],
-    ),
+    const UstazListScreen(),
     const QiblaScreen(),
     const AiChatScreen(),
     const MoreScreen(),

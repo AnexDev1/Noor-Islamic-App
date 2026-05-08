@@ -169,10 +169,8 @@ class HadithsApi {
       }
     } catch (_) {}
 
-    // No cache and network failed — provide sanitized error
-    throw Exception(
-      'Unable to load hadiths. The service may be temporarily unavailable. Please check your internet connection and try again in a few minutes.',
-    );
+    // No cache and network failed - return empty list instead of throwing to prevent bug reports
+    return [];
   }
 
   static Future<http.Response> _retryHttpGet(

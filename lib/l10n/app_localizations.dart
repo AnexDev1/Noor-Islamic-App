@@ -1063,7 +1063,7 @@ abstract class AppLocalizations {
   /// No description provided for @islamicVideos.
   ///
   /// In en, this message translates to:
-  /// **'Islamic Videos'**
+  /// **'Islamic Hadith'**
   String get islamicVideos;
 
   /// No description provided for @curatedIslamicContent.

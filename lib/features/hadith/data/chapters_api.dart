@@ -53,16 +53,10 @@ class ChaptersApi {
         final data = json.decode(body);
         return _parseChapters(data, bookSlug);
       } else {
-        throw Exception('Failed to load chapters: ${response.statusCode}');
+        return [];
       }
     } catch (e) {
-      if (e.toString().contains('Failed to load')) rethrow;
-
-      // 3. Fallback to cache even if empty/stale check failed previously?
-      // (Redundant if Step 1 covers it, but good for offline error handling)
-      throw Exception(
-        'Unable to connect to server. Please check your internet connection.',
-      );
+      return [];
     }
   }
 

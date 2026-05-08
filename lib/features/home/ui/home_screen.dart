@@ -15,7 +15,7 @@ import '../../hadith/ui/hadith_home_screen.dart';
 import '../../azkhar/ui/azkhar_home_screen.dart';
 import '../../tasbih/ui/tasbih_hub_screen.dart';
 import '../../learn_islam/ui/learn_islam_screen.dart';
-import '../../videos/ui/video_hub_screen.dart';
+import '../../videos/ui/ustaz_list_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -35,11 +35,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   String _countdownText = '';
   String _nextPrayerName = '';
   PrayerTimes? _currentPrayerTimes;
-  Timer? _ramadanCountdownTimer;
-  int _ramadanDays = 0;
-  int _ramadanHours = 0;
-  int _ramadanMinutes = 0;
-  int _ramadanSeconds = 0;
 
   @override
   void initState() {
@@ -80,7 +75,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     _fadeController.dispose();
     _slideController.dispose();
     _countdownTimer?.cancel();
-    _ramadanCountdownTimer?.cancel();
     super.dispose();
   }
 
@@ -202,15 +196,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const VideoHubScreen(
-              channelIds: [
-                // Verified Islamic Content Channel IDs Only
-                'UCTX8ZbNDi_HBoyjTWRw9fAg',
-                'UCNHaE-HxyC7PMqB-7QJEScg',
-                'UCQQWZ1IeswjheSTSEXKcQsA',
-                'UCNB_OaI4524fASt8h0IL8dw',
-              ],
-            ),
+            builder: (context) => const UstazListScreen(),
           ),
         );
       },
@@ -312,7 +298,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   ) {
     final l10n = AppLocalizations.of(context)!;
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -491,186 +477,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
           const SizedBox(height: 12),
 
-          _buildRamadanCountdown(),
-
-          const SizedBox(height: 12),
-
           _buildPrayerTimesGrid(prayerTimes, todayStatus),
         ],
       ),
     );
   }
 
-  Widget _buildRamadanCountdown() {
-    final ramadanAsync = ref.watch(ramadanCountdownProvider);
-    final l10n = AppLocalizations.of(context)!;
-
-    // Ensure timer is running if data is available
-    if (ramadanAsync is AsyncData &&
-        ramadanAsync.value != null &&
-        (_ramadanCountdownTimer == null || !_ramadanCountdownTimer!.isActive)) {
-      final countdown = ramadanAsync.value!;
-      _ramadanDays = countdown.countdown['days'] ?? 0;
-      _ramadanHours = countdown.countdown['hours'] ?? 0;
-      _ramadanMinutes = countdown.countdown['minutes'] ?? 0;
-      _ramadanSeconds = countdown.countdown['seconds'] ?? 0;
-      _startRamadanCountdown(countdown);
-    }
-
-    return ramadanAsync.when(
-      loading: () => const SizedBox.shrink(),
-      error: (_, __) => const SizedBox.shrink(),
-      data: (countdown) {
-        if (countdown.isCountdownZero || countdown.isRamadanStarted) {
-          return _buildRamadanMubarakMessage();
-        }
-
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.2),
-              width: 1,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.accent.withValues(alpha: 0.2),
-                blurRadius: 6,
-                spreadRadius: 0,
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              Icon(Icons.mosque, color: Colors.white, size: 14),
-              const SizedBox(width: 6),
-              Text(
-                l10n.ramadanCountdown,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const Spacer(),
-              _buildCountdownItem(_ramadanDays, l10n.daysUntilRamadan),
-              const SizedBox(width: 8),
-              _buildCountdownItem(_ramadanHours, l10n.hoursUntilRamadan),
-              const SizedBox(width: 8),
-              _buildCountdownItem(_ramadanMinutes, l10n.minutesUntilRamadan),
-              const SizedBox(width: 8),
-              _buildCountdownItem(_ramadanSeconds, l10n.secondsUntilRamadan),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildCountdownItem(int value, String label) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          value.toString().padLeft(2, '0'),
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.5,
-          ),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          label,
-          style: const TextStyle(
-            color: Colors.white70,
-            fontSize: 8,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildRamadanMubarakMessage() {
-    final l10n = AppLocalizations.of(context)!;
-    final messages = [
-      l10n.ramadanMubarak,
-      l10n.ramadanKareem,
-      l10n.ramadanBlessings,
-    ];
-    final random = DateTime.now().millisecondsSinceEpoch % messages.length;
-    final message = messages[random];
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: AppColors.accent.withValues(alpha: 0.4),
-          width: 1.5,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.accent.withValues(alpha: 0.3),
-            blurRadius: 8,
-            spreadRadius: 1,
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.celebration, color: AppColors.accent, size: 16),
-          const SizedBox(width: 8),
-          Flexible(
-            child: Text(
-              message,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _startRamadanCountdown(RamadanCountdown countdown) {
-    _ramadanCountdownTimer?.cancel();
-    _ramadanCountdownTimer = Timer.periodic(const Duration(seconds: 1), (
-      timer,
-    ) {
-      if (mounted) {
-        final now = DateTime.now();
-        final difference = countdown.ramadanStartDate.difference(now);
-
-        if (difference.isNegative || difference.inSeconds <= 0) {
-          _ramadanDays = 0;
-          _ramadanHours = 0;
-          _ramadanMinutes = 0;
-          _ramadanSeconds = 0;
-          timer.cancel();
-        } else {
-          _ramadanDays = difference.inDays;
-          _ramadanHours = difference.inHours % 24;
-          _ramadanMinutes = difference.inMinutes % 60;
-          _ramadanSeconds = difference.inSeconds % 60;
-        }
-        setState(() {});
-      }
-    });
-  }
 
   Widget _buildPrayerTimesGrid(
     PrayerTimes prayerTimes,
@@ -863,6 +675,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                           },
                         ),
                       ),
+                      _buildLanguageSwitcher(),
                     ],
                   ),
                 ],
@@ -871,6 +684,52 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildLanguageSwitcher() {
+    final currentLocale = ref.watch(localeProvider);
+    final localeNotifier = ref.read(localeProvider.notifier);
+
+    return PopupMenuButton<String>(
+      icon: const Icon(Icons.language, color: Colors.white),
+      color: AppColors.surface,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      onSelected: (String languageCode) {
+        localeNotifier.setLocale(Locale(languageCode));
+      },
+      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+        PopupMenuItem<String>(
+          value: 'en',
+          child: Row(
+            children: [
+              Icon(Icons.check, color: currentLocale.languageCode == 'en' ? AppColors.primary : Colors.transparent, size: 20),
+              const SizedBox(width: 8),
+              const Text('English'),
+            ],
+          ),
+        ),
+        PopupMenuItem<String>(
+          value: 'am',
+          child: Row(
+            children: [
+              Icon(Icons.check, color: currentLocale.languageCode == 'am' ? AppColors.primary : Colors.transparent, size: 20),
+              const SizedBox(width: 8),
+              const Text('አማርኛ'),
+            ],
+          ),
+        ),
+        PopupMenuItem<String>(
+          value: 'om',
+          child: Row(
+            children: [
+              Icon(Icons.check, color: currentLocale.languageCode == 'om' ? AppColors.primary : Colors.transparent, size: 20),
+              const SizedBox(width: 8),
+              const Text('Afaan Oromoo'),
+            ],
+          ),
+        ),
+      ],
     );
   }
 

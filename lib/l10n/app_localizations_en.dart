@@ -503,7 +503,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Unable to fetch Qibla direction. Please check your connection.';
 
   @override
-  String get islamicVideos => 'Islamic Videos';
+  String get islamicVideos => 'Islamic Hadith';
 
   @override
   String get curatedIslamicContent => 'Curated Islamic content & reminders';
