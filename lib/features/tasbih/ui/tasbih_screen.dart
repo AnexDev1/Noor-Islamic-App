@@ -12,7 +12,8 @@ class TasbihScreen extends StatefulWidget {
   State<TasbihScreen> createState() => _TasbihScreenState();
 }
 
-class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMixin {
+class _TasbihScreenState extends State<TasbihScreen>
+    with TickerProviderStateMixin {
   int _count = 0;
   int _target = 33;
   int _totalCount = 0;
@@ -98,37 +99,22 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
+    );
 
     _pulseAnimation = Tween<double>(
       begin: 1.0,
       end: 1.1,
-    ).animate(CurvedAnimation(
-      parent: _pulseController,
-      curve: Curves.easeOut,
-    ));
+    ).animate(CurvedAnimation(parent: _pulseController, curve: Curves.easeOut));
 
-    _celebrationAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _celebrationController,
-      curve: Curves.elasticOut,
-    ));
+    _celebrationAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _celebrationController, curve: Curves.elasticOut),
+    );
 
-    _rippleAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _rippleController,
-      curve: Curves.easeOut,
-    ));
+    _rippleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _rippleController, curve: Curves.easeOut),
+    );
 
     _fadeController.forward();
   }
@@ -193,7 +179,9 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
 
   void _showCompletionCelebration() {
     HapticFeedback.heavyImpact();
-    _celebrationController.forward().then((_) => _celebrationController.reverse());
+    _celebrationController.forward().then(
+      (_) => _celebrationController.reverse(),
+    );
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -211,9 +199,7 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
         ),
         backgroundColor: AppColors.success,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         duration: const Duration(seconds: 3),
       ),
     );
@@ -271,7 +257,11 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
                     // Main Counter
                     Expanded(
                       child: Center(
-                        child: _buildInteractiveCounter(selectedDhikr['color'], isCompleted, progress),
+                        child: _buildInteractiveCounter(
+                          selectedDhikr['color'],
+                          isCompleted,
+                          progress,
+                        ),
                       ),
                     ),
 
@@ -311,10 +301,7 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
             color: Colors.white.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Icon(
-            Icons.arrow_back,
-            color: Colors.white,
-          ),
+          child: const Icon(Icons.arrow_back, color: Colors.white),
         ),
       ),
       actions: [
@@ -326,10 +313,7 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
               color: Colors.white.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(
-              Icons.restore,
-              color: Colors.white,
-            ),
+            child: const Icon(Icons.restore, color: Colors.white),
           ),
         ),
         const SizedBox(width: 16),
@@ -340,10 +324,7 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                AppColors.primary,
-                AppColors.primaryLight,
-              ],
+              colors: [AppColors.primary, AppColors.primaryLight],
             ),
             borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(32),
@@ -395,7 +376,10 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
                       ),
                       // Total count badge
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(20),
@@ -451,13 +435,15 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
                 ],
               ),
               borderRadius: BorderRadius.circular(20),
-              boxShadow: isSelected ? [
-                BoxShadow(
-                  color: (dhikr['color'] as Color).withValues(alpha: 0.4),
-                  blurRadius: 12,
-                  offset: const Offset(0, 6),
-                ),
-              ] : [],
+              boxShadow: isSelected
+                  ? [
+                      BoxShadow(
+                        color: (dhikr['color'] as Color).withValues(alpha: 0.4),
+                        blurRadius: 12,
+                        offset: const Offset(0, 6),
+                      ),
+                    ]
+                  : [],
             ),
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -557,112 +543,133 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
     );
   }
 
-  Widget _buildInteractiveCounter(Color color, bool isCompleted, double progress) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        // Ripple Effect
-        AnimatedBuilder(
-          animation: _rippleAnimation,
-          builder: (context, child) {
-            return Container(
-              width: 240 + (_rippleAnimation.value * 60),
-              height: 240 + (_rippleAnimation.value * 60),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: color.withValues(alpha: 0.3 * (1 - _rippleAnimation.value)),
-                  width: 2,
+  Widget _buildInteractiveCounter(
+    Color color,
+    bool isCompleted,
+    double progress,
+  ) {
+    return SizedBox(
+      width: 280,
+      height: 280,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Ripple Effect
+          AnimatedBuilder(
+            animation: _rippleAnimation,
+            builder: (context, child) {
+              return Container(
+                width: 240 + (_rippleAnimation.value * 60),
+                height: 240 + (_rippleAnimation.value * 60),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: color.withValues(
+                      alpha: 0.3 * (1 - _rippleAnimation.value),
+                    ),
+                    width: 2,
+                  ),
                 ),
-              ),
-            );
-          },
-        ),
+              );
+            },
+          ),
 
-        // Outer Ring with Progress
-        SizedBox(
-          width: 220,
-          height: 220,
-          child: CircularProgressIndicator(
-            value: progress,
-            strokeWidth: 8,
-            backgroundColor: AppColors.textTertiary.withValues(alpha: 0.2),
-            valueColor: AlwaysStoppedAnimation<Color>(
-              isCompleted ? AppColors.success : color,
+          // Outer Ring with Progress
+          SizedBox(
+            width: 220,
+            height: 220,
+            child: CircularProgressIndicator(
+              value: progress,
+              strokeWidth: 8,
+              backgroundColor: AppColors.textTertiary.withValues(alpha: 0.2),
+              valueColor: AlwaysStoppedAnimation<Color>(
+                isCompleted ? AppColors.success : color,
+              ),
             ),
           ),
-        ),
 
-        // Main Counter Button
-        AnimatedBuilder(
-          animation: _pulseAnimation,
-          builder: (context, child) {
-            return AnimatedBuilder(
-              animation: _celebrationAnimation,
-              builder: (context, child) {
-                return Transform.scale(
-                  scale: _pulseAnimation.value * (1 + _celebrationAnimation.value * 0.1),
-                  child: GestureDetector(
-                    onTap: _increment,
-                    child: Container(
-                      width: 180,
-                      height: 180,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: RadialGradient(
-                          colors: isCompleted
-                              ? [AppColors.success, AppColors.success.withValues(alpha: 0.7)]
-                              : [color, color.withValues(alpha: 0.7)],
+          // Main Counter Button
+          AnimatedBuilder(
+            animation: _pulseAnimation,
+            builder: (context, child) {
+              return AnimatedBuilder(
+                animation: _celebrationAnimation,
+                builder: (context, child) {
+                  return Transform.scale(
+                    scale:
+                        _pulseAnimation.value *
+                        (1 + _celebrationAnimation.value * 0.1),
+                    child: GestureDetector(
+                      onTap: _increment,
+                      child: Container(
+                        width: 180,
+                        height: 180,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: RadialGradient(
+                            colors: isCompleted
+                                ? [
+                                    AppColors.success,
+                                    AppColors.success.withValues(alpha: 0.7),
+                                  ]
+                                : [color, color.withValues(alpha: 0.7)],
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color:
+                                  (isCompleted
+                                          ? AppColors.success
+                                          : AppColors.primary)
+                                      .withValues(alpha: 0.4),
+                              blurRadius: 20,
+                              offset: const Offset(0, 8),
+                              spreadRadius: 2,
+                            ),
+                          ],
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: (isCompleted ? AppColors.success : AppColors.primary).withValues(alpha: 0.4),
-                            blurRadius: 20,
-                            offset: const Offset(0, 8),
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // Count number
-                          Text(
-                            '$_count',
-                            style: AppTextStyles.displayLarge.copyWith(
-                              fontSize: 48,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w800,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // Count number
+                            Text(
+                              '$_count',
+                              style: AppTextStyles.displayLarge.copyWith(
+                                fontSize: 48,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w800,
+                              ),
                             ),
-                          ),
 
-                          // Target indicator
-                          Text(
-                            'of $_target',
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              color: Colors.white.withValues(alpha: 0.9),
-                              fontWeight: FontWeight.w500,
+                            // Target indicator
+                            Text(
+                              'of $_target',
+                              style: AppTextStyles.bodyMedium.copyWith(
+                                color: Colors.white.withValues(alpha: 0.9),
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
-                          ),
 
-                          const SizedBox(height: 8),
+                            const SizedBox(height: 8),
 
-                          // Tap instruction
-                          Icon(
-                            isCompleted ? Icons.check_circle : Icons.touch_app,
-                            color: Colors.white.withValues(alpha: 0.8),
-                            size: 24,
-                          ),
-                        ],
+                            // Tap instruction
+                            Icon(
+                              isCompleted
+                                  ? Icons.check_circle
+                                  : Icons.touch_app,
+                              color: Colors.white.withValues(alpha: 0.8),
+                              size: 24,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
-            );
-          },
-        ),
-      ],
+                  );
+                },
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -689,10 +696,7 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Session Progress',
-                    style: AppTextStyles.heading4,
-                  ),
+                  Text('Session Progress', style: AppTextStyles.heading4),
                   Text(
                     '$_count of $_target completed',
                     style: AppTextStyles.bodyMedium.copyWith(
@@ -702,9 +706,13 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
                 ],
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
-                  color: (isCompleted ? AppColors.success : AppColors.primary).withValues(alpha: 0.1),
+                  color: (isCompleted ? AppColors.success : AppColors.primary)
+                      .withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
@@ -734,7 +742,10 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: isCompleted
-                        ? [AppColors.success, AppColors.success.withValues(alpha: 0.8)]
+                        ? [
+                            AppColors.success,
+                            AppColors.success.withValues(alpha: 0.8),
+                          ]
                         : [AppColors.primary, AppColors.primaryLight],
                   ),
                   borderRadius: BorderRadius.circular(4),
@@ -749,11 +760,7 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.emoji_events,
-                color: AppColors.accent,
-                size: 20,
-              ),
+              Icon(Icons.emoji_events, color: AppColors.accent, size: 20),
               const SizedBox(width: 8),
               Text(
                 'Lifetime Total: $_totalCount dhikr',
@@ -816,10 +823,7 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          title: Text(
-            'Set Custom Target',
-            style: AppTextStyles.heading3,
-          ),
+          title: Text('Set Custom Target', style: AppTextStyles.heading3),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

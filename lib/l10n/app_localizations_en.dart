@@ -503,7 +503,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Unable to fetch Qibla direction. Please check your connection.';
 
   @override
-  String get islamicVideos => 'Islamic Hadith';
+  String get islamicVideos => 'Da\'wah';
 
   @override
   String get curatedIslamicContent => 'Curated Islamic content & reminders';
@@ -540,7 +540,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get listenQuran => 'Listen Quran';
 
   @override
-  String get learnIslamSubtitle => 'Your journey to understanding';
+  String get learnIslamSubtitle => 'Salah, Wudu, rules & video lessons';
 
   @override
   String get salah => 'Salah';
@@ -603,4 +603,67 @@ class AppLocalizationsEn extends AppLocalizations {
   String quizResultMessage(int score, int total, int percentage) {
     return 'You scored $score out of $total ($percentage%)';
   }
+
+  @override
+  String get tajweedHifzMode => 'Tajweed & Hifz Mode';
+
+  @override
+  String get tajweedHifzSubtitle => 'Ayah-by-Ayah recitation and repetition';
+
+  @override
+  String get prayerMatMode => 'Prayer Mat Mode';
+
+  @override
+  String get prayerMatSubtitle => 'Distraction-free focus timer';
+
+  @override
+  String get noorWrap => 'Noor Wrap';
+
+  @override
+  String get noorWrapSubtitle => 'Your spiritual journey summary';
+
+  @override
+  String get tasbihSubtitle => 'Counter, Nafas Dhikr & Bead Flow';
+
+  @override
+  String get bookmarksSubtitle => 'Saved Quran, Hadith & Azkhar items';
+
+  @override
+  String get listenQuranSubtitle => 'Stream audio with background play';
+
+  @override
+  String get quranStreakSubtitle => 'Track your daily Quran reading';
+
+  @override
+  String get reflectionsSubtitle => 'Journal your prayer experiences';
+
+  @override
+  String get ayahCardSubtitle => 'Beautiful shareable Quran cards';
+
+  @override
+  String get ramadanHabitsSubtitle => '30-day challenge board';
+
+  @override
+  String get zikrReminders => 'Zikr Reminders';
+
+  @override
+  String get softZikrReminders => 'Soft zikr reminders';
+
+  @override
+  String get reminderInterval => 'Reminder interval';
+
+  @override
+  String get reminderZikr => 'Reminder zikr';
+
+  @override
+  String get appearanceSettings => 'Appearance';
+
+  @override
+  String get darkThemeTitle => 'Dark theme';
+
+  @override
+  String get darkThemeSubtitle => 'Use the darker color palette';
+
+  @override
+  String get arabicFontTitle => 'Arabic font';
 }

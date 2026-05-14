@@ -76,6 +76,8 @@ class RamadanHabitsNotifier extends StateNotifier<RamadanHabitsState> {
       // Load completed map
       final completedStr = _prefs.getString('ramadan_completed') ?? '{}';
       final Map<String, dynamic> completedMap = jsonDecode(completedStr);
+      final customStr = _prefs.getString('ramadan_custom_challenges') ?? '[]';
+      final List<dynamic> customList = jsonDecode(customStr);
 
       final challenges = jsonList.map((j) {
         final id = j['id'] as int;
@@ -88,6 +90,20 @@ class RamadanHabitsNotifier extends StateNotifier<RamadanHabitsState> {
           isCompleted: completedMap[id.toString()] == true,
         );
       }).toList();
+
+      final customChallenges = customList.map((j) {
+        final id = j['id'] as int;
+        return RamadanChallenge(
+          id: id,
+          titleEn: j['title_en'] ?? j['titleEn'] ?? '',
+          titleAr: j['title_ar'] ?? j['titleAr'] ?? '',
+          icon: j['icon'] ?? '✨',
+          category: j['category'] ?? 'custom',
+          isCompleted: completedMap[id.toString()] == true,
+        );
+      }).toList();
+
+      challenges.addAll(customChallenges);
 
       final completed = challenges.where((c) => c.isCompleted).length;
 
@@ -122,6 +138,48 @@ class RamadanHabitsNotifier extends StateNotifier<RamadanHabitsState> {
       completedCount: completed,
       progressPercent: updated.isEmpty ? 0 : completed / updated.length,
     );
+  }
+
+  Future<void> addCustomChallenge({
+    required String title,
+    String category = 'custom',
+  }) async {
+    final trimmed = title.trim();
+    if (trimmed.isEmpty) return;
+
+    final challenge = RamadanChallenge(
+      id: DateTime.now().millisecondsSinceEpoch,
+      titleEn: trimmed,
+      titleAr: trimmed,
+      icon: '✨',
+      category: category,
+    );
+
+    final updated = [...state.challenges, challenge];
+    await _saveCustomChallenges(updated);
+    state = state.copyWith(
+      challenges: updated,
+      completedCount: updated.where((c) => c.isCompleted).length,
+      progressPercent: updated.isEmpty
+          ? 0
+          : updated.where((c) => c.isCompleted).length / updated.length,
+    );
+  }
+
+  Future<void> _saveCustomChallenges(List<RamadanChallenge> challenges) async {
+    final custom = challenges.where((c) => c.id >= 1000000000000).toList();
+    final customJson = custom
+        .map(
+          (c) => {
+            'id': c.id,
+            'title_en': c.titleEn,
+            'title_ar': c.titleAr,
+            'icon': c.icon,
+            'category': c.category,
+          },
+        )
+        .toList();
+    await _prefs.setString('ramadan_custom_challenges', jsonEncode(customJson));
   }
 }
 

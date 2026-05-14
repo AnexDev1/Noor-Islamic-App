@@ -20,7 +20,9 @@ class QuranApi {
         _refreshCacheInBackground(url, prefs);
 
         final List surahList = json.decode(cached);
-        return surahList.map((e) => SurahInfo.fromJson(e)).toList();
+        return surahList.asMap().entries.map((entry) {
+          return SurahInfo.fromJson(entry.value, surahNumber: entry.key + 1);
+        }).toList();
       }
     } catch (_) {}
 
@@ -33,7 +35,9 @@ class QuranApi {
       );
 
       final List surahList = json.decode(jsonString);
-      return surahList.map((e) => SurahInfo.fromJson(e)).toList();
+      return surahList.asMap().entries.map((entry) {
+        return SurahInfo.fromJson(entry.value, surahNumber: entry.key + 1);
+      }).toList();
     } catch (_) {
       // Asset not found or error reading, proceed to network
     }
@@ -51,7 +55,9 @@ class QuranApi {
           await prefs.setString(_cacheKey, body);
 
           final List surahList = json.decode(body);
-          return surahList.map((e) => SurahInfo.fromJson(e)).toList();
+          return surahList.asMap().entries.map((entry) {
+            return SurahInfo.fromJson(entry.value, surahNumber: entry.key + 1);
+          }).toList();
         }
       } catch (e) {
         if (attempt == retries) rethrow;

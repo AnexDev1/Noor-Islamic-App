@@ -9,11 +9,25 @@ import '../providers/ustaz_providers.dart';
 import '../domain/ustaz.dart';
 import 'ustaz_videos_screen.dart';
 
-class UstazListScreen extends ConsumerWidget {
+class UstazListScreen extends ConsumerStatefulWidget {
   const UstazListScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<UstazListScreen> createState() => _UstazListScreenState();
+}
+
+class _UstazListScreenState extends ConsumerState<UstazListScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final ustazList = ref.watch(ustazListProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
@@ -24,24 +38,66 @@ class UstazListScreen extends ConsumerWidget {
         physics: const BouncingScrollPhysics(),
         slivers: [
           _buildAppBar(context, isDark, l10n),
-          ustazList.when(
-            data: (list) => SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final ustaz = list[index];
-                    return _PremiumUstazCard(ustaz: ustaz, index: index);
-                  },
-                  childCount: list.length,
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+              child: TextField(
+                controller: _searchController,
+                onChanged: (value) => setState(() => _searchQuery = value),
+                decoration: InputDecoration(
+                  hintText: 'Search speakers...',
+                  prefixIcon: const Icon(Icons.search),
+                  suffixIcon: _searchQuery.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.clear),
+                          onPressed: () {
+                            _searchController.clear();
+                            setState(() => _searchQuery = '');
+                          },
+                        )
+                      : null,
+                  filled: true,
+                  fillColor: isDark ? AppColors.surfaceDark : AppColors.surface,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
               ),
             ),
+          ),
+          ustazList.when(
+            data: (list) {
+              final filtered = _searchQuery.isEmpty
+                  ? list
+                  : list.where((ustaz) {
+                      final query = _searchQuery.toLowerCase();
+                      return ustaz.name.toLowerCase().contains(query) ||
+                          (ustaz.bio ?? '').toLowerCase().contains(query);
+                    }).toList();
+
+              return SliverPadding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    final ustaz = filtered[index];
+                    return _PremiumUstazCard(ustaz: ustaz, index: index);
+                  }, childCount: filtered.length),
+                ),
+              );
+            },
             loading: () => const SliverFillRemaining(
-              child: Center(child: CircularProgressIndicator(color: AppColors.primary)),
+              child: Center(
+                child: CircularProgressIndicator(color: AppColors.primary),
+              ),
             ),
             error: (err, stack) => SliverFillRemaining(
-              child: Center(child: Text('Error: $err', style: TextStyle(color: Colors.red))),
+              child: Center(
+                child: Text('Error: $err', style: TextStyle(color: Colors.red)),
+              ),
             ),
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 100)),
@@ -50,7 +106,11 @@ class UstazListScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildAppBar(BuildContext context, bool isDark, AppLocalizations l10n) {
+  Widget _buildAppBar(
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     return SliverAppBar(
       expandedHeight: 140,
       pinned: true,
@@ -79,7 +139,8 @@ class UstazListScreen extends ConsumerWidget {
                   width: 300,
                   height: 300,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => const SizedBox(),
+                  errorBuilder: (context, error, stackTrace) =>
+                      const SizedBox(),
                 ),
               ),
             ),
@@ -99,7 +160,7 @@ class _PremiumUstazCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -107,7 +168,9 @@ class _PremiumUstazCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: isDark ? Colors.black.withOpacity(0.3) : AppColors.primary.withOpacity(0.08),
+            color: isDark
+                ? Colors.black.withOpacity(0.3)
+                : AppColors.primary.withOpacity(0.08),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -122,14 +185,22 @@ class _PremiumUstazCard extends StatelessWidget {
             Navigator.push(
               context,
               PageRouteBuilder(
-                pageBuilder: (context, animation, secondaryAnimation) => UstazVideosScreen(ustaz: ustaz),
-                transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                  const begin = Offset(1.0, 0.0);
-                  const end = Offset.zero;
-                  const curve = Curves.easeInOutQuart;
-                  var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                  return SlideTransition(position: animation.drive(tween), child: child);
-                },
+                pageBuilder: (context, animation, secondaryAnimation) =>
+                    UstazVideosScreen(ustaz: ustaz),
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) {
+                      const begin = Offset(1.0, 0.0);
+                      const end = Offset.zero;
+                      const curve = Curves.easeInOutQuart;
+                      var tween = Tween(
+                        begin: begin,
+                        end: end,
+                      ).chain(CurveTween(curve: curve));
+                      return SlideTransition(
+                        position: animation.drive(tween),
+                        child: child,
+                      );
+                    },
               ),
             );
           },
@@ -161,7 +232,8 @@ class _PremiumUstazCard extends StatelessWidget {
                         imageUrl: ustaz.imageUrl,
                         fit: BoxFit.cover,
                         httpHeaders: const {
-                          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                          'User-Agent':
+                              'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
                         },
                         placeholder: (context, url) => Shimmer.fromColors(
                           baseColor: Colors.grey[300]!,
@@ -170,7 +242,11 @@ class _PremiumUstazCard extends StatelessWidget {
                         ),
                         errorWidget: (context, url, error) => Container(
                           color: AppColors.primary.withOpacity(0.1),
-                          child: const Icon(Icons.person, color: AppColors.primary, size: 40),
+                          child: const Icon(
+                            Icons.person,
+                            color: AppColors.primary,
+                            size: 40,
+                          ),
                         ),
                       ),
                     ),
@@ -194,7 +270,10 @@ class _PremiumUstazCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.primary.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(20),

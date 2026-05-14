@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class AppTextStyles {
   // Locale State
@@ -7,207 +6,232 @@ class AppTextStyles {
   static void setLocale(String locale) => _currentLocale = locale;
   static bool get _isAmharic => _currentLocale == 'am';
 
-  static String get _fontFamily =>
-      _isAmharic ? 'Benaiah' : GoogleFonts.inter().fontFamily!;
-  static String get _displayFontFamily =>
-      _isAmharic ? 'Benaiah' : GoogleFonts.poppins().fontFamily!;
+  static String _arabicFontFamily = 'Amiri';
+  static void setArabicFontFamily(String family) => _arabicFontFamily = family;
+
+  static String? get _fontFamily => _isAmharic ? 'Benaiah' : null;
 
   // Font Families
-  static String get primaryFont => _fontFamily;
-  static String get arabicFont => GoogleFonts.amiri().fontFamily!;
-  static String get displayFont => _displayFontFamily;
+  static String get primaryFont => _fontFamily ?? 'sans-serif';
+  static String get arabicFont => _arabicFontFamily;
+  static String get displayFont => _fontFamily ?? 'sans-serif';
 
   // Display Styles - Large Headers
-  static TextStyle get displayLarge => GoogleFonts.poppins(
+  static TextStyle get displayLarge => TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 36,
     fontWeight: FontWeight.w700,
     color: const Color(0xFF1A1D23),
     height: 1.2,
     letterSpacing: -0.5,
-  ).copyWith(fontFamily: _isAmharic ? 'Benaiah' : null);
+  );
 
-  static TextStyle get displayMedium => GoogleFonts.poppins(
+  static TextStyle get displayMedium => TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 28,
     fontWeight: FontWeight.w600,
     color: const Color(0xFF1A1D23),
     height: 1.3,
     letterSpacing: -0.25,
-  ).copyWith(fontFamily: _isAmharic ? 'Benaiah' : null);
+  );
 
-  static TextStyle get displaySmall => GoogleFonts.poppins(
+  static TextStyle get displaySmall => TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 24,
     fontWeight: FontWeight.w600,
     color: const Color(0xFF1A1D23),
     height: 1.3,
-  ).copyWith(fontFamily: _isAmharic ? 'Benaiah' : null);
+  );
 
   // Heading Styles - Modern Typography Scale
-  static TextStyle get heading1 => GoogleFonts.poppins(
+  static TextStyle get heading1 => TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 22,
     fontWeight: FontWeight.w600,
     color: const Color(0xFF1A1D23),
     height: 1.4,
-  ).copyWith(fontFamily: _isAmharic ? 'Benaiah' : null);
+  );
 
-  static TextStyle get heading2 => GoogleFonts.poppins(
+  static TextStyle get heading2 => TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 20,
     fontWeight: FontWeight.w600,
     color: const Color(0xFF1A1D23),
     height: 1.4,
-  ).copyWith(fontFamily: _isAmharic ? 'Benaiah' : null);
+  );
 
-  static TextStyle get heading3 => GoogleFonts.poppins(
+  static TextStyle get heading3 => TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 18,
     fontWeight: FontWeight.w500,
     color: const Color(0xFF1A1D23),
     height: 1.4,
-  ).copyWith(fontFamily: _isAmharic ? 'Benaiah' : null);
+  );
 
-  static TextStyle get heading4 => GoogleFonts.inter(
+  static TextStyle get heading4 => TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 16,
     fontWeight: FontWeight.w600,
     color: const Color(0xFF1A1D23),
     height: 1.5,
-  ).copyWith(fontFamily: _isAmharic ? 'Benaiah' : null);
+  );
 
   // Body Text Styles
-  static TextStyle get bodyLarge => GoogleFonts.inter(
+  static TextStyle get bodyLarge => TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 16,
     fontWeight: FontWeight.w400,
     color: const Color(0xFF1A1D23),
     height: 1.6,
-  ).copyWith(fontFamily: _isAmharic ? 'Benaiah' : null);
+  );
 
   // Add body1 for backward compatibility
-  static TextStyle get body1 => GoogleFonts.inter(
+  static TextStyle get body1 => TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 16,
     fontWeight: FontWeight.w400,
     color: const Color(0xFF1A1D23),
     height: 1.6,
-  ).copyWith(fontFamily: _isAmharic ? 'Benaiah' : null);
+  );
 
-  static TextStyle get bodyMedium => GoogleFonts.inter(
+  static TextStyle get bodyMedium => TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 14,
     fontWeight: FontWeight.w400,
     color: const Color(0xFF4A5568),
     height: 1.5,
-  ).copyWith(fontFamily: _isAmharic ? 'Benaiah' : null);
+  );
 
-  static TextStyle get bodySmall => GoogleFonts.inter(
+  static TextStyle get bodySmall => TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 12,
     fontWeight: FontWeight.w400,
     color: const Color(0xFF718096),
     height: 1.4,
-  ).copyWith(fontFamily: _isAmharic ? 'Benaiah' : null);
+  );
 
   // Label Styles
-  static TextStyle get labelLarge => GoogleFonts.inter(
+  static TextStyle get labelLarge => TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 14,
     fontWeight: FontWeight.w500,
     color: const Color(0xFF1A1D23),
     height: 1.4,
     letterSpacing: 0.1,
-  ).copyWith(fontFamily: _isAmharic ? 'Benaiah' : null);
+  );
 
-  static TextStyle get labelMedium => GoogleFonts.inter(
+  static TextStyle get labelMedium => TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 12,
     fontWeight: FontWeight.w500,
     color: const Color(0xFF4A5568),
     height: 1.3,
     letterSpacing: 0.5,
-  ).copyWith(fontFamily: _isAmharic ? 'Benaiah' : null);
+  );
 
-  static TextStyle get labelSmall => GoogleFonts.inter(
+  static TextStyle get labelSmall => TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 11,
     fontWeight: FontWeight.w500,
     color: const Color(0xFF718096),
     height: 1.3,
     letterSpacing: 0.5,
-  ).copyWith(fontFamily: _isAmharic ? 'Benaiah' : null);
+  );
 
   // Arabic Text Styles - Islamic Content
-  static TextStyle get arabicLarge => GoogleFonts.amiri(
+  static TextStyle get arabicLarge => TextStyle(
+    fontFamily: arabicFont,
     fontSize: 24,
     fontWeight: FontWeight.w400,
-    color: const Color(0xFF1A1D23),
+    color: Color(0xFF1A1D23),
     height: 2.0,
   );
 
-  static TextStyle get arabicMedium => GoogleFonts.amiri(
+  static TextStyle get arabicMedium => TextStyle(
+    fontFamily: arabicFont,
     fontSize: 20,
     fontWeight: FontWeight.w400,
-    color: const Color(0xFF1A1D23),
+    color: Color(0xFF1A1D23),
     height: 1.8,
   );
 
-  static TextStyle get arabicSmall => GoogleFonts.amiri(
+  static TextStyle get arabicSmall => TextStyle(
+    fontFamily: arabicFont,
     fontSize: 16,
     fontWeight: FontWeight.w400,
-    color: const Color(0xFF4A5568),
+    color: Color(0xFF4A5568),
     height: 1.7,
   );
 
   // Specialized Styles
-  static TextStyle get caption => GoogleFonts.inter(
+  static TextStyle get caption => TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 12,
     fontWeight: FontWeight.w400,
     color: const Color(0xFF718096),
     height: 1.4,
-  ).copyWith(fontFamily: _isAmharic ? 'Benaiah' : null);
+  );
 
-  static TextStyle get overline => GoogleFonts.inter(
+  static TextStyle get overline => TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 10,
     fontWeight: FontWeight.w600,
     color: const Color(0xFF718096),
     height: 1.6,
     letterSpacing: 1.5,
-  ).copyWith(fontFamily: _isAmharic ? 'Benaiah' : null);
+  );
 
   // Button Styles
-  static TextStyle get buttonLarge => GoogleFonts.inter(
+  static TextStyle get buttonLarge => TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 16,
     fontWeight: FontWeight.w600,
     color: Colors.white,
     height: 1.25,
     letterSpacing: 0.1,
-  ).copyWith(fontFamily: _isAmharic ? 'Benaiah' : null);
+  );
 
-  static TextStyle get buttonMedium => GoogleFonts.inter(
+  static TextStyle get buttonMedium => TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 14,
     fontWeight: FontWeight.w600,
     color: Colors.white,
     height: 1.4,
     letterSpacing: 0.1,
-  ).copyWith(fontFamily: _isAmharic ? 'Benaiah' : null);
+  );
 
-  static TextStyle get buttonSmall => GoogleFonts.inter(
+  static TextStyle get buttonSmall => TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 12,
     fontWeight: FontWeight.w600,
     color: Colors.white,
     height: 1.3,
     letterSpacing: 0.2,
-  ).copyWith(fontFamily: _isAmharic ? 'Benaiah' : null);
+  );
 
   // Prayer Times Styles
-  static TextStyle get prayerName => GoogleFonts.poppins(
+  static TextStyle get prayerName => TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 14,
     fontWeight: FontWeight.w600,
     color: Colors.white,
     height: 1.2,
-  ).copyWith(fontFamily: _isAmharic ? 'Benaiah' : null);
+  );
 
-  static TextStyle get prayerTime => GoogleFonts.inter(
+  static TextStyle get prayerTime => TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 16,
     fontWeight: FontWeight.w700,
     color: Colors.white,
     height: 1.1,
     letterSpacing: 0.5,
-  ).copyWith(fontFamily: _isAmharic ? 'Benaiah' : null);
+  );
 
-  static TextStyle get prayerTimeSmall => GoogleFonts.inter(
+  static TextStyle get prayerTimeSmall => TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 12,
     fontWeight: FontWeight.w500,
     color: Colors.white70,
     height: 1.2,
-  ).copyWith(fontFamily: _isAmharic ? 'Benaiah' : null);
+  );
 }

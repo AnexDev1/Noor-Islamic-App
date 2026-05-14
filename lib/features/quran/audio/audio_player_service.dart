@@ -9,6 +9,7 @@ class SimpleQuranAudioPlayer {
     _instance ??= SimpleQuranAudioPlayer._internal();
     return _instance!;
   }
+
   SimpleQuranAudioPlayer._internal() {
     _initialize();
   }
@@ -40,8 +41,9 @@ class SimpleQuranAudioPlayer {
     // Listen to player state changes
     _audioPlayer.playerStateStream.listen((state) {
       isPlaying.value = state.playing;
-      isLoading.value = state.processingState == ProcessingState.loading ||
-                      state.processingState == ProcessingState.buffering;
+      isLoading.value =
+          state.processingState == ProcessingState.loading ||
+          state.processingState == ProcessingState.buffering;
 
       hasError.value = false; // Reset error on state change
 
@@ -90,6 +92,7 @@ class SimpleQuranAudioPlayer {
 
       // Start playing
       await _audioPlayer.play();
+      isPlaying.value = true;
 
       debugPrint('Audio started successfully');
     } catch (e) {
@@ -108,6 +111,7 @@ class SimpleQuranAudioPlayer {
         await _audioPlayer.seek(Duration.zero);
       }
       await _audioPlayer.play();
+      isPlaying.value = true;
     } catch (e) {
       debugPrint('Error resuming audio: $e');
       hasError.value = true;
@@ -118,6 +122,7 @@ class SimpleQuranAudioPlayer {
   Future<void> pause() async {
     try {
       await _audioPlayer.pause();
+      isPlaying.value = false;
     } catch (e) {
       debugPrint('Error pausing audio: $e');
       hasError.value = true;

@@ -6,6 +6,7 @@ import '../domain/azkhar_category.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/utils/helpers.dart';
+import '../../bookmarks/ui/bookmarks_screen.dart';
 import 'widgets/azkhar_category_list.dart';
 
 class AzkharHomeScreen extends StatefulWidget {
@@ -219,7 +220,12 @@ class _AzkharHomeScreenState extends State<AzkharHomeScreen>
                       ),
                       IconButton(
                         onPressed: () {
-                          // Add bookmark functionality
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const BookmarksScreen(),
+                            ),
+                          );
                         },
                         icon: const Icon(
                           Icons.bookmark_border,

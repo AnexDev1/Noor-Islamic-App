@@ -9,8 +9,7 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../core/services/user_service.dart';
 import '../../../core/providers/app_providers.dart';
 import '../../../core/providers/models.dart';
-import '../../quran/ui/quran_screen.dart';
-import '../../quran/ui/listen_quran_screen.dart';
+import '../../quran/ui/quran_hub_screen.dart';
 import '../../hadith/ui/hadith_home_screen.dart';
 import '../../azkhar/ui/azkhar_home_screen.dart';
 import '../../tasbih/ui/tasbih_hub_screen.dart';
@@ -93,8 +92,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
   void _updateCountdown() {
     if (_currentPrayerTimes == null) return;
+    final l10n = AppLocalizations.of(context)!;
     final now = DateTime.now();
-    final prayerNames = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+    final prayerNames = [l10n.fajr, l10n.dhuhr, l10n.asr, l10n.maghrib, l10n.isha];
     final prayerTimesList = [
       _parsePrayerTime(_currentPrayerTimes!.fajr),
       _parsePrayerTime(_currentPrayerTimes!.dhuhr),
@@ -174,11 +174,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     // Quick Actions Grid
                     _buildQuickActionsGrid(context),
 
-                    const SizedBox(height: 24),
-
-                    // Featured Videos Card
-                    _buildFeaturedVideosCard(),
-
                     const SizedBox(height: 24), // Bottom spacing reduced
                   ]),
                 ),
@@ -187,19 +182,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildFeaturedVideosCard() {
-    return _IslamicVideosCarousel(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const UstazListScreen(),
-          ),
-        );
-      },
     );
   }
 
@@ -483,7 +465,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     );
   }
 
-
   Widget _buildPrayerTimesGrid(
     PrayerTimes prayerTimes,
     PrayerStatus todayStatus,
@@ -654,7 +635,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                                   children: [
                                     Text(
                                       greetingSnapshot.data ??
-                                          'As-salamu Alaykum',
+                                          AppLocalizations.of(context)!.assalamuAlaikum,
                                       style: AppTextStyles.bodyMedium.copyWith(
                                         color: Colors.white.withAlpha(230),
                                       ),
@@ -703,7 +684,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           value: 'en',
           child: Row(
             children: [
-              Icon(Icons.check, color: currentLocale.languageCode == 'en' ? AppColors.primary : Colors.transparent, size: 20),
+              Icon(
+                Icons.check,
+                color: currentLocale.languageCode == 'en'
+                    ? AppColors.primary
+                    : Colors.transparent,
+                size: 20,
+              ),
               const SizedBox(width: 8),
               const Text('English'),
             ],
@@ -713,7 +700,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           value: 'am',
           child: Row(
             children: [
-              Icon(Icons.check, color: currentLocale.languageCode == 'am' ? AppColors.primary : Colors.transparent, size: 20),
+              Icon(
+                Icons.check,
+                color: currentLocale.languageCode == 'am'
+                    ? AppColors.primary
+                    : Colors.transparent,
+                size: 20,
+              ),
               const SizedBox(width: 8),
               const Text('አማርኛ'),
             ],
@@ -723,7 +716,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           value: 'om',
           child: Row(
             children: [
-              Icon(Icons.check, color: currentLocale.languageCode == 'om' ? AppColors.primary : Colors.transparent, size: 20),
+              Icon(
+                Icons.check,
+                color: currentLocale.languageCode == 'om'
+                    ? AppColors.primary
+                    : Colors.transparent,
+                size: 20,
+              ),
               const SizedBox(width: 8),
               const Text('Afaan Oromoo'),
             ],
@@ -741,7 +740,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         'icon': 'assets/quran.png',
         'onTap': () => Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const QuranScreen()),
+          MaterialPageRoute(builder: (_) => const QuranHubScreen()),
         ),
       },
       {
@@ -769,19 +768,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         ),
       },
       {
-        'title': l10n.listenQuran,
-        'icon': Icons.headphones,
-        'onTap': () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const ListenQuranScreen()),
-        ),
-      },
-      {
         'title': l10n.learnIslam,
         'icon': Icons.menu_book_rounded,
         'onTap': () => Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => const LearnIslamScreen()),
+        ),
+      },
+      {
+        'title': l10n.islamicVideos,
+        'icon': Icons.play_circle_filled_rounded,
+        'onTap': () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const UstazListScreen()),
         ),
       },
     ];

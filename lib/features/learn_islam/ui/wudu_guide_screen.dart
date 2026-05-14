@@ -31,8 +31,11 @@ class _WuduGuideScreenState extends ConsumerState<WuduGuideScreen> {
       error: (e, _) => Center(child: Text('Error loading wudu steps: $e')),
       data: (steps) => ListView.builder(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
-        itemCount: steps.length,
+        itemCount: steps.length + 1,
         itemBuilder: (context, index) {
+          if (index == steps.length) {
+            return _buildQuizButton();
+          }
           final step = steps[index];
           final stepNum = step['step'] as int;
           final isCompleted = progress.completedWuduSteps.contains(stepNum);
@@ -54,6 +57,234 @@ class _WuduGuideScreenState extends ConsumerState<WuduGuideScreen> {
             },
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildQuizButton() {
+    final l10n = AppLocalizations.of(context)!;
+    return Padding(
+      padding: const EdgeInsets.only(top: 24, bottom: 40),
+      child: ElevatedButton.icon(
+        onPressed: () => _showWuduQuiz(),
+        icon: const Icon(Icons.quiz, size: 20),
+        label: Text(l10n.testYourKnowledge),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF06B6D4), // waterColor
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          elevation: 4,
+          shadowColor: const Color(0xFF06B6D4).withValues(alpha: 0.5),
+        ),
+      ),
+    );
+  }
+
+  void _showWuduQuiz() {
+    final l10n = AppLocalizations.of(context)!;
+    int currentQuestion = 0;
+    int score = 0;
+
+    final questions = [
+      {
+        'q': 'What is the first and most important step before starting Wudu?',
+        'options': ['Washing the hands', 'Making intention (Niyyah) & saying Bismillah', 'Rinsing the mouth', 'Washing the face'],
+        'answer': 1,
+      },
+      {
+        'q': 'How many times is it Sunnah to wash your arms up to the elbows?',
+        'options': ['Once', 'Twice', 'Three times', 'Four times'],
+        'answer': 2,
+      },
+      {
+        'q': 'When washing your arms or feet, which side should you start with?',
+        'options': ['The Left side', 'The Right side', 'Both at the same time', 'It doesn\'t matter'],
+        'answer': 1,
+      },
+      {
+        'q': 'How many times should you wipe your head (Masah)?',
+        'options': ['Once', 'Twice', 'Three times', 'It is optional'],
+        'answer': 0,
+      },
+      {
+        'q': 'What is recommended to say after completing Wudu?',
+        'options': ['Allahu Akbar', 'Alhamdulillah', 'The Shahadah', 'SubhanAllah'],
+        'answer': 2,
+      },
+    ];
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setSheetState) {
+            if (currentQuestion >= questions.length) {
+              // Quiz complete
+              Future.microtask(() {
+                ref
+                    .read(learnProgressProvider.notifier)
+                    .recordQuizResult(score, questions.length);
+              });
+              return _quizResultSheet(score, questions.length, l10n);
+            }
+
+            final q = questions[currentQuestion];
+            final options = q['options'] as List<String>;
+
+            return Container(
+              padding: const EdgeInsets.all(24),
+              decoration: const BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        l10n.quiz,
+                        style: AppTextStyles.heading3,
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF06B6D4).withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          '${currentQuestion + 1} / ${questions.length}',
+                          style: AppTextStyles.labelMedium.copyWith(
+                            color: const Color(0xFF06B6D4),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    q['q'] as String,
+                    style: AppTextStyles.heading4.copyWith(height: 1.4),
+                  ),
+                  const SizedBox(height: 32),
+                  ...List.generate(options.length, (idx) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (idx == q['answer']) {
+                            score++;
+                            HapticFeedback.lightImpact();
+                          } else {
+                            HapticFeedback.heavyImpact();
+                          }
+                          setSheetState(() {
+                            currentQuestion++;
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.background,
+                          foregroundColor: AppColors.textPrimary,
+                          padding: const EdgeInsets.all(16),
+                          alignment: Alignment.centerLeft,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            side: BorderSide(
+                              color: AppColors.textTertiary.withValues(alpha: 0.2),
+                            ),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: Text(
+                          options[idx],
+                          style: AppTextStyles.bodyMedium,
+                        ),
+                      ),
+                    );
+                  }),
+                  const SizedBox(height: 24),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _quizResultSheet(int score, int total, AppLocalizations l10n) {
+    final percentage = ((score / total) * 100).round();
+    final isGood = percentage >= 60;
+    
+    return Container(
+      padding: const EdgeInsets.all(32),
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: (isGood ? AppColors.success : AppColors.secondary)
+                  .withValues(alpha: 0.1),
+            ),
+            child: Icon(
+              isGood ? Icons.stars : Icons.refresh,
+              size: 40,
+              color: isGood ? AppColors.success : AppColors.secondary,
+            ),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            '$score / $total',
+            style: AppTextStyles.displayMedium.copyWith(
+              color: isGood ? AppColors.success : AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            l10n.quizResultMessage(score, total, percentage),
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: AppColors.textSecondary,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 32),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF06B6D4),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+              child: const Text(
+                'Continue',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+        ],
       ),
     );
   }

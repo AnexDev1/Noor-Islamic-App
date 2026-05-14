@@ -306,6 +306,16 @@ class _ReflectionsScreenState extends ConsumerState<ReflectionsScreen> {
                           fontSize: 14,
                         ),
                       ),
+                      IconButton(
+                        onPressed: () =>
+                            _showReflectionSheet(existing: reflection),
+                        icon: const Icon(
+                          Icons.edit,
+                          color: Colors.white54,
+                          size: 18,
+                        ),
+                        visualDensity: VisualDensity.compact,
+                      ),
                       const Spacer(),
                       Text(
                         timeStr,
@@ -374,10 +384,14 @@ class _ReflectionsScreenState extends ConsumerState<ReflectionsScreen> {
   }
 
   void _showAddReflectionSheet(BuildContext context) {
-    int selectedSentiment = 3;
-    String selectedPrayer = 'Fajr';
-    final noteController = TextEditingController();
-    final selectedTags = <String>[];
+    _showReflectionSheet();
+  }
+
+  void _showReflectionSheet({Reflection? existing}) {
+    int selectedSentiment = existing?.sentiment ?? 3;
+    String selectedPrayer = existing?.prayerName ?? 'Fajr';
+    final noteController = TextEditingController(text: existing?.note ?? '');
+    final selectedTags = <String>[...existing?.tags ?? const []];
     final availableTags = [
       'Khushoo',
       'Grateful',
@@ -444,8 +458,21 @@ class _ReflectionsScreenState extends ConsumerState<ReflectionsScreen> {
                                 setSheetState(() => selectedPrayer = prayer);
                               },
                               selectedColor: const Color(0xFFD4AF37),
-                              backgroundColor: Colors.white.withValues(
-                                alpha: 0.1,
+                              backgroundColor: const Color(0xFF13253D),
+                              color: MaterialStateProperty.resolveWith<Color?>((
+                                states,
+                              ) {
+                                if (states.contains(MaterialState.selected)) {
+                                  return const Color(0xFFD4AF37);
+                                }
+                                return const Color(0xFF13253D);
+                              }),
+                              shape: StadiumBorder(
+                                side: BorderSide(
+                                  color: selectedPrayer == prayer
+                                      ? const Color(0xFFD4AF37)
+                                      : Colors.white.withValues(alpha: 0.12),
+                                ),
                               ),
                               labelStyle: TextStyle(
                                 color: selectedPrayer == prayer
@@ -518,7 +545,26 @@ class _ReflectionsScreenState extends ConsumerState<ReflectionsScreen> {
                           selectedColor: const Color(
                             0xFFD4AF37,
                           ).withValues(alpha: 0.3),
-                          backgroundColor: Colors.white.withValues(alpha: 0.08),
+                          backgroundColor: const Color(0xFF13253D),
+                          color: MaterialStateProperty.resolveWith<Color?>((
+                            states,
+                          ) {
+                            if (states.contains(MaterialState.selected)) {
+                              return const Color(
+                                0xFFD4AF37,
+                              ).withValues(alpha: 0.3);
+                            }
+                            return const Color(0xFF13253D);
+                          }),
+                          shape: StadiumBorder(
+                            side: BorderSide(
+                              color: selectedTags.contains(tag)
+                                  ? const Color(
+                                      0xFFD4AF37,
+                                    ).withValues(alpha: 0.4)
+                                  : Colors.white.withValues(alpha: 0.12),
+                            ),
+                          ),
                           labelStyle: TextStyle(
                             color: selectedTags.contains(tag)
                                 ? const Color(0xFFD4AF37)
@@ -535,18 +581,34 @@ class _ReflectionsScreenState extends ConsumerState<ReflectionsScreen> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      ref
-                          .read(reflectionsProvider.notifier)
-                          .addReflection(
+                      final notifier = ref.read(reflectionsProvider.notifier);
+                      if (existing == null) {
+                        notifier.addReflection(
+                          prayerName: selectedPrayer,
+                          sentiment: selectedSentiment,
+                          note: noteController.text,
+                          tags: selectedTags,
+                        );
+                      } else {
+                        notifier.updateReflection(
+                          Reflection(
+                            id: existing.id,
+                            dateTime: existing.dateTime,
                             prayerName: selectedPrayer,
                             sentiment: selectedSentiment,
                             note: noteController.text,
                             tags: selectedTags,
-                          );
+                          ),
+                        );
+                      }
                       Navigator.pop(ctx);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: const Text('Reflection saved 🤲'),
+                          content: Text(
+                            existing == null
+                                ? 'Reflection saved 🤲'
+                                : 'Reflection updated 🤲',
+                          ),
                           backgroundColor: const Color(0xFF0F4C3A),
                           behavior: SnackBarBehavior.floating,
                           shape: RoundedRectangleBorder(
@@ -563,8 +625,10 @@ class _ReflectionsScreenState extends ConsumerState<ReflectionsScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text(
-                      'Save Reflection',
+                    child: Text(
+                      existing == null
+                          ? 'Save Reflection'
+                          : 'Update Reflection',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,

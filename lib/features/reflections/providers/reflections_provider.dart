@@ -150,6 +150,20 @@ class ReflectionsNotifier extends StateNotifier<ReflectionsState> {
     _updateState(updated);
     await _saveData();
   }
+
+  Future<void> updateReflection(Reflection updatedReflection) async {
+    final updated =
+        state.reflections
+            .map(
+              (reflection) => reflection.id == updatedReflection.id
+                  ? updatedReflection
+                  : reflection,
+            )
+            .toList()
+          ..sort((a, b) => b.dateTime.compareTo(a.dateTime));
+    _updateState(updated);
+    await _saveData();
+  }
 }
 
 final reflectionsProvider =

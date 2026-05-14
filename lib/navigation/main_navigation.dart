@@ -4,7 +4,6 @@ import '../features/home/ui/home_screen.dart';
 import '../features/qibla/ui/qibla_screen.dart';
 import '../features/ai_chat/ui/ai_chat_screen.dart';
 import '../features/more/ui/more_screen.dart';
-import '../features/videos/ui/ustaz_list_screen.dart';
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_text_styles.dart';
 
@@ -20,7 +19,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   final List<Widget> _screens = [
     const HomeScreen(),
-    const UstazListScreen(),
     const QiblaScreen(),
     const AiChatScreen(),
     const MoreScreen(),
@@ -42,12 +40,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           color: AppColors.primary,
         ),
         label: l10n.home,
-      ),
-      // Videos tab
-      NavigationItem(
-        icon: Icons.play_circle_filled_rounded,
-        activeIcon: Icons.play_circle_filled_rounded,
-        label: l10n.islamicVideos,
       ),
       NavigationItem(
         icon: Image.asset(
@@ -131,7 +123,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
                               color: isActive
-                                  ? AppColors.primary.withOpacity(0.1)
+                                  ? AppColors.primary.withValues(alpha: 0.1)
                                   : Colors.transparent,
                               borderRadius: BorderRadius.circular(12),
                             ),

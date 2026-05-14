@@ -7,6 +7,7 @@ import 'dart:convert';
 import '../../features/home/data/prayer_time_api.dart';
 import '../../features/home/data/ramadan_countdown_api.dart';
 import '../services/adhan_notification_service.dart';
+import '../theme/app_text_styles.dart';
 import 'models.dart';
 
 // Shared Preferences Provider
@@ -162,10 +163,12 @@ class PrayerTimesNotifier extends StateNotifier<AsyncValue<PrayerTimes>> {
         final timesMap = Map<String, String>.from(json.decode(cachedTimes));
         final cachedLat = _prefs.getDouble('prayer_times_lat');
         final cachedLon = _prefs.getDouble('prayer_times_lon');
+        final cachedMadhab = _prefs.getString('prayer_times_madhab');
         final isUsingFallback =
             _prefs.getBool('prayer_times_fallback') ?? false;
         final isUsingApiFallback =
             _prefs.getBool('prayer_times_api_fallback') ?? false;
+        final currentMadhab = _ref.read(userPreferencesProvider).selectedMadhab;
 
         final prayerTimes = PrayerTimes.fromMap(
           timesMap,
@@ -186,7 +189,8 @@ class PrayerTimesNotifier extends StateNotifier<AsyncValue<PrayerTimes>> {
         final now = DateTime.now();
         if (lastUpdate.day != now.day ||
             lastUpdate.month != now.month ||
-            lastUpdate.year != now.year) {
+            lastUpdate.year != now.year ||
+            cachedMadhab != currentMadhab) {
           await refreshPrayerTimes();
         }
       } else {
@@ -199,17 +203,21 @@ class PrayerTimesNotifier extends StateNotifier<AsyncValue<PrayerTimes>> {
 
   Future<void> refreshPrayerTimes() async {
     try {
-      final locationAsync = _ref.read(userLocationProvider);
-      if (!locationAsync.hasValue) {
-        await _ref.read(userLocationProvider.notifier).getCurrentLocation();
-      }
+      state = const AsyncValue.loading();
+
+      await _ref.read(userLocationProvider.notifier).refreshLocation();
 
       final location = _ref.read(userLocationProvider).value;
       if (location == null) throw Exception('No location available');
 
+      final preferences = _ref.read(userPreferencesProvider);
+      final school = _mapMadhabToSchool(preferences.selectedMadhab);
+
       final result = await PrayerTimeApi.fetchPrayerTimes(
         lat: location.latitude,
         lon: location.longitude,
+        method: 4,
+        school: school,
       );
 
       final prayerTimes = PrayerTimes.fromMap(
@@ -229,6 +237,9 @@ class PrayerTimesNotifier extends StateNotifier<AsyncValue<PrayerTimes>> {
       );
       await _prefs.setDouble('prayer_times_lat', location.latitude);
       await _prefs.setDouble('prayer_times_lon', location.longitude);
+      await _prefs.setInt('prayer_times_method', 4);
+      await _prefs.setInt('prayer_times_school', school);
+      await _prefs.setString('prayer_times_madhab', preferences.selectedMadhab);
       await _prefs.setBool('prayer_times_fallback', location.isUsingFallback);
       await _prefs.setBool('prayer_times_api_fallback', result.isUsingFallback);
 
@@ -239,6 +250,11 @@ class PrayerTimesNotifier extends StateNotifier<AsyncValue<PrayerTimes>> {
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
     }
+  }
+
+  int _mapMadhabToSchool(String madhab) {
+    final normalized = madhab.toLowerCase();
+    return normalized.contains('hanafi') ? 0 : 1;
   }
 
   Future<void> _scheduleNotifications(PrayerTimes prayerTimes) async {
@@ -560,20 +576,32 @@ class UserPreferencesNotifier extends StateNotifier<UserPreferences> {
   Future<void> _loadPreferences() async {
     final selectedMadhab = _prefs.getString('selected_madhab') ?? 'Not set';
     final prayerReminders = _prefs.getBool('prayer_reminders') ?? true;
+    final zikrRemindersEnabled =
+        _prefs.getBool('zikr_reminders_enabled') ?? false;
+    final zikrReminderIntervalMinutes =
+        _prefs.getInt('zikr_reminder_interval_minutes') ?? 5;
+    final zikrReminderText =
+        _prefs.getString('zikr_reminder_text') ?? 'Sallu ala Nabi';
     final showArabic = _prefs.getBool('show_arabic') ?? true;
     final darkMode = _prefs.getBool('dark_mode') ?? false;
     final notificationsEnabled =
         _prefs.getBool('notifications_enabled') ?? true;
+    final arabicFontFamily = _prefs.getString('arabic_font_family') ?? 'Amiri';
     final lastAppUsage = _prefs.getString('last_app_usage') ?? 'First time';
 
     state = UserPreferences(
       selectedMadhab: selectedMadhab,
       prayerReminders: prayerReminders,
+      zikrRemindersEnabled: zikrRemindersEnabled,
+      zikrReminderIntervalMinutes: zikrReminderIntervalMinutes,
+      zikrReminderText: zikrReminderText,
       showArabic: showArabic,
       darkMode: darkMode,
       notificationsEnabled: notificationsEnabled,
+      arabicFontFamily: arabicFontFamily,
       lastAppUsage: lastAppUsage,
     );
+    AppTextStyles.setArabicFontFamily(arabicFontFamily);
   }
 
   Future<void> updateMadhab(String madhab) async {
@@ -586,6 +614,23 @@ class UserPreferencesNotifier extends StateNotifier<UserPreferences> {
     await _prefs.setBool('prayer_reminders', state.prayerReminders);
   }
 
+  Future<void> toggleZikrReminders() async {
+    state = state.copyWith(zikrRemindersEnabled: !state.zikrRemindersEnabled);
+    await _prefs.setBool('zikr_reminders_enabled', state.zikrRemindersEnabled);
+  }
+
+  Future<void> setZikrReminderInterval(int minutes) async {
+    if (minutes <= 0) return;
+    state = state.copyWith(zikrReminderIntervalMinutes: minutes);
+    await _prefs.setInt('zikr_reminder_interval_minutes', minutes);
+  }
+
+  Future<void> setZikrReminderText(String text) async {
+    final value = text.trim().isEmpty ? state.zikrReminderText : text.trim();
+    state = state.copyWith(zikrReminderText: value);
+    await _prefs.setString('zikr_reminder_text', value);
+  }
+
   Future<void> toggleArabicText() async {
     state = state.copyWith(showArabic: !state.showArabic);
     await _prefs.setBool('show_arabic', state.showArabic);
@@ -594,6 +639,12 @@ class UserPreferencesNotifier extends StateNotifier<UserPreferences> {
   Future<void> toggleDarkMode() async {
     state = state.copyWith(darkMode: !state.darkMode);
     await _prefs.setBool('dark_mode', state.darkMode);
+  }
+
+  Future<void> setArabicFontFamily(String family) async {
+    state = state.copyWith(arabicFontFamily: family);
+    await _prefs.setString('arabic_font_family', family);
+    AppTextStyles.setArabicFontFamily(family);
   }
 
   Future<void> toggleNotifications() async {
@@ -926,7 +977,7 @@ String _formatDateTime(DateTime dateTime) {
 
 // Locale Provider for app localization
 class LocaleNotifier extends StateNotifier<Locale> {
-  LocaleNotifier(this._prefs) : super(const Locale('am')) {
+  LocaleNotifier(this._prefs) : super(const Locale('en')) {
     _loadSavedLocale();
   }
 

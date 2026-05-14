@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
+import '../../reflections/ui/reflections_screen.dart';
 
 class PrayerMatScreen extends StatefulWidget {
   const PrayerMatScreen({super.key});
@@ -176,11 +177,16 @@ class _PrayerMatScreenState extends State<PrayerMatScreen>
                       selected: _selectedPrayer == p,
                       onSelected: (_) => setState(() => _selectedPrayer = p),
                       selectedColor: const Color(0xFFD4AF37),
-                      backgroundColor: Colors.white.withValues(alpha: 0.1),
+                      backgroundColor: const Color(0xFF14253B),
+                      side: BorderSide(
+                        color: _selectedPrayer == p
+                            ? const Color(0xFFD4AF37)
+                            : Colors.white.withValues(alpha: 0.18),
+                      ),
                       labelStyle: TextStyle(
                         color: _selectedPrayer == p
                             ? const Color(0xFF0A1628)
-                            : Colors.white70,
+                            : const Color(0xFFE7D6A8),
                       ),
                     ),
                   )
@@ -349,11 +355,38 @@ class _PrayerMatScreenState extends State<PrayerMatScreen>
               const SizedBox(height: 32),
               SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const ReflectionsScreen(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.edit_note, size: 20),
+                  label: const Text(
+                    'Log Salah Reflection',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFD4AF37),
-                    foregroundColor: const Color(0xFF0A1628),
+                    backgroundColor: const Color(0xFF1A6B50),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(0xFFD4AF37),
+                    side: const BorderSide(color: Color(0xFFD4AF37)),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),

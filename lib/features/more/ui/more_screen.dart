@@ -10,8 +10,8 @@ import '../../../core/utils/constants.dart';
 import '../../../core/utils/helpers.dart';
 import '../../../core/services/user_service.dart';
 import '../../../core/providers/app_providers.dart';
-import '../../../core/providers/models.dart';
 import '../../../l10n/app_localizations.dart'; // Import localization
+import '../../bookmarks/ui/bookmarks_screen.dart';
 import '../../qadah/ui/qadah_screen.dart'; // Import Qadah screen
 import '../../tasbih/ui/tasbih_hub_screen.dart';
 import '../../quran_streak/ui/quran_streak_screen.dart';
@@ -22,6 +22,7 @@ import '../../prayer_mat/ui/prayer_mat_screen.dart';
 import '../../noor_wrap/ui/noor_wrap_screen.dart';
 import '../../learn_islam/ui/learn_islam_screen.dart';
 import '../../quran/ui/listen_quran_screen.dart';
+import '../../tajweed/ui/hifz_mode_screen.dart';
 import 'settings_screen.dart';
 import 'islamic_calendar_screen.dart';
 import 'about_screen.dart';
@@ -103,9 +104,9 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
                 const SizedBox(height: 12),
                 _buildAnalyticsSection(l10n), // Pass l10n
                 const SizedBox(height: 24),
-                _buildSectionHeader('Spiritual Tools'),
+                _buildSectionHeader(l10n.moreTitle),
                 const SizedBox(height: 12),
-                _buildSpiritualToolsSection(),
+                _buildSpiritualToolsSection(l10n),
                 const SizedBox(height: 24),
                 _buildSectionHeader(l10n.settingsTitle), // Localized header
                 const SizedBox(height: 12),
@@ -234,13 +235,13 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
     );
   }
 
-  Widget _buildSpiritualToolsSection() {
+  Widget _buildSpiritualToolsSection(AppLocalizations l10n) {
     return Column(
       children: [
         _buildMenuTile(
           icon: Icons.radio_button_checked,
-          title: 'Tasbih Hub',
-          subtitle: 'Counter, Nafas Dhikr & Bead Flow',
+          title: l10n.tasbih,
+          subtitle: l10n.tasbihSubtitle,
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => const TasbihHubScreen()),
@@ -249,16 +250,25 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
         _buildMenuTile(
           icon: Icons.menu_book,
           title: AppLocalizations.of(context)!.learnIslam,
-          subtitle: 'Salah, Wudu, rules & video lessons',
+          subtitle: l10n.learnIslamSubtitle,
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => const LearnIslamScreen()),
           ),
         ),
         _buildMenuTile(
+          icon: Icons.bookmarks_rounded,
+          title: l10n.book,
+          subtitle: l10n.bookmarksSubtitle,
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const BookmarksScreen()),
+          ),
+        ),
+        _buildMenuTile(
           icon: Icons.headphones_rounded,
           title: AppLocalizations.of(context)!.listenQuran,
-          subtitle: 'Stream audio with background play',
+          subtitle: l10n.listenQuranSubtitle,
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(
@@ -267,9 +277,18 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
           ),
         ),
         _buildMenuTile(
+          icon: Icons.repeat_one,
+          title: l10n.tajweedHifzMode,
+          subtitle: l10n.tajweedHifzSubtitle,
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const HifzModeScreen()),
+          ),
+        ),
+        _buildMenuTile(
           icon: Icons.local_fire_department,
-          title: 'Mushaf Streak',
-          subtitle: 'Track your daily Quran reading',
+          title: l10n.quran,
+          subtitle: l10n.quranStreakSubtitle,
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => const QuranStreakScreen()),
@@ -277,8 +296,8 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
         ),
         _buildMenuTile(
           icon: Icons.edit_note,
-          title: 'Salah Reflections',
-          subtitle: 'Journal your prayer experiences',
+          title: l10n.salah,
+          subtitle: l10n.reflectionsSubtitle,
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => const ReflectionsScreen()),
@@ -286,8 +305,8 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
         ),
         _buildMenuTile(
           icon: Icons.auto_stories,
-          title: 'Ayah of the Day',
-          subtitle: 'Beautiful shareable Quran cards',
+          title: l10n.ayah,
+          subtitle: l10n.ayahCardSubtitle,
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => const AyahCardScreen()),
@@ -295,8 +314,8 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
         ),
         _buildMenuTile(
           icon: Icons.grid_view_rounded,
-          title: 'Ramadan Habits',
-          subtitle: '30-day challenge board',
+          title: l10n.ramadanCountdown,
+          subtitle: l10n.ramadanHabitsSubtitle,
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => const RamadanHabitsScreen()),
@@ -304,8 +323,8 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
         ),
         _buildMenuTile(
           icon: Icons.self_improvement,
-          title: 'Prayer Mat Mode',
-          subtitle: 'Distraction-free focus timer',
+          title: l10n.prayerMatMode,
+          subtitle: l10n.prayerMatSubtitle,
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => const PrayerMatScreen()),
@@ -313,8 +332,8 @@ class _MoreScreenState extends ConsumerState<MoreScreen>
         ),
         _buildMenuTile(
           icon: Icons.auto_awesome,
-          title: 'Noor Wrap',
-          subtitle: 'Your spiritual journey summary',
+          title: l10n.noorWrap,
+          subtitle: l10n.noorWrapSubtitle,
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => const NoorWrapScreen()),

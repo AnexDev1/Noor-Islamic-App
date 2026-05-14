@@ -13,7 +13,9 @@ class QuranStreakScreen extends ConsumerStatefulWidget {
 class _QuranStreakScreenState extends ConsumerState<QuranStreakScreen>
     with TickerProviderStateMixin {
   late AnimationController _flameController;
-  int _selectedPages = 1;
+  final TextEditingController _pagesController = TextEditingController(
+    text: '1',
+  );
 
   @override
   void initState() {
@@ -27,6 +29,7 @@ class _QuranStreakScreenState extends ConsumerState<QuranStreakScreen>
   @override
   void dispose() {
     _flameController.dispose();
+    _pagesController.dispose();
     super.dispose();
   }
 
@@ -322,68 +325,43 @@ class _QuranStreakScreenState extends ConsumerState<QuranStreakScreen>
             ),
           ),
           const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                onPressed: () {
-                  if (_selectedPages > 1) {
-                    setState(() => _selectedPages--);
-                  }
-                },
-                icon: const Icon(
-                  Icons.remove_circle_outline,
-                  color: Colors.white70,
-                ),
+          TextField(
+            controller: _pagesController,
+            keyboardType: TextInputType.number,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFFD4AF37),
+            ),
+            decoration: InputDecoration(
+              hintText: '55',
+              filled: true,
+              fillColor: const Color(0xFFD4AF37).withValues(alpha: 0.12),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFD4AF37).withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  '$_selectedPages',
-                  style: const TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFFD4AF37),
-                  ),
-                ),
-              ),
-              IconButton(
-                onPressed: () => setState(() => _selectedPages++),
-                icon: const Icon(
-                  Icons.add_circle_outline,
-                  color: Colors.white70,
-                ),
-              ),
-            ],
+            ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
+            child: ElevatedButton.icon(
               onPressed: () {
-                ref
-                    .read(quranStreakProvider.notifier)
-                    .logReading(_selectedPages);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Logged $_selectedPages page${_selectedPages > 1 ? 's' : ''}! MashAllah! 🌟',
-                    ),
-                    backgroundColor: const Color(0xFF0F4C3A),
-                    behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                );
+                final pages = int.tryParse(_pagesController.text.trim()) ?? 0;
+                if (pages <= 0) return;
+                ref.read(quranStreakProvider.notifier).logReading(pages);
+                _pagesController.text = '1';
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(const SnackBar(content: Text('Reading logged')));
               },
+              icon: const Icon(Icons.bookmark_add_outlined, size: 20),
+              label: const Text(
+                'Log Pages',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFD4AF37),
                 foregroundColor: const Color(0xFF0A1628),
@@ -391,10 +369,6 @@ class _QuranStreakScreenState extends ConsumerState<QuranStreakScreen>
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-              ),
-              child: const Text(
-                'Log Reading',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
           ),

@@ -29,7 +29,6 @@ class _QiblaScreenState extends State<QiblaScreen>
   late Animation<double> _pulseAnimation;
   late Animation<double> _rotationAnimation;
   bool _isAligned = false;
-  bool _hasShownAlignmentSnackbar = false;
 
   @override
   void initState() {
@@ -95,37 +94,35 @@ class _QiblaScreenState extends State<QiblaScreen>
         setState(() {
           _isAligned = newAlignment;
         });
-        if (_isAligned && !_hasShownAlignmentSnackbar) {
-          // _showAlignmentSuccess();
-          _hasShownAlignmentSnackbar = true;
+        if (_isAligned) {
+          _showAlignmentSuccess();
           _rotationController.repeat();
-        } else if (!_isAligned) {
-          _hasShownAlignmentSnackbar = false;
+        } else {
           _rotationController.stop();
         }
       }
     }
   }
 
-  // void _showAlignmentSuccess() {
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     SnackBar(
-  //       content: Row(
-  //         children: [
-  //           const Icon(Icons.check_circle, color: Colors.white),
-  //           const SizedBox(width: 12),
-  //           const Text('Alhamdulillah! You\'re facing the Qibla!'),
-  //         ],
-  //       ),
-  //       backgroundColor: AppColors.success,
-  //       behavior: SnackBarBehavior.floating,
-  //       shape: RoundedRectangleBorder(
-  //         borderRadius: BorderRadius.circular(12),
-  //       ),
-  //       duration: const Duration(seconds: 3),
-  //     ),
-  //   );
-  // }
+  void _showAlignmentSuccess() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Row(
+          children: [
+            Icon(Icons.check_circle, color: Colors.white),
+            SizedBox(width: 12),
+            Text('Alhamdulillah! You\'re facing the Qibla!'),
+          ],
+        ),
+        backgroundColor: AppColors.success,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
 
   @override
   void dispose() {

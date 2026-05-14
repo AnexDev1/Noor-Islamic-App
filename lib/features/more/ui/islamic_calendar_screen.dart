@@ -19,19 +19,56 @@ class _IslamicCalendarScreenState extends State<IslamicCalendarScreen> {
   int _currentMonthIndex = 0;
 
   final List<String> _hijriMonths = [
-    'Muharram', 'Safar', 'Rabi\' al-awwal', 'Rabi\' al-thani',
-    'Jumada al-awwal', 'Jumada al-thani', 'Rajab', 'Sha\'ban',
-    'Ramadan', 'Shawwal', 'Dhu al-Qi\'dah', 'Dhu al-Hijjah'
+    'Muharram',
+    'Safar',
+    'Rabi\' al-awwal',
+    'Rabi\' al-thani',
+    'Jumada al-awwal',
+    'Jumada al-thani',
+    'Rajab',
+    'Sha\'ban',
+    'Ramadan',
+    'Shawwal',
+    'Dhu al-Qi\'dah',
+    'Dhu al-Hijjah',
   ];
 
   final List<Map<String, dynamic>> _islamicEvents = [
-    {'date': '1-1', 'name': 'Islamic New Year', 'description': 'Beginning of the Hijri calendar'},
-    {'date': '10-1', 'name': 'Day of Ashura', 'description': 'Day of fasting and remembrance'},
-    {'date': '12-3', 'name': 'Mawlid al-Nabi', 'description': 'Birth of Prophet Muhammad (PBUH)'},
-    {'date': '1-9', 'name': 'Start of Ramadan', 'description': 'Beginning of the holy month'},
-    {'date': '1-10', 'name': 'Eid al-Fitr', 'description': 'Festival of Breaking the Fast'},
-    {'date': '9-12', 'name': 'Day of Arafat', 'description': 'Day of Hajj pilgrimage'},
-    {'date': '10-12', 'name': 'Eid al-Adha', 'description': 'Festival of Sacrifice'},
+    {
+      'date': '1-1',
+      'name': 'Islamic New Year',
+      'description': 'Beginning of the Hijri calendar',
+    },
+    {
+      'date': '10-1',
+      'name': 'Day of Ashura',
+      'description': 'Day of fasting and remembrance',
+    },
+    {
+      'date': '12-3',
+      'name': 'Mawlid al-Nabi',
+      'description': 'Birth of Prophet Muhammad (PBUH)',
+    },
+    {
+      'date': '1-9',
+      'name': 'Start of Ramadan',
+      'description': 'Beginning of the holy month',
+    },
+    {
+      'date': '1-10',
+      'name': 'Eid al-Fitr',
+      'description': 'Festival of Breaking the Fast',
+    },
+    {
+      'date': '9-12',
+      'name': 'Day of Arafat',
+      'description': 'Day of Hajj pilgrimage',
+    },
+    {
+      'date': '10-12',
+      'name': 'Eid al-Adha',
+      'description': 'Festival of Sacrifice',
+    },
   ];
 
   @override
@@ -70,10 +107,7 @@ class _IslamicCalendarScreenState extends State<IslamicCalendarScreen> {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  AppColors.primary,
-                  AppColors.primaryLight,
-                ],
+                colors: [AppColors.primary, AppColors.primaryLight],
               ),
             ),
             child: Column(
@@ -113,7 +147,11 @@ class _IslamicCalendarScreenState extends State<IslamicCalendarScreen> {
                 IconButton(
                   onPressed: () {
                     setState(() {
-                      _selectedDate = DateTime(_selectedDate.year, _selectedDate.month - 1, 1);
+                      _selectedDate = DateTime(
+                        _selectedDate.year,
+                        _selectedDate.month - 1,
+                        1,
+                      );
                     });
                   },
                   icon: const Icon(Icons.chevron_left),
@@ -128,7 +166,11 @@ class _IslamicCalendarScreenState extends State<IslamicCalendarScreen> {
                 IconButton(
                   onPressed: () {
                     setState(() {
-                      _selectedDate = DateTime(_selectedDate.year, _selectedDate.month + 1, 1);
+                      _selectedDate = DateTime(
+                        _selectedDate.year,
+                        _selectedDate.month + 1,
+                        1,
+                      );
                     });
                   },
                   icon: const Icon(Icons.chevron_right),
@@ -149,8 +191,13 @@ class _IslamicCalendarScreenState extends State<IslamicCalendarScreen> {
                   ..._getEventsForMonth(hijriMonth).map((event) {
                     final eventDay = int.parse(event['date'].split('-')[0]);
                     final eventMonth = int.parse(event['date'].split('-')[1]);
-                    final isToday = (eventDay == todayHijriDay && eventMonth == todayHijriMonth);
-                    final isPassed = (eventMonth < todayHijriMonth) || (eventMonth == todayHijriMonth && eventDay < todayHijriDay);
+                    final isToday =
+                        (eventDay == todayHijriDay &&
+                        eventMonth == todayHijriMonth);
+                    final isPassed =
+                        (eventMonth < todayHijriMonth) ||
+                        (eventMonth == todayHijriMonth &&
+                            eventDay < todayHijriDay);
                     return _EventCard(
                       title: event['name'],
                       description: event['description'],
@@ -169,12 +216,19 @@ class _IslamicCalendarScreenState extends State<IslamicCalendarScreen> {
                   // Upcoming Events
                   _SectionHeader(title: 'Upcoming Events'),
                   const SizedBox(height: 12),
-                  ..._getUpcomingEvents(hijriMonth, todayHijriDay, todayHijriMonth, hijriYear).take(3).map((event) {
+                  ..._getUpcomingEvents(
+                    hijriMonth,
+                    todayHijriDay,
+                    todayHijriMonth,
+                    hijriYear,
+                  ).take(3).map((event) {
                     final eventDay = int.parse(event['date'].split('-')[0]);
                     final eventMonth = int.parse(event['date'].split('-')[1]);
-                    final eventYear = hijriYear; // Assume current Hijri year for static events
+                    final eventYear =
+                        hijriYear; // Assume current Hijri year for static events
                     final eventMonthName = _hijriMonths[eventMonth - 1];
-                    final fullHijriDate = '$eventDay $eventMonthName $eventYear AH';
+                    final fullHijriDate =
+                        '$eventDay $eventMonthName $eventYear AH';
                     return _EventCard(
                       title: event['name'],
                       description: event['description'],
@@ -187,7 +241,9 @@ class _IslamicCalendarScreenState extends State<IslamicCalendarScreen> {
                   const SizedBox(height: 24),
 
                   // Islamic Months Info
-                  _SectionHeader(title: 'About ${_hijriMonths[hijriMonth - 1]}'),
+                  _SectionHeader(
+                    title: 'About ${_hijriMonths[hijriMonth - 1]}',
+                  ),
                   const SizedBox(height: 12),
                   _MonthInfoCard(monthIndex: hijriMonth - 1),
                 ],
@@ -206,19 +262,35 @@ class _IslamicCalendarScreenState extends State<IslamicCalendarScreen> {
     }).toList();
   }
 
-  List<Map<String, dynamic>> _getUpcomingEvents(int currentMonth, int todayHijriDay, int todayHijriMonth, int todayHijriYear) {
+  List<Map<String, dynamic>> _getUpcomingEvents(
+    int currentMonth,
+    int todayHijriDay,
+    int todayHijriMonth,
+    int todayHijriYear,
+  ) {
     return _islamicEvents.where((event) {
       final eventDay = int.parse(event['date'].split('-')[0]);
       final eventMonth = int.parse(event['date'].split('-')[1]);
       // Only show events after today
-      return (eventMonth > todayHijriMonth) || (eventMonth == todayHijriMonth && eventDay > todayHijriDay);
+      return (eventMonth > todayHijriMonth) ||
+          (eventMonth == todayHijriMonth && eventDay > todayHijriDay);
     }).toList();
   }
 
   String _getGregorianMonth(int month) {
     const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
     return months[month - 1];
   }
@@ -281,14 +353,15 @@ class _EventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomCard(
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             width: 60,
             height: 60,
             decoration: BoxDecoration(
               color: isThisMonth
-                ? AppColors.primary.withOpacity(0.1)
-                : AppColors.accent.withOpacity(0.1),
+                  ? AppColors.primary.withOpacity(0.1)
+                  : AppColors.accent.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -321,12 +394,62 @@ class _EventCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    if (showTodayTag)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            'Today',
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    if (showPassedTag)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2, left: 8),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.error,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            'Passed',
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -338,36 +461,6 @@ class _EventCard extends StatelessWidget {
               ],
             ),
           ),
-          if (showTodayTag)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                'Today',
-                style: AppTextStyles.bodySmall.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          if (showPassedTag)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: AppColors.error,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                'Passed',
-                style: AppTextStyles.bodySmall.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
         ],
       ),
     );

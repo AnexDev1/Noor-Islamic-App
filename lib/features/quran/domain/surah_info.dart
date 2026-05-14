@@ -1,4 +1,5 @@
 class SurahInfo {
+  final int surahNumber;
   final String surahName;
   final String surahNameArabic;
   final String surahNameTranslation;
@@ -6,6 +7,7 @@ class SurahInfo {
   final int totalAyah;
 
   SurahInfo({
+    required this.surahNumber,
     required this.surahName,
     required this.surahNameArabic,
     required this.surahNameTranslation,
@@ -13,8 +15,9 @@ class SurahInfo {
     required this.totalAyah,
   });
 
-  factory SurahInfo.fromJson(Map<String, dynamic> json) {
+  factory SurahInfo.fromJson(Map<String, dynamic> json, {int? surahNumber}) {
     return SurahInfo(
+      surahNumber: surahNumber ?? json['surahNumber'] ?? 0,
       surahName: json['surahName'] ?? '',
       surahNameArabic: json['surahNameArabic'] ?? '',
       surahNameTranslation: json['surahNameTranslation'] ?? '',
@@ -23,4 +26,3 @@ class SurahInfo {
     );
   }
 }
-

@@ -729,7 +729,7 @@ class _TasbihHubScreenState extends ConsumerState<TasbihHubScreen>
   // ═══════════════════════════════════════════════════════════════
   Widget _buildNafasMode(TasbihHubState hub) {
     final phrase = hub.nafasPhrase;
-    final target = phrase.defaultTarget;
+    final target = hub.target;
     final progress = target > 0 ? (hub.count / target).clamp(0.0, 1.0) : 0.0;
 
     return GestureDetector(
@@ -866,6 +866,53 @@ class _TasbihHubScreenState extends ConsumerState<TasbihHubScreen>
                 ),
 
                 const SizedBox(height: 32),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            ref.read(tasbihHubProvider.notifier).resetCount();
+                            HapticFeedback.mediumImpact();
+                          },
+                          icon: const Icon(Icons.refresh, size: 18),
+                          label: const Text('Reset'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.textSecondary,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: () => _showTargetDialog(),
+                          icon: const Icon(Icons.flag, size: 18),
+                          label: const Text('Target'),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: AppColors.primary,
+                            side: BorderSide(
+                              color: AppColors.primary,
+                              width: 2,
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 24),
 
                 // Arabic text
                 Text(

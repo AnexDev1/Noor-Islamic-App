@@ -225,7 +225,7 @@ class TasbihHubNotifier extends StateNotifier<TasbihHubState> {
   bool nafasIncrement() {
     final newCount = state.count + 1;
     final newTotal = state.totalLifetimeCount + 1;
-    final currentTarget = kDhikrPhrases[state.nafasPhraseIndex].defaultTarget;
+    final currentTarget = state.target;
 
     if (newCount >= currentTarget) {
       // Phrase done — move to next
@@ -235,7 +235,7 @@ class TasbihHubNotifier extends StateNotifier<TasbihHubState> {
           count: 0,
           totalLifetimeCount: newTotal,
           nafasPhraseIndex: nextIdx,
-          target: kDhikrPhrases[nextIdx].defaultTarget,
+          target: currentTarget,
         );
         _updateStreak();
         _saveData();

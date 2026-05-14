@@ -191,7 +191,7 @@
   "unableToFindQibla": "Qiblaa argachuu hin dandeenye",
   "unableToFetchQibla": "Kallattii Qiblaa argachuu hin dandeenye. Maaloo walqunnamtii keessan mirkaneeffadhaa.",
   
-  "islamicVideos": "Hadiisa Islaamaa",
+  "islamicVideos": "Da'waa",
   "curatedIslamicContent": "Qabeenya Islaamaa fi yaadachiisa filataman",
   
   "ramadanCountdown": "Ramadaan Lakkoofsi",
@@ -223,5 +223,27 @@
   "excellent": "Baay'ee Gaarii!",
   "goodJob": "Hojii Gaarii!",
   "keepLearning": "Baruu Itti Fufi!",
-  "quizResultMessage": "{total} keessaa {score} argattan ({percentage}%)"
+  "quizResultMessage": "{total} keessaa {score} argattan ({percentage}%)",
+  "tajweedHifzMode": "Haala Tajweed & Hifz",
+  "tajweedHifzSubtitle": "Dawaa-hir-hir tilmaamuutaa fi irra deebi'uu",
+  "prayerMatMode": "Haala Lafa Salaataa",
+  "prayerMatSubtitle": "Haala tijuu akka hin qabu",
+  "noorWrap": "Noor Walitti Galumsaa",
+  "noorWrapSubtitle": "Gabaasaa jidha addaa keessan",
+  "tasbihSubtitle": "Lakkaawwee, Nafas Dhikr & Tasbiihaa Midhaa",
+  "learnIslamSubtitle": "Salah, Ablution, Seera & Barnoota Vidiyoo",
+  "bookmarksSubtitle": "Quran, Hadith & Azkaar kaamameen olkaa'e",
+  "listenQuranSubtitle": "Audio kileensaa jiidha dura jiruu",
+  "quranStreakSubtitle": "Barumsa Quran guyyaa hunda hordofu",
+  "reflectionsSubtitle": "Muuxannoo salaataa keessan baruudhaa",
+  "ayahCardSubtitle": "Kaardota Quran miidhaasaa kan addaasaa",
+  "ramadanHabitsSubtitle": "Taabala hanqa guyyaa 30",
+  "zikrReminders": "Yaadachiisa Dhikr",
+  "softZikrReminders": "Yaadachiisa dhikr lalaalaa",
+  "reminderInterval": "Yeroo yaadachiisa",
+  "reminderZikr": "Dhikr yaadachiisa",
+  "appearanceSettings": "Dursa",
+  "darkThemeTitle": "Duumaa madaa",
+  "darkThemeSubtitle": "Paleti halluu mataa yaa ba'u",
+  "arabicFontTitle": "Fonti Arabaa"
 }

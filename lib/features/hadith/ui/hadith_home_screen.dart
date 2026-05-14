@@ -6,8 +6,8 @@ import '../domain/book.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/utils/helpers.dart';
+import '../../bookmarks/ui/bookmarks_screen.dart';
 import 'widgets/hadith_book_list.dart';
-import 'book_detail_screen.dart';
 
 class HadithHomeScreen extends StatefulWidget {
   const HadithHomeScreen({super.key});
@@ -221,7 +221,12 @@ class _HadithHomeScreenState extends State<HadithHomeScreen>
                       ),
                       IconButton(
                         onPressed: () {
-                          // Add bookmark functionality
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const BookmarksScreen(),
+                            ),
+                          );
                         },
                         icon: const Icon(
                           Icons.bookmark_border,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../core/services/bookmark_service.dart';
 import '../domain/azkhar_category.dart';
-import '../domain/azkhar_item.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 
@@ -13,13 +13,15 @@ class AzkharDetailScreen extends StatefulWidget {
   State<AzkharDetailScreen> createState() => _AzkharDetailScreenState();
 }
 
-class _AzkharDetailScreenState extends State<AzkharDetailScreen> with TickerProviderStateMixin {
+class _AzkharDetailScreenState extends State<AzkharDetailScreen>
+    with TickerProviderStateMixin {
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
   Map<int, int> _counters = {};
   bool _showArabic = true;
   bool _showBenefits = true;
   bool _showReference = true;
+  bool _isBookmarked = false;
 
   @override
   void initState() {
@@ -35,15 +37,23 @@ class _AzkharDetailScreenState extends State<AzkharDetailScreen> with TickerProv
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
+    );
 
     _fadeController.forward();
+
+    BookmarkService.instance.initialize().then((_) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _isBookmarked = BookmarkService.instance.isBookmarked(
+          _bookmarkId,
+          BookmarkType.azkhar,
+        );
+      });
+    });
   }
 
   @override
@@ -59,9 +69,7 @@ class _AzkharDetailScreenState extends State<AzkharDetailScreen> with TickerProv
         content: const Text('Copied to clipboard'),
         backgroundColor: AppColors.success,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
@@ -120,6 +128,46 @@ class _AzkharDetailScreenState extends State<AzkharDetailScreen> with TickerProv
     return translations[widget.category.name] ?? 'Islamic Remembrance';
   }
 
+  String get _bookmarkId => 'azkhar-${widget.category.name}';
+
+  Future<void> _toggleBookmark() async {
+    await BookmarkService.instance.initialize();
+
+    if (_isBookmarked) {
+      await BookmarkService.instance.removeBookmark(
+        _bookmarkId,
+        BookmarkType.azkhar,
+      );
+      if (!mounted) {
+        return;
+      }
+      setState(() => _isBookmarked = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Bookmark removed')));
+      return;
+    }
+
+    await BookmarkService.instance.addBookmark(
+      BookmarkItem(
+        id: _bookmarkId,
+        title: widget.category.name,
+        subtitle: 'Azkhar collection',
+        type: BookmarkType.azkhar,
+        metadata: <String, dynamic>{'category': widget.category.name},
+        timestamp: DateTime.now(),
+      ),
+    );
+
+    if (!mounted) {
+      return;
+    }
+    setState(() => _isBookmarked = true);
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Bookmark saved')));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,296 +180,348 @@ class _AzkharDetailScreenState extends State<AzkharDetailScreen> with TickerProv
             _buildModernAppBar(),
 
             // Settings Panel
-            SliverToBoxAdapter(
-              child: _buildSettingsPanel(),
-            ),
+            SliverToBoxAdapter(child: _buildSettingsPanel()),
 
             // Progress Summary
-            SliverToBoxAdapter(
-              child: _buildProgressSummary(),
-            ),
+            SliverToBoxAdapter(child: _buildProgressSummary()),
 
             // Azkar List
             SliverPadding(
               padding: const EdgeInsets.all(20),
               sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final item = widget.category.items[index];
-                    final currentCount = _counters[index]!;
-                    final isCompleted = currentCount == 0;
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  final item = widget.category.items[index];
+                  final currentCount = _counters[index]!;
+                  final isCompleted = currentCount == 0;
 
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 24),
-                      decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.shadowLight,
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 24),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.shadowLight,
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                      border: isCompleted
+                          ? Border.all(color: AppColors.success, width: 2)
+                          : null,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Header with counter
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: isCompleted
+                                        ? [
+                                            AppColors.success,
+                                            AppColors.success.withValues(
+                                              alpha: 0.8,
+                                            ),
+                                          ]
+                                        : [
+                                            AppColors.primary,
+                                            AppColors.primaryLight,
+                                          ],
+                                  ),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  isCompleted
+                                      ? 'Completed ✓'
+                                      : 'Dhikr ${index + 1}',
+                                  style: AppTextStyles.labelMedium.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  IconButton(
+                                    onPressed: () =>
+                                        _copyToClipboard(item.content),
+                                    icon: Icon(
+                                      Icons.copy,
+                                      color: AppColors.textSecondary,
+                                      size: 20,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () => _resetCounter(index),
+                                    icon: Icon(
+                                      Icons.refresh,
+                                      color: AppColors.textSecondary,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                        ],
-                        border: isCompleted
-                            ? Border.all(color: AppColors.success, width: 2)
-                            : null,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(24),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Header with counter
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: isCompleted
-                                          ? [AppColors.success, AppColors.success.withValues(alpha: 0.8)]
-                                          : [AppColors.primary, AppColors.primaryLight],
-                                    ),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Text(
-                                    isCompleted ? 'Completed ✓' : 'Dhikr ${index + 1}',
-                                    style: AppTextStyles.labelMedium.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      onPressed: () => _copyToClipboard(item.content),
-                                      icon: Icon(
-                                        Icons.copy,
-                                        color: AppColors.textSecondary,
-                                        size: 20,
-                                      ),
-                                    ),
-                                    IconButton(
-                                      onPressed: () => _resetCounter(index),
-                                      icon: Icon(
-                                        Icons.refresh,
-                                        color: AppColors.textSecondary,
-                                        size: 20,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
 
-                            const SizedBox(height: 20),
+                          const SizedBox(height: 20),
 
-                            // Arabic Text
-                            if (_showArabic)
-                              Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.all(20),
-                                decoration: BoxDecoration(
-                                  color: AppColors.accent.withValues(alpha: 0.05),
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                    color: AppColors.accent.withValues(alpha: 0.2),
-                                  ),
-                                ),
-                                child: SelectableText(
-                                  item.content,
-                                  style: AppTextStyles.arabicLarge.copyWith(
-                                    fontSize: 22,
-                                    height: 2.0,
-                                    color: AppColors.textPrimary,
-                                  ),
-                                  textAlign: TextAlign.right,
-                                  textDirection: TextDirection.rtl,
-                                ),
-                              ),
-
-                            // Reference
-                            if (_showReference && item.reference.isNotEmpty) ...[
-                              const SizedBox(height: 16),
-                              Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  color: AppColors.primary.withValues(alpha: 0.05),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: AppColors.primary.withValues(alpha: 0.2),
-                                  ),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.book,
-                                      color: AppColors.primary,
-                                      size: 16,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      'المصدر: ',
-                                      style: AppTextStyles.labelMedium.copyWith(
-                                        color: AppColors.primary,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      textDirection: TextDirection.rtl,
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        item.reference,
-                                        style: AppTextStyles.bodySmall.copyWith(
-                                          color: AppColors.primary,
-                                        ),
-                                        textDirection: TextDirection.rtl,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-
-                            // Benefits
-                            if (_showBenefits && item.description.isNotEmpty) ...[
-                              const SizedBox(height: 16),
-                              Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  color: AppColors.success.withValues(alpha: 0.05),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: AppColors.success.withValues(alpha: 0.2),
-                                  ),
-                                ),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Icon(
-                                      Icons.lightbulb,
-                                      color: AppColors.success,
-                                      size: 16,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      'الفضل: ',
-                                      style: AppTextStyles.labelMedium.copyWith(
-                                        color: AppColors.success,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      textDirection: TextDirection.rtl,
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        item.description,
-                                        style: AppTextStyles.bodySmall.copyWith(
-                                          color: AppColors.success,
-                                          height: 1.5,
-                                        ),
-                                        textDirection: TextDirection.rtl,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-
-                            const SizedBox(height: 20),
-
-                            // Counter Section
+                          // Arabic Text
+                          if (_showArabic)
                             Container(
                               width: double.infinity,
                               padding: const EdgeInsets.all(20),
                               decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: isCompleted
-                                      ? [AppColors.success.withValues(alpha: 0.1), AppColors.success.withValues(alpha: 0.05)]
-                                      : [AppColors.primary.withValues(alpha: 0.1), AppColors.primary.withValues(alpha: 0.05)],
-                                ),
+                                color: AppColors.accent.withValues(alpha: 0.05),
                                 borderRadius: BorderRadius.circular(16),
                                 border: Border.all(
-                                  color: isCompleted
-                                      ? AppColors.success.withValues(alpha: 0.3)
-                                      : AppColors.primary.withValues(alpha: 0.3),
+                                  color: AppColors.accent.withValues(
+                                    alpha: 0.2,
+                                  ),
+                                ),
+                              ),
+                              child: SelectableText(
+                                item.content,
+                                style: AppTextStyles.arabicLarge.copyWith(
+                                  fontSize: 22,
+                                  height: 2.0,
+                                  color: AppColors.textPrimary,
+                                ),
+                                textAlign: TextAlign.right,
+                                textDirection: TextDirection.rtl,
+                              ),
+                            ),
+
+                          // Reference
+                          if (_showReference && item.reference.isNotEmpty) ...[
+                            const SizedBox(height: 16),
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary.withValues(
+                                  alpha: 0.05,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: AppColors.primary.withValues(
+                                    alpha: 0.2,
+                                  ),
                                 ),
                               ),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Repetition Count',
-                                        style: AppTextStyles.bodyMedium.copyWith(
-                                          color: AppColors.textSecondary,
-                                        ),
-                                      ),
-                                      Text(
-                                        '$currentCount / ${item.count}',
-                                        style: AppTextStyles.displayMedium.copyWith(
-                                          color: isCompleted ? AppColors.success : AppColors.primary,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                    ],
+                                  Icon(
+                                    Icons.book,
+                                    color: AppColors.primary,
+                                    size: 16,
                                   ),
-
-                                  // Tap Button
-                                  InkWell(
-                                    onTap: currentCount > 0 ? () => _decrementCounter(index) : null,
-                                    borderRadius: BorderRadius.circular(50),
-                                    child: Container(
-                                      width: 80,
-                                      height: 80,
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          colors: isCompleted
-                                              ? [AppColors.success, AppColors.success.withValues(alpha: 0.8)]
-                                              : currentCount > 0
-                                                  ? [AppColors.primary, AppColors.primaryLight]
-                                                  : [AppColors.textTertiary, AppColors.textTertiary.withValues(alpha: 0.8)],
-                                        ),
-                                        shape: BoxShape.circle,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: (isCompleted ? AppColors.success : AppColors.primary).withValues(alpha: 0.3),
-                                            blurRadius: 8,
-                                            offset: const Offset(0, 4),
-                                          ),
-                                        ],
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'المصدر: ',
+                                    style: AppTextStyles.labelMedium.copyWith(
+                                      color: AppColors.primary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    textDirection: TextDirection.rtl,
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      item.reference,
+                                      style: AppTextStyles.bodySmall.copyWith(
+                                        color: AppColors.primary,
                                       ),
-                                      child: Center(
-                                        child: Icon(
-                                          isCompleted ? Icons.check : Icons.touch_app,
-                                          color: Colors.white,
-                                          size: 32,
-                                        ),
-                                      ),
+                                      textDirection: TextDirection.rtl,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
                           ],
-                        ),
+
+                          // Benefits
+                          if (_showBenefits && item.description.isNotEmpty) ...[
+                            const SizedBox(height: 16),
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: AppColors.success.withValues(
+                                  alpha: 0.05,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: AppColors.success.withValues(
+                                    alpha: 0.2,
+                                  ),
+                                ),
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Icon(
+                                    Icons.lightbulb,
+                                    color: AppColors.success,
+                                    size: 16,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'الفضل: ',
+                                    style: AppTextStyles.labelMedium.copyWith(
+                                      color: AppColors.success,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    textDirection: TextDirection.rtl,
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      item.description,
+                                      style: AppTextStyles.bodySmall.copyWith(
+                                        color: AppColors.success,
+                                        height: 1.5,
+                                      ),
+                                      textDirection: TextDirection.rtl,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+
+                          const SizedBox(height: 20),
+
+                          // Counter Section
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: isCompleted
+                                    ? [
+                                        AppColors.success.withValues(
+                                          alpha: 0.1,
+                                        ),
+                                        AppColors.success.withValues(
+                                          alpha: 0.05,
+                                        ),
+                                      ]
+                                    : [
+                                        AppColors.primary.withValues(
+                                          alpha: 0.1,
+                                        ),
+                                        AppColors.primary.withValues(
+                                          alpha: 0.05,
+                                        ),
+                                      ],
+                              ),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: isCompleted
+                                    ? AppColors.success.withValues(alpha: 0.3)
+                                    : AppColors.primary.withValues(alpha: 0.3),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Repetition Count',
+                                      style: AppTextStyles.bodyMedium.copyWith(
+                                        color: AppColors.textSecondary,
+                                      ),
+                                    ),
+                                    Text(
+                                      '$currentCount / ${item.count}',
+                                      style: AppTextStyles.displayMedium
+                                          .copyWith(
+                                            color: isCompleted
+                                                ? AppColors.success
+                                                : AppColors.primary,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+
+                                // Tap Button
+                                InkWell(
+                                  onTap: currentCount > 0
+                                      ? () => _decrementCounter(index)
+                                      : null,
+                                  borderRadius: BorderRadius.circular(50),
+                                  child: Container(
+                                    width: 80,
+                                    height: 80,
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: isCompleted
+                                            ? [
+                                                AppColors.success,
+                                                AppColors.success.withValues(
+                                                  alpha: 0.8,
+                                                ),
+                                              ]
+                                            : currentCount > 0
+                                            ? [
+                                                AppColors.primary,
+                                                AppColors.primaryLight,
+                                              ]
+                                            : [
+                                                AppColors.textTertiary,
+                                                AppColors.textTertiary
+                                                    .withValues(alpha: 0.8),
+                                              ],
+                                      ),
+                                      shape: BoxShape.circle,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color:
+                                              (isCompleted
+                                                      ? AppColors.success
+                                                      : AppColors.primary)
+                                                  .withValues(alpha: 0.3),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Center(
+                                      child: Icon(
+                                        isCompleted
+                                            ? Icons.check
+                                            : Icons.touch_app,
+                                        color: Colors.white,
+                                        size: 32,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    );
-                  },
-                  childCount: widget.category.items.length,
-                ),
+                    ),
+                  );
+                }, childCount: widget.category.items.length),
               ),
             ),
 
             // Bottom padding
-            const SliverToBoxAdapter(
-              child: SizedBox(height: 100),
-            ),
+            const SliverToBoxAdapter(child: SizedBox(height: 100)),
           ],
         ),
       ),
@@ -443,13 +543,25 @@ class _AzkharDetailScreenState extends State<AzkharDetailScreen> with TickerProv
             color: Colors.white.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Icon(
-            Icons.arrow_back,
-            color: Colors.white,
-          ),
+          child: const Icon(Icons.arrow_back, color: Colors.white),
         ),
       ),
       actions: [
+        IconButton(
+          onPressed: _toggleBookmark,
+          icon: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              _isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
         IconButton(
           onPressed: () {
             // Reset all counters
@@ -465,10 +577,7 @@ class _AzkharDetailScreenState extends State<AzkharDetailScreen> with TickerProv
               color: Colors.white.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(
-              Icons.refresh_rounded,
-              color: Colors.white,
-            ),
+            child: const Icon(Icons.refresh_rounded, color: Colors.white),
           ),
         ),
         const SizedBox(width: 16),
@@ -479,10 +588,7 @@ class _AzkharDetailScreenState extends State<AzkharDetailScreen> with TickerProv
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                AppColors.primary,
-                AppColors.primaryLight,
-              ],
+              colors: [AppColors.primary, AppColors.primaryLight],
             ),
             borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(32),
@@ -564,10 +670,7 @@ class _AzkharDetailScreenState extends State<AzkharDetailScreen> with TickerProv
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Display Settings',
-            style: AppTextStyles.heading3,
-          ),
+          Text('Display Settings', style: AppTextStyles.heading3),
           const SizedBox(height: 16),
 
           // Toggle switches
@@ -661,9 +764,7 @@ class _AzkharDetailScreenState extends State<AzkharDetailScreen> with TickerProv
           ],
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.success.withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: AppColors.success.withValues(alpha: 0.2)),
       ),
       child: Column(
         children: [
@@ -673,10 +774,7 @@ class _AzkharDetailScreenState extends State<AzkharDetailScreen> with TickerProv
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Progress',
-                    style: AppTextStyles.heading4,
-                  ),
+                  Text('Progress', style: AppTextStyles.heading4),
                   Text(
                     '$completedCount of $totalCount completed',
                     style: AppTextStyles.bodyMedium.copyWith(
@@ -686,7 +784,10 @@ class _AzkharDetailScreenState extends State<AzkharDetailScreen> with TickerProv
                 ],
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
@@ -717,7 +818,10 @@ class _AzkharDetailScreenState extends State<AzkharDetailScreen> with TickerProv
               child: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [AppColors.success, AppColors.success.withValues(alpha: 0.8)],
+                    colors: [
+                      AppColors.success,
+                      AppColors.success.withValues(alpha: 0.8),
+                    ],
                   ),
                   borderRadius: BorderRadius.circular(4),
                 ),

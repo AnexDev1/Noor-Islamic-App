@@ -9,7 +9,8 @@ class WelcomeOnboardingScreen extends StatefulWidget {
   const WelcomeOnboardingScreen({super.key});
 
   @override
-  State<WelcomeOnboardingScreen> createState() => _WelcomeOnboardingScreenState();
+  State<WelcomeOnboardingScreen> createState() =>
+      _WelcomeOnboardingScreenState();
 }
 
 class _WelcomeOnboardingScreenState extends State<WelcomeOnboardingScreen>
@@ -41,29 +42,18 @@ class _WelcomeOnboardingScreenState extends State<WelcomeOnboardingScreen>
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
+    );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.5),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _slideController,
-      curve: Curves.easeOutCubic,
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero).animate(
+          CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
+        );
 
-    _scaleAnimation = Tween<double>(
-      begin: 0.5,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _scaleController,
-      curve: Curves.elasticOut,
-    ));
+    _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
+      CurvedAnimation(parent: _scaleController, curve: Curves.elasticOut),
+    );
 
     // Start animations with delays
     Future.delayed(const Duration(milliseconds: 300), () {
@@ -106,7 +96,9 @@ class _WelcomeOnboardingScreenState extends State<WelcomeOnboardingScreen>
             child: SingleChildScrollView(
               child: ConstrainedBox(
                 constraints: BoxConstraints(
-                  minHeight: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top,
+                  minHeight:
+                      MediaQuery.of(context).size.height -
+                      MediaQuery.of(context).padding.top,
                 ),
                 child: IntrinsicHeight(
                   child: Column(
@@ -134,10 +126,14 @@ class _WelcomeOnboardingScreenState extends State<WelcomeOnboardingScreen>
                                     ),
                                   ],
                                 ),
-                                child: const Icon(
-                                  Icons.mosque,
-                                  size: 60,
-                                  color: AppColors.primary,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(30),
+                                  child: Image.asset(
+                                    'assets/icon.png',
+                                    width: 60,
+                                    height: 60,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
                               const SizedBox(height: 24),
@@ -210,19 +206,22 @@ class _WelcomeOnboardingScreenState extends State<WelcomeOnboardingScreen>
                                     _FeatureRow(
                                       icon: Icons.schedule,
                                       title: 'Prayer Times',
-                                      description: 'Accurate prayer times for your location',
+                                      description:
+                                          'Accurate prayer times for your location',
                                     ),
                                     const SizedBox(height: 16),
                                     _FeatureRow(
                                       icon: Icons.menu_book,
                                       title: 'Holy Quran',
-                                      description: 'Read and listen to the Quran',
+                                      description:
+                                          'Read and listen to the Quran',
                                     ),
                                     const SizedBox(height: 16),
                                     _FeatureRow(
                                       icon: Icons.favorite,
                                       title: 'Daily Azkhar',
-                                      description: 'Morning and evening remembrance',
+                                      description:
+                                          'Morning and evening remembrance',
                                     ),
                                   ],
                                 ),
@@ -232,7 +231,7 @@ class _WelcomeOnboardingScreenState extends State<WelcomeOnboardingScreen>
                         ),
                       ),
 
-                      const Spacer(),
+                      const SizedBox(height: 60),
 
                       // Get Started Button
                       SlideTransition(
@@ -251,15 +250,16 @@ class _WelcomeOnboardingScreenState extends State<WelcomeOnboardingScreen>
                                       PageRouteBuilder(
                                         pageBuilder: (context, animation, _) =>
                                             const UserInfoScreen(),
-                                        transitionsBuilder: (context, animation, _, child) {
-                                          return SlideTransition(
-                                            position: Tween<Offset>(
-                                              begin: const Offset(1.0, 0.0),
-                                              end: Offset.zero,
-                                            ).animate(animation),
-                                            child: child,
-                                          );
-                                        },
+                                        transitionsBuilder:
+                                            (context, animation, _, child) {
+                                              return SlideTransition(
+                                                position: Tween<Offset>(
+                                                  begin: const Offset(1.0, 0.0),
+                                                  end: Offset.zero,
+                                                ).animate(animation),
+                                                child: child,
+                                              );
+                                            },
                                       ),
                                     );
                                   },
@@ -329,11 +329,7 @@ class _FeatureRow extends StatelessWidget {
             color: Colors.white.withOpacity(0.2),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(
-            icon,
-            color: Colors.white,
-            size: 20,
-          ),
+          child: Icon(icon, color: Colors.white, size: 20),
         ),
         const SizedBox(width: 16),
         Expanded(

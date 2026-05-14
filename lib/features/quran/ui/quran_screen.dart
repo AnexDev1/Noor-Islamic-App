@@ -7,6 +7,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/utils/helpers.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../bookmarks/ui/bookmarks_screen.dart';
 import 'widgets/audio_player_widget.dart';
 import 'widgets/surah_list.dart';
 
@@ -21,8 +22,6 @@ class _QuranScreenState extends State<QuranScreen>
     with TickerProviderStateMixin {
   late Future<List<SurahInfo>> _surahsFuture;
   final SimpleQuranAudioPlayer _audioService = SimpleQuranAudioPlayer.instance;
-  late AnimationController _fadeController;
-  late Animation<double> _fadeAnimation;
   String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
 
@@ -30,24 +29,12 @@ class _QuranScreenState extends State<QuranScreen>
   void initState() {
     super.initState();
     _surahsFuture = QuranApi.fetchSurahs();
-
-    _fadeController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
-
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
-    );
-
-    _fadeController.forward();
   }
 
   @override
   void dispose() {
     // Proper cleanup - stop audio when leaving Quran screen
     _audioService.stop();
-    _fadeController.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -224,7 +211,10 @@ class _QuranScreenState extends State<QuranScreen>
               ),
               IconButton(
                 onPressed: () {
-                  // Add bookmark or favorite functionality
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const BookmarksScreen()),
+                  );
                 },
                 icon: const Icon(
                   Icons.bookmark_border,

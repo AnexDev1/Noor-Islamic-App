@@ -264,7 +264,7 @@ class AppLocalizationsAm extends AppLocalizations {
   String get undoPrayerConfirmationDesc => 'ይህንን የሶላት መዝገብ መሰረዝ ይፈልጋሉ?';
 
   @override
-  String get undo => 'ሰርዝ';
+  String get undo => 'ቀልብስ';
 
   @override
   String get aiChat => 'AI ውይይት';
@@ -495,7 +495,7 @@ class AppLocalizationsAm extends AppLocalizations {
       'የቂብላን አቅጣጫ ማግኘት አልተቻለም። እባክዎ የበመረብ ግንኙነትዎን ያረጋግጡ።';
 
   @override
-  String get islamicVideos => 'ኢስላማዊ ሀዲስ';
+  String get islamicVideos => 'ዳዕዋ';
 
   @override
   String get curatedIslamicContent => 'የተራገፉ እስላማዊ ይዘቶች እና ማስታወሻዎች';
@@ -531,7 +531,7 @@ class AppLocalizationsAm extends AppLocalizations {
   String get listenQuran => 'ቁርኣን ያድምጡ';
 
   @override
-  String get learnIslamSubtitle => 'ወደ ግንዛቤ ጉዞዎ';
+  String get learnIslamSubtitle => 'ሳላህ፣ ውዱ፣ ደንብ እና የቪዲዮ ትምህርቶች';
 
   @override
   String get salah => 'ሶላት';
@@ -594,4 +594,67 @@ class AppLocalizationsAm extends AppLocalizations {
   String quizResultMessage(int score, int total, int percentage) {
     return 'ከ$total ውስጥ $score አስመዝግበዋል ($percentage%)';
   }
+
+  @override
+  String get tajweedHifzMode => 'ታጅወድ እና ሂፍዝ ሁነታ';
+
+  @override
+  String get tajweedHifzSubtitle => 'በአንደበት በቅርጥ ንባብ እና ድግግሞሽ';
+
+  @override
+  String get prayerMatMode => 'የጸሎት ወንጌል ሁነታ';
+
+  @override
+  String get prayerMatSubtitle => 'ትዕይንት ነጻ ትኩረት ሰዓት';
+
+  @override
+  String get noorWrap => 'ኑር ጠቅላላ';
+
+  @override
+  String get noorWrapSubtitle => 'የእርስዎ መንፈሳዊ ጉዞ ማጠቃለያ';
+
+  @override
+  String get tasbihSubtitle => 'ቆጣሪ፣ ናፋስ ዝክር እና ዝርዝር ሃብር';
+
+  @override
+  String get bookmarksSubtitle => 'የተቀመጡ ቁርዓን፣ ሐዲስ እና አዝካር ንጥሎች';
+
+  @override
+  String get listenQuranSubtitle => 'ስትሪም ኦዲዮ ከጀርባ ሎጋር ጋር';
+
+  @override
+  String get quranStreakSubtitle => 'የተለየ ቁርዓን ንባብ ይከታተሉ';
+
+  @override
+  String get reflectionsSubtitle => 'የእርስዎ ጸሎት ልምዶች መመዝገቢያ';
+
+  @override
+  String get ayahCardSubtitle => 'አሪሙ የሚጋራ ቁርዓን ካርዶች';
+
+  @override
+  String get ramadanHabitsSubtitle => '30 ቀናት ፈተና ሰሌዳ';
+
+  @override
+  String get zikrReminders => 'ዝክር ማስታወሻዎች';
+
+  @override
+  String get softZikrReminders => 'ለስ ዝክር ማስታወሻዎች';
+
+  @override
+  String get reminderInterval => 'ማስታወሻ ጊዜ';
+
+  @override
+  String get reminderZikr => 'ማስታወሻ ዝክር';
+
+  @override
+  String get appearanceSettings => 'ገጽታ';
+
+  @override
+  String get darkThemeTitle => 'ጨለማ ሥርዓተ ዓለም';
+
+  @override
+  String get darkThemeSubtitle => 'ወፍራ ቀለም ፎቅ ይጠቀሙ';
+
+  @override
+  String get arabicFontTitle => 'የአረቢ ፊት';
 }

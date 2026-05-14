@@ -35,21 +35,13 @@ class _SplashScreenState extends State<SplashScreen>
       vsync: this,
     );
 
-    _logoAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _logoController,
-      curve: Curves.elasticOut,
-    ));
+    _logoAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _logoController, curve: Curves.elasticOut),
+    );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
+    );
 
     _logoController.forward();
     _fadeController.forward();
@@ -122,10 +114,14 @@ class _SplashScreenState extends State<SplashScreen>
                         ),
                       ],
                     ),
-                    child: const Icon(
-                      Icons.mosque,
-                      size: 70,
-                      color: AppColors.primary,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(35),
+                      child: Image.asset(
+                        'assets/icon.png',
+                        width: 70,
+                        height: 70,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),

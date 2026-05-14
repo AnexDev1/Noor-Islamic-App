@@ -1063,7 +1063,7 @@ abstract class AppLocalizations {
   /// No description provided for @islamicVideos.
   ///
   /// In en, this message translates to:
-  /// **'Islamic Hadith'**
+  /// **'Da\'wah'**
   String get islamicVideos;
 
   /// No description provided for @curatedIslamicContent.
@@ -1135,7 +1135,7 @@ abstract class AppLocalizations {
   /// No description provided for @learnIslamSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Your journey to understanding'**
+  /// **'Salah, Wudu, rules & video lessons'**
   String get learnIslamSubtitle;
 
   /// No description provided for @salah.
@@ -1245,6 +1245,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You scored {score} out of {total} ({percentage}%)'**
   String quizResultMessage(int score, int total, int percentage);
+
+  /// No description provided for @tajweedHifzMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Tajweed & Hifz Mode'**
+  String get tajweedHifzMode;
+
+  /// No description provided for @tajweedHifzSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ayah-by-Ayah recitation and repetition'**
+  String get tajweedHifzSubtitle;
+
+  /// No description provided for @prayerMatMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Prayer Mat Mode'**
+  String get prayerMatMode;
+
+  /// No description provided for @prayerMatSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Distraction-free focus timer'**
+  String get prayerMatSubtitle;
+
+  /// No description provided for @noorWrap.
+  ///
+  /// In en, this message translates to:
+  /// **'Noor Wrap'**
+  String get noorWrap;
+
+  /// No description provided for @noorWrapSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your spiritual journey summary'**
+  String get noorWrapSubtitle;
+
+  /// No description provided for @tasbihSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Counter, Nafas Dhikr & Bead Flow'**
+  String get tasbihSubtitle;
+
+  /// No description provided for @bookmarksSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved Quran, Hadith & Azkhar items'**
+  String get bookmarksSubtitle;
+
+  /// No description provided for @listenQuranSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stream audio with background play'**
+  String get listenQuranSubtitle;
+
+  /// No description provided for @quranStreakSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Track your daily Quran reading'**
+  String get quranStreakSubtitle;
+
+  /// No description provided for @reflectionsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Journal your prayer experiences'**
+  String get reflectionsSubtitle;
+
+  /// No description provided for @ayahCardSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Beautiful shareable Quran cards'**
+  String get ayahCardSubtitle;
+
+  /// No description provided for @ramadanHabitsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'30-day challenge board'**
+  String get ramadanHabitsSubtitle;
+
+  /// No description provided for @zikrReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Zikr Reminders'**
+  String get zikrReminders;
+
+  /// No description provided for @softZikrReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Soft zikr reminders'**
+  String get softZikrReminders;
+
+  /// No description provided for @reminderInterval.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder interval'**
+  String get reminderInterval;
+
+  /// No description provided for @reminderZikr.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder zikr'**
+  String get reminderZikr;
+
+  /// No description provided for @appearanceSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get appearanceSettings;
+
+  /// No description provided for @darkThemeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark theme'**
+  String get darkThemeTitle;
+
+  /// No description provided for @darkThemeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the darker color palette'**
+  String get darkThemeSubtitle;
+
+  /// No description provided for @arabicFontTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic font'**
+  String get arabicFontTitle;
 }
 
 class _AppLocalizationsDelegate

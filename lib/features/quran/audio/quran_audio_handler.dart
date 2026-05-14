@@ -93,7 +93,7 @@ class QuranAudioHandler extends BaseAudioHandler
 
     _currentIndex = index;
     final surah = _playlist[index];
-    final surahNumber = index + 1;
+    final surahNumber = surah.surahNumber;
 
     final url = _getStreamUrl(surahNumber, _currentReciterId);
     final imageUrl = _getReciterImage(_currentReciterId);
@@ -170,10 +170,9 @@ class QuranAudioHandler extends BaseAudioHandler
       mediaItem.add(item);
 
       // Set audio source
-      await _player.setAudioSource(AudioSource.uri(
-        Uri.parse(url),
-        headers: headers,
-      ));
+      await _player.setAudioSource(
+        AudioSource.uri(Uri.parse(url), headers: headers),
+      );
       await _player.setSpeed(_speed);
       await _player.play();
     } catch (e) {

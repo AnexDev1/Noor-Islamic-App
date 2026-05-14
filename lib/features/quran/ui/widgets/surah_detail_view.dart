@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../../data/audio_api.dart';
 import '../../domain/surah_detail.dart';
 import '../../domain/quran_enc_translation.dart';
 import '../../audio/audio_player_service.dart';
@@ -31,12 +35,32 @@ class SurahDetailView extends StatefulWidget {
 
 class _SurahDetailViewState extends State<SurahDetailView> {
   String? _audioUrl;
-  bool _isLoadingAudio = false;
+  final AudioPlayer _ayahAudioPlayer = AudioPlayer();
+  StreamSubscription<PlayerState>? _ayahPlayerSubscription;
+  Map<int, String> _ayahAudioUrls = {};
+  int? _playingAyahIndex;
+  bool _isPlayingAyah = false;
+  bool _isLoadingAyahAudio = false;
 
   @override
   void initState() {
     super.initState();
+    _ayahPlayerSubscription = _ayahAudioPlayer.playerStateStream.listen((
+      state,
+    ) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _isPlayingAyah = state.playing;
+        if (state.processingState == ProcessingState.completed) {
+          _playingAyahIndex = null;
+          _isPlayingAyah = false;
+        }
+      });
+    });
     _fetchAudioUrl();
+    _fetchAllAyahAudio();
   }
 
   @override
@@ -45,7 +69,22 @@ class _SurahDetailViewState extends State<SurahDetailView> {
     if (oldWidget.reciterId != widget.reciterId ||
         oldWidget.surahDetail.surahNo != widget.surahDetail.surahNo) {
       _fetchAudioUrl();
+      unawaited(_ayahAudioPlayer.stop());
+      if (mounted) {
+        setState(() {
+          _playingAyahIndex = null;
+          _isPlayingAyah = false;
+        });
+      }
+      _fetchAllAyahAudio();
     }
+  }
+
+  @override
+  void dispose() {
+    _ayahPlayerSubscription?.cancel();
+    _ayahAudioPlayer.dispose();
+    super.dispose();
   }
 
   Future<void> _fetchAudioUrl() async {
@@ -58,15 +97,10 @@ class _SurahDetailViewState extends State<SurahDetailView> {
       if (audioEntry is Map && audioEntry['url'] != null) {
         setState(() {
           _audioUrl = audioEntry['url'].toString();
-          _isLoadingAudio = false;
         });
         return;
       }
     }
-
-    setState(() {
-      _isLoadingAudio = true;
-    });
 
     final reciterId = widget.reciterId;
     final surahNo = widget.surahDetail.surahNo;
@@ -81,26 +115,61 @@ class _SurahDetailViewState extends State<SurahDetailView> {
         if (audioFiles.isNotEmpty) {
           setState(() {
             _audioUrl = audioFiles[0]['audio_url'] as String?;
-            _isLoadingAudio = false;
           });
         } else {
           setState(() {
             _audioUrl = null;
-            _isLoadingAudio = false;
           });
         }
       } else {
         setState(() {
           _audioUrl = null;
-          _isLoadingAudio = false;
         });
       }
     } catch (e) {
       setState(() {
         _audioUrl = null;
-        _isLoadingAudio = false;
       });
     }
+  }
+
+  Future<void> _fetchAllAyahAudio() async {
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _isLoadingAyahAudio = true;
+    });
+
+    final ayahAudioUrls = <int, String>{};
+
+    for (int i = 0; i < widget.surahDetail.totalAyah; i++) {
+      final ayahNo = i + 1;
+      try {
+        final audioMap = await AudioApi.fetchAyahAudio(
+          widget.surahDetail.surahNo,
+          ayahNo,
+        );
+        final dynamic reciterAudio = audioMap[widget.reciterId];
+        if (reciterAudio is Map && reciterAudio['url'] != null) {
+          ayahAudioUrls[i] = reciterAudio['url'].toString();
+        } else {
+          ayahAudioUrls[i] = '';
+        }
+      } catch (_) {
+        ayahAudioUrls[i] = '';
+      }
+    }
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _ayahAudioUrls = ayahAudioUrls;
+      _isLoadingAyahAudio = false;
+    });
   }
 
   Widget _buildSurahHeader() {
@@ -112,12 +181,12 @@ class _SurahDetailViewState extends State<SurahDetailView> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.primary.withOpacity(0.1),
-            AppColors.accent.withOpacity(0.05),
+            AppColors.primary.withValues(alpha: 0.1),
+            AppColors.accent.withValues(alpha: 0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.primary.withOpacity(0.2)),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
       ),
       child: Column(
         children: [
@@ -187,9 +256,9 @@ class _SurahDetailViewState extends State<SurahDetailView> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -210,12 +279,54 @@ class _SurahDetailViewState extends State<SurahDetailView> {
 
   Future<void> _playAudio() async {
     if (_audioUrl != null) {
+      await _ayahAudioPlayer.stop();
       await widget.audioService.play(
         _audioUrl!,
         widget.surahDetail.surahName,
         reciterName: widget.reciterName,
       );
     }
+  }
+
+  Future<void> _toggleAyahAudio(int index) async {
+    final url = _ayahAudioUrls[index];
+    if (url == null || url.isEmpty) {
+      return;
+    }
+
+    if (_playingAyahIndex == index && _isPlayingAyah) {
+      await _ayahAudioPlayer.pause();
+      if (mounted) {
+        setState(() {
+          _isPlayingAyah = false;
+        });
+      }
+      return;
+    }
+
+    if (_playingAyahIndex == index && !_isPlayingAyah) {
+      await _ayahAudioPlayer.play();
+      if (mounted) {
+        setState(() {
+          _isPlayingAyah = true;
+        });
+      }
+      return;
+    }
+
+    await widget.audioService.stop();
+    await _ayahAudioPlayer.stop();
+    await _ayahAudioPlayer.setUrl(url);
+    await _ayahAudioPlayer.play();
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _playingAyahIndex = index;
+      _isPlayingAyah = true;
+    });
   }
 
   @override
@@ -257,7 +368,10 @@ class _SurahDetailViewState extends State<SurahDetailView> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: isCurrentSurah
-                      ? [AppColors.accent, AppColors.accent.withOpacity(0.8)]
+                      ? [
+                          AppColors.accent,
+                          AppColors.accent.withValues(alpha: 0.8),
+                        ]
                       : [AppColors.primary, AppColors.primaryLight],
                 ),
                 borderRadius: BorderRadius.circular(16),
@@ -265,7 +379,7 @@ class _SurahDetailViewState extends State<SurahDetailView> {
                   BoxShadow(
                     color:
                         (isCurrentSurah ? AppColors.accent : AppColors.primary)
-                            .withOpacity(0.3),
+                            .withValues(alpha: 0.3),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -318,102 +432,7 @@ class _SurahDetailViewState extends State<SurahDetailView> {
   }
 
   Widget _buildVersesSection() {
-    // Arabic Only Mode
-    if (!widget.showTranslation) {
-      return _buildArabicOnlyVerses();
-    }
-
-    // With Translation Mode
-    return _buildVersesWithTranslation();
-  }
-
-  Widget _buildArabicOnlyVerses() {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 10,
-      ), // Small padding for text
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(0),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadowLight,
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          // Bismillah (except for Surah At-Tawbah)
-          if (widget.surahDetail.surahNo != 9) ...[
-            Center(
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppColors.accent.withOpacity(0.1),
-                      AppColors.primary.withOpacity(0.05),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.primary.withOpacity(0.2)),
-                ),
-                child: Text(
-                  'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
-                  style: AppTextStyles.arabicLarge.copyWith(
-                    fontSize: 26,
-                    color: AppColors.primary,
-                    height: 2.0,
-                  ),
-                  textAlign: TextAlign.center,
-                  textDirection: TextDirection.rtl,
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-          ],
-
-          // Arabic Verses in a flowing text format
-          SelectableText.rich(
-            TextSpan(
-              children: widget.surahDetail.arabic1.asMap().entries.map((entry) {
-                final index = entry.key;
-                final arabicText = entry.value;
-                return TextSpan(
-                  children: [
-                    TextSpan(
-                      text: arabicText.trim(), // Trim current verse
-                      style: AppTextStyles.arabicLarge.copyWith(
-                        fontSize: 26,
-                        height: 2.2,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    TextSpan(
-                      text: ' ﴿${_toArabicNumber(index + 1)}﴾ ',
-                      style: AppTextStyles.arabicLarge.copyWith(
-                        fontSize: 20,
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                );
-              }).toList(),
-            ),
-            textAlign: TextAlign.center, // Center aligned
-            textDirection: TextDirection.rtl,
-          ),
-        ],
-      ),
-    );
+    return _buildAyahCards(showTranslation: widget.showTranslation);
   }
 
   String _toArabicNumber(int number) {
@@ -425,7 +444,7 @@ class _SurahDetailViewState extends State<SurahDetailView> {
         .join();
   }
 
-  Widget _buildVersesWithTranslation() {
+  Widget _buildAyahCards({required bool showTranslation}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -433,15 +452,25 @@ class _SurahDetailViewState extends State<SurahDetailView> {
           children: [
             Icon(Icons.menu_book_rounded, color: AppColors.primary, size: 22),
             const SizedBox(width: 10),
-            Text('Verses with Translation', style: AppTextStyles.heading3),
+            Text(
+              showTranslation ? 'Verses with Translation' : 'Verses',
+              style: AppTextStyles.heading3,
+            ),
           ],
         ),
 
         const SizedBox(height: 16),
 
-        ...widget.translations.asMap().entries.map((entry) {
-          final index = entry.key;
-          final translation = entry.value;
+        ...List.generate(widget.surahDetail.totalAyah, (index) {
+          final translation = index < widget.translations.length
+              ? widget.translations[index]
+              : null;
+          final arabicText = translation?.arabicText?.isNotEmpty == true
+              ? translation!.arabicText!
+              : (index < widget.surahDetail.arabic1.length
+                    ? widget.surahDetail.arabic1[index]
+                    : '');
+          final audioUrl = _ayahAudioUrls[index] ?? '';
 
           return Container(
             margin: const EdgeInsets.only(bottom: 20),
@@ -466,7 +495,7 @@ class _SurahDetailViewState extends State<SurahDetailView> {
                     vertical: 14,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.05),
+                    color: AppColors.primary.withValues(alpha: 0.05),
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20),
@@ -495,12 +524,27 @@ class _SurahDetailViewState extends State<SurahDetailView> {
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        'Verse ${index + 1}',
+                        'Verse ${_toArabicNumber(index + 1)}',
                         style: AppTextStyles.bodyMedium.copyWith(
                           fontWeight: FontWeight.w600,
                           color: AppColors.primary,
                         ),
                       ),
+                      const Spacer(),
+                      if (audioUrl.isNotEmpty)
+                        IconButton(
+                          onPressed: () => _toggleAyahAudio(index),
+                          icon: Icon(
+                            _playingAyahIndex == index && _isPlayingAyah
+                                ? Icons.pause_circle_outline_rounded
+                                : Icons.play_circle_outline_rounded,
+                            color: AppColors.primary,
+                            size: 26,
+                          ),
+                          tooltip: _playingAyahIndex == index && _isPlayingAyah
+                              ? 'Pause Ayah'
+                              : 'Play Ayah',
+                        ),
                     ],
                   ),
                 ),
@@ -511,21 +555,19 @@ class _SurahDetailViewState extends State<SurahDetailView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // Arabic Text
-                      if (translation.arabicText != null &&
-                          translation.arabicText!.isNotEmpty)
+                      if (arabicText.isNotEmpty)
                         Container(
                           width: double.infinity,
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: AppColors.accent.withOpacity(0.04),
+                            color: AppColors.accent.withValues(alpha: 0.04),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: AppColors.accent.withOpacity(0.15),
+                              color: AppColors.accent.withValues(alpha: 0.15),
                             ),
                           ),
                           child: Text(
-                            translation.arabicText!,
+                            arabicText,
                             style: AppTextStyles.arabicLarge.copyWith(
                               fontSize: 24,
                               height: 2.0,
@@ -536,23 +578,27 @@ class _SurahDetailViewState extends State<SurahDetailView> {
                           ),
                         ),
 
-                      const SizedBox(height: 16),
-
-                      // Translation
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: AppColors.surfaceVariant.withOpacity(0.5),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          translation.translation,
-                          style: AppTextStyles.bodyLarge.copyWith(
-                            height: 1.7,
-                            color: AppColors.textSecondary,
+                      if (showTranslation &&
+                          translation != null &&
+                          translation.translation.isNotEmpty) ...[
+                        const SizedBox(height: 16),
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: AppColors.surfaceVariant.withValues(
+                              alpha: 0.5,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            translation.translation,
+                            style: AppTextStyles.bodyLarge.copyWith(
+                              height: 1.7,
+                              color: AppColors.textSecondary,
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ],
                   ),
                 ),
@@ -561,7 +607,6 @@ class _SurahDetailViewState extends State<SurahDetailView> {
           );
         }),
 
-        // Bottom spacing
         const SizedBox(height: 40),
       ],
     );

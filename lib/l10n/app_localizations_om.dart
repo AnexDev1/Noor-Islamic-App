@@ -505,7 +505,7 @@ class AppLocalizationsOm extends AppLocalizations {
       'Kallattii Qiblaa argachuu hin dandeenye. Maaloo walqunnamtii keessan mirkaneeffadhaa.';
 
   @override
-  String get islamicVideos => 'Hadiisa Islaamaa';
+  String get islamicVideos => 'Da\'waa';
 
   @override
   String get curatedIslamicContent =>
@@ -543,7 +543,7 @@ class AppLocalizationsOm extends AppLocalizations {
   String get listenQuran => 'Qur\'aana Dhageeffadhu';
 
   @override
-  String get learnIslamSubtitle => 'Imala hubannoo keessaniif';
+  String get learnIslamSubtitle => 'Salah, Ablution, Seera & Barnoota Vidiyoo';
 
   @override
   String get salah => 'Salaata';
@@ -606,4 +606,68 @@ class AppLocalizationsOm extends AppLocalizations {
   String quizResultMessage(int score, int total, int percentage) {
     return '$total keessaa $score argattan ($percentage%)';
   }
+
+  @override
+  String get tajweedHifzMode => 'Haala Tajweed & Hifz';
+
+  @override
+  String get tajweedHifzSubtitle =>
+      'Dawaa-hir-hir tilmaamuutaa fi irra deebi\'uu';
+
+  @override
+  String get prayerMatMode => 'Haala Lafa Salaataa';
+
+  @override
+  String get prayerMatSubtitle => 'Haala tijuu akka hin qabu';
+
+  @override
+  String get noorWrap => 'Noor Walitti Galumsaa';
+
+  @override
+  String get noorWrapSubtitle => 'Gabaasaa jidha addaa keessan';
+
+  @override
+  String get tasbihSubtitle => 'Lakkaawwee, Nafas Dhikr & Tasbiihaa Midhaa';
+
+  @override
+  String get bookmarksSubtitle => 'Quran, Hadith & Azkaar kaamameen olkaa\'e';
+
+  @override
+  String get listenQuranSubtitle => 'Audio kileensaa jiidha dura jiruu';
+
+  @override
+  String get quranStreakSubtitle => 'Barumsa Quran guyyaa hunda hordofu';
+
+  @override
+  String get reflectionsSubtitle => 'Muuxannoo salaataa keessan baruudhaa';
+
+  @override
+  String get ayahCardSubtitle => 'Kaardota Quran miidhaasaa kan addaasaa';
+
+  @override
+  String get ramadanHabitsSubtitle => 'Taabala hanqa guyyaa 30';
+
+  @override
+  String get zikrReminders => 'Yaadachiisa Dhikr';
+
+  @override
+  String get softZikrReminders => 'Yaadachiisa dhikr lalaalaa';
+
+  @override
+  String get reminderInterval => 'Yeroo yaadachiisa';
+
+  @override
+  String get reminderZikr => 'Dhikr yaadachiisa';
+
+  @override
+  String get appearanceSettings => 'Dursa';
+
+  @override
+  String get darkThemeTitle => 'Duumaa madaa';
+
+  @override
+  String get darkThemeSubtitle => 'Paleti halluu mataa yaa ba\'u';
+
+  @override
+  String get arabicFontTitle => 'Fonti Arabaa';
 }

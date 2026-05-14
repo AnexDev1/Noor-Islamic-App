@@ -23,6 +23,13 @@ class RamadanHabitsScreen extends ConsumerWidget {
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
+        actions: [
+          IconButton(
+            onPressed: () => _showAddChallengeDialog(context, ref),
+            icon: const Icon(Icons.add_circle_outline, color: Colors.white),
+            tooltip: 'Add custom habit',
+          ),
+        ],
       ),
       body: habitsState.isLoading
           ? const Center(
@@ -32,6 +39,8 @@ class RamadanHabitsScreen extends ConsumerWidget {
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
+                  _buildInfoCard(),
+                  const SizedBox(height: 16),
                   _buildProgressCrescent(habitsState),
                   const SizedBox(height: 24),
                   _buildChallengeGrid(habitsState, ref),
@@ -101,6 +110,40 @@ class RamadanHabitsScreen extends ConsumerWidget {
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.6),
               fontSize: 13,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'This is a Ramadan habit board',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Check items as you complete them during Ramadan. You can also add your own habits with the + button.',
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.65),
+              fontSize: 13,
+              height: 1.4,
             ),
           ),
         ],
@@ -229,6 +272,38 @@ class RamadanHabitsScreen extends ConsumerWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showAddChallengeDialog(BuildContext context, WidgetRef ref) {
+    final controller = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Add custom habit'),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(
+            hintText: 'e.g. Read 1 page of Quran',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              ref
+                  .read(ramadanHabitsProvider.notifier)
+                  .addCustomChallenge(title: controller.text);
+              Navigator.pop(ctx);
+            },
+            child: const Text('Add'),
+          ),
+        ],
       ),
     );
   }

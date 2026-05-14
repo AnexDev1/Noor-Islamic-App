@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../core/services/bookmark_service.dart';
 import '../domain/hadith.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -12,11 +13,12 @@ class HadithDetailScreen extends StatefulWidget {
   State<HadithDetailScreen> createState() => _HadithDetailScreenState();
 }
 
-class _HadithDetailScreenState extends State<HadithDetailScreen> with TickerProviderStateMixin {
+class _HadithDetailScreenState extends State<HadithDetailScreen>
+    with TickerProviderStateMixin {
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
-  bool _showArabic = true;
-  bool _showEnglish = true;
+  String _displayMode = 'both';
+  bool _isBookmarked = false;
 
   @override
   void initState() {
@@ -26,15 +28,23 @@ class _HadithDetailScreenState extends State<HadithDetailScreen> with TickerProv
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
+    );
 
     _fadeController.forward();
+
+    BookmarkService.instance.initialize().then((_) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _isBookmarked = BookmarkService.instance.isBookmarked(
+          _bookmarkId,
+          BookmarkType.hadith,
+        );
+      });
+    });
   }
 
   @override
@@ -50,9 +60,7 @@ class _HadithDetailScreenState extends State<HadithDetailScreen> with TickerProv
         content: Text('Copied to clipboard'),
         backgroundColor: AppColors.success,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
@@ -74,6 +82,50 @@ class _HadithDetailScreenState extends State<HadithDetailScreen> with TickerProv
     _copyToClipboard(hadithText);
   }
 
+  String get _bookmarkId =>
+      'hadith-${widget.hadith.bookSlug}-${widget.hadith.hadithNumber}';
+
+  Future<void> _toggleBookmark() async {
+    await BookmarkService.instance.initialize();
+
+    if (_isBookmarked) {
+      await BookmarkService.instance.removeBookmark(
+        _bookmarkId,
+        BookmarkType.hadith,
+      );
+      if (!mounted) {
+        return;
+      }
+      setState(() => _isBookmarked = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Bookmark removed')));
+      return;
+    }
+
+    await BookmarkService.instance.addBookmark(
+      BookmarkItem(
+        id: _bookmarkId,
+        title: 'Hadith ${widget.hadith.hadithNumber}',
+        subtitle: widget.hadith.bookSlug,
+        type: BookmarkType.hadith,
+        metadata: <String, dynamic>{
+          'bookSlug': widget.hadith.bookSlug,
+          'hadithNumber': widget.hadith.hadithNumber,
+        },
+        timestamp: DateTime.now(),
+      ),
+    );
+
+    if (!mounted) {
+      return;
+    }
+    setState(() => _isBookmarked = true);
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Bookmark saved')));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,14 +138,10 @@ class _HadithDetailScreenState extends State<HadithDetailScreen> with TickerProv
             _buildModernAppBar(),
 
             // Settings Panel
-            SliverToBoxAdapter(
-              child: _buildSettingsPanel(),
-            ),
+            SliverToBoxAdapter(child: _buildSettingsPanel()),
 
             // Main Content
-            SliverToBoxAdapter(
-              child: _buildHadithContent(),
-            ),
+            SliverToBoxAdapter(child: _buildHadithContent()),
           ],
         ),
       ),
@@ -115,13 +163,25 @@ class _HadithDetailScreenState extends State<HadithDetailScreen> with TickerProv
             color: Colors.white.withOpacity(0.15),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Icon(
-            Icons.arrow_back,
-            color: Colors.white,
-          ),
+          child: const Icon(Icons.arrow_back, color: Colors.white),
         ),
       ),
       actions: [
+        IconButton(
+          onPressed: _toggleBookmark,
+          icon: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              _isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
         IconButton(
           onPressed: _shareHadith,
           icon: Container(
@@ -130,10 +190,7 @@ class _HadithDetailScreenState extends State<HadithDetailScreen> with TickerProv
               color: Colors.white.withOpacity(0.15),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(
-              Icons.share,
-              color: Colors.white,
-            ),
+            child: const Icon(Icons.share, color: Colors.white),
           ),
         ),
         const SizedBox(width: 16),
@@ -163,7 +220,6 @@ class _HadithDetailScreenState extends State<HadithDetailScreen> with TickerProv
                 children: [
                   Row(
                     children: [
-
                       const SizedBox(width: 16),
                       Expanded(
                         child: Column(
@@ -177,7 +233,6 @@ class _HadithDetailScreenState extends State<HadithDetailScreen> with TickerProv
                               ),
                             ),
                             const SizedBox(height: 4),
-
                           ],
                         ),
                       ),
@@ -210,34 +265,23 @@ class _HadithDetailScreenState extends State<HadithDetailScreen> with TickerProv
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text('Display Settings', style: AppTextStyles.heading3),
+          const SizedBox(height: 8),
           Text(
-            'Display Settings',
-            style: AppTextStyles.heading3,
+            'Choose how the hadith is displayed.',
+            style: AppTextStyles.bodySmall.copyWith(
+              color: AppColors.textSecondary,
+            ),
           ),
           const SizedBox(height: 16),
 
-          // Language toggles
-          Row(
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
             children: [
-              Expanded(
-                child: _buildToggleChip(
-                  label: 'Arabic',
-                  icon: Icons.text_format,
-                  isActive: _showArabic,
-                  onTap: () => setState(() => _showArabic = !_showArabic),
-                  color: AppColors.accent,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildToggleChip(
-                  label: 'English',
-                  icon: Icons.translate,
-                  isActive: _showEnglish,
-                  onTap: () => setState(() => _showEnglish = !_showEnglish),
-                  color: AppColors.primary,
-                ),
-              ),
+              _buildModeChip('both', 'Both', Icons.view_agenda),
+              _buildModeChip('arabic', 'Arabic only', Icons.text_format),
+              _buildModeChip('english', 'English only', Icons.translate),
             ],
           ),
         ],
@@ -245,44 +289,30 @@ class _HadithDetailScreenState extends State<HadithDetailScreen> with TickerProv
     );
   }
 
-  Widget _buildToggleChip({
-    required String label,
-    required IconData icon,
-    required bool isActive,
-    required VoidCallback onTap,
-    required Color color,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(
-          color: isActive ? color.withOpacity(0.1) : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isActive ? color : AppColors.textTertiary,
-            width: 1.5,
+  Widget _buildModeChip(String value, String label, IconData icon) {
+    final isActive = _displayMode == value;
+    return ChoiceChip(
+      selected: isActive,
+      onSelected: (_) => setState(() => _displayMode = value),
+      label: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            size: 16,
+            color: isActive ? Colors.white : AppColors.textSecondary,
           ),
-        ),
-        child: Column(
-          children: [
-            Icon(
-              icon,
-              color: isActive ? color : AppColors.textTertiary,
-              size: 20,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: AppTextStyles.labelSmall.copyWith(
-                color: isActive ? color : AppColors.textTertiary,
-                fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
+          const SizedBox(width: 6),
+          Text(label),
+        ],
       ),
+      selectedColor: AppColors.primary,
+      backgroundColor: AppColors.surface,
+      labelStyle: TextStyle(
+        color: isActive ? Colors.white : AppColors.textPrimary,
+        fontWeight: FontWeight.w600,
+      ),
+      side: BorderSide(color: AppColors.textTertiary.withOpacity(0.2)),
     );
   }
 
@@ -293,7 +323,9 @@ class _HadithDetailScreenState extends State<HadithDetailScreen> with TickerProv
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Arabic Text
-          if (_showArabic && widget.hadith.arabic != null && widget.hadith.arabic!.isNotEmpty)
+          if ((_displayMode == 'both' || _displayMode == 'arabic') &&
+              widget.hadith.arabic != null &&
+              widget.hadith.arabic!.isNotEmpty)
             _buildTextSection(
               title: 'Arabic Text',
               text: widget.hadith.arabic!,
@@ -309,7 +341,9 @@ class _HadithDetailScreenState extends State<HadithDetailScreen> with TickerProv
             ),
 
           // English Translation
-          if (_showEnglish && widget.hadith.english != null && widget.hadith.english!.isNotEmpty)
+          if ((_displayMode == 'both' || _displayMode == 'english') &&
+              widget.hadith.english != null &&
+              widget.hadith.english!.isNotEmpty)
             _buildTextSection(
               title: 'English Translation',
               text: widget.hadith.english!,
@@ -344,26 +378,16 @@ class _HadithDetailScreenState extends State<HadithDetailScreen> with TickerProv
       children: [
         Row(
           children: [
-            Icon(
-              icon,
-              color: iconColor,
-              size: 20,
-            ),
+            Icon(icon, color: iconColor, size: 20),
             const SizedBox(width: 8),
             Text(
               title,
-              style: AppTextStyles.heading3.copyWith(
-                color: iconColor,
-              ),
+              style: AppTextStyles.heading3.copyWith(color: iconColor),
             ),
             const Spacer(),
             IconButton(
               onPressed: () => _copyToClipboard(text),
-              icon: Icon(
-                Icons.copy,
-                color: iconColor,
-                size: 20,
-              ),
+              icon: Icon(Icons.copy, color: iconColor, size: 20),
             ),
           ],
         ),
@@ -376,9 +400,7 @@ class _HadithDetailScreenState extends State<HadithDetailScreen> with TickerProv
           decoration: BoxDecoration(
             color: backgroundColor,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: borderColor,
-            ),
+            border: Border.all(color: borderColor),
           ),
           child: SelectableText(
             text,

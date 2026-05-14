@@ -61,7 +61,7 @@ class SettingsScreen extends ConsumerWidget {
           const SizedBox(height: 24),
 
           // Language Settings Section
-          _buildSectionHeader('${l10n.language} / ቋንቋ'),
+          _buildSectionHeader(l10n.language),
           _buildSettingsCard([_buildLanguageTile(context, ref)]),
 
           const SizedBox(height: 24),
@@ -80,12 +80,68 @@ class SettingsScreen extends ConsumerWidget {
                   .toggleNotifications(),
               icon: Icons.notifications_active,
             ),
-            const Divider(height: 1),
-            _buildAdhanNotificationTile(context, ref),
-            const Divider(height: 1),
-            _buildReminderNotificationTile(context, ref),
           ]),
           const SizedBox(height: 12),
+
+          // Zikr reminders
+          _buildSectionHeader(l10n.zikrReminders),
+          _buildSettingsCard([
+            _buildSwitchTile(
+              context: context,
+              ref: ref,
+              title: l10n.softZikrReminders,
+              subtitle:
+                  '${preferences.zikrReminderText} every ${preferences.zikrReminderIntervalMinutes} minutes',
+              value: preferences.zikrRemindersEnabled,
+              onChanged: () => ref
+                  .read(userPreferencesProvider.notifier)
+                  .toggleZikrReminders(),
+              icon: Icons.notifications_active_outlined,
+            ),
+            const Divider(height: 1),
+            _buildListTile(
+              context: context,
+              title: l10n.reminderInterval,
+              subtitle: '${preferences.zikrReminderIntervalMinutes} minutes',
+              icon: Icons.schedule,
+              onTap: () => _showIntervalSelector(context, ref),
+            ),
+            const Divider(height: 1),
+            _buildListTile(
+              context: context,
+              title: l10n.reminderZikr,
+              subtitle: preferences.zikrReminderText,
+              icon: Icons.record_voice_over,
+              onTap: () => _showZikrTextEditor(context, ref),
+            ),
+          ]),
+
+          const SizedBox(height: 24),
+
+          // Appearance
+          _buildSectionHeader(l10n.appearanceSettings),
+          _buildSettingsCard([
+            _buildSwitchTile(
+              context: context,
+              ref: ref,
+              title: l10n.darkThemeTitle,
+              subtitle: l10n.darkThemeSubtitle,
+              value: preferences.darkMode,
+              onChanged: () =>
+                  ref.read(userPreferencesProvider.notifier).toggleDarkMode(),
+              icon: Icons.dark_mode,
+            ),
+            const Divider(height: 1),
+            _buildListTile(
+              context: context,
+              title: l10n.arabicFontTitle,
+              subtitle: preferences.arabicFontFamily,
+              icon: Icons.font_download,
+              onTap: () => _showArabicFontSelector(context, ref),
+            ),
+          ]),
+
+          const SizedBox(height: 24),
 
           // Test Notifications Section
           _buildSectionHeader(l10n.notifications),
@@ -106,7 +162,7 @@ class SettingsScreen extends ConsumerWidget {
           const SizedBox(height: 24),
 
           // Data & Privacy Section
-          _buildSectionHeader('Data & Privacy'),
+          _buildSectionHeader(l10n.privacyPolicy),
           _buildSettingsCard([
             _buildListTile(
               context: context,
@@ -222,44 +278,6 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildAdhanNotificationTile(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    return FutureBuilder<bool>(
-      future: AdhanNotificationService.areNotificationsEnabled(),
-      builder: (context, snapshot) {
-        final isEnabled = snapshot.data ?? true;
-        return ListTile(
-          leading: Icon(Icons.mosque, color: AppColors.primary),
-          title: Text(l10n.adhanNotifications, style: AppTextStyles.bodyLarge),
-          subtitle: Text(
-            l10n.adhanNotificationsDesc,
-            style: AppTextStyles.caption,
-          ),
-          trailing: Switch(
-            value: isEnabled,
-            onChanged: (value) async {
-              await AdhanNotificationService.setNotificationsEnabled(value);
-              // Force rebuild
-              (context as Element).markNeedsBuild();
-            },
-            thumbColor: WidgetStateProperty.resolveWith((states) {
-              if (states.contains(WidgetState.selected)) {
-                return AppColors.primary;
-              }
-              return null;
-            }),
-            trackColor: WidgetStateProperty.resolveWith((states) {
-              if (states.contains(WidgetState.selected)) {
-                return AppColors.primary.withValues(alpha: 0.5);
-              }
-              return null;
-            }),
-          ),
-        );
-      },
-    );
-  }
-
   Widget _buildTestNotificationTile(
     BuildContext context,
     String title,
@@ -272,44 +290,6 @@ class SettingsScreen extends ConsumerWidget {
       subtitle: Text(l10n.tapToTestNotification, style: AppTextStyles.caption),
       trailing: Icon(Icons.play_arrow, color: AppColors.primary),
       onTap: onTap,
-    );
-  }
-
-  Widget _buildReminderNotificationTile(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    return FutureBuilder<bool>(
-      future: AdhanNotificationService.areRemindersEnabled(),
-      builder: (context, snapshot) {
-        final isEnabled = snapshot.data ?? true;
-        return ListTile(
-          leading: Icon(Icons.alarm, color: AppColors.primary),
-          title: Text(l10n.prayerReminders, style: AppTextStyles.bodyLarge),
-          subtitle: Text(
-            l10n.prayerRemindersDesc,
-            style: AppTextStyles.caption,
-          ),
-          trailing: Switch(
-            value: isEnabled,
-            onChanged: (value) async {
-              await AdhanNotificationService.setRemindersEnabled(value);
-              // Force rebuild
-              (context as Element).markNeedsBuild();
-            },
-            thumbColor: WidgetStateProperty.resolveWith((states) {
-              if (states.contains(WidgetState.selected)) {
-                return AppColors.primary;
-              }
-              return null;
-            }),
-            trackColor: WidgetStateProperty.resolveWith((states) {
-              if (states.contains(WidgetState.selected)) {
-                return AppColors.primary.withValues(alpha: 0.5);
-              }
-              return null;
-            }),
-          ),
-        );
-      },
     );
   }
 
@@ -613,6 +593,102 @@ class SettingsScreen extends ConsumerWidget {
       SnackBar(
         content: Text(l10n.reminderNotificationSent),
         duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void _showIntervalSelector(BuildContext context, WidgetRef ref) {
+    final current = ref
+        .read(userPreferencesProvider)
+        .zikrReminderIntervalMinutes;
+    const options = [5, 10, 15, 30, 60];
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Reminder interval'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: options
+              .map(
+                (minutes) => ListTile(
+                  title: Text('$minutes minutes'),
+                  trailing: current == minutes
+                      ? Icon(Icons.check_circle, color: AppColors.primary)
+                      : null,
+                  onTap: () {
+                    ref
+                        .read(userPreferencesProvider.notifier)
+                        .setZikrReminderInterval(minutes);
+                    Navigator.pop(ctx);
+                  },
+                ),
+              )
+              .toList(),
+        ),
+      ),
+    );
+  }
+
+  void _showZikrTextEditor(BuildContext context, WidgetRef ref) {
+    final controller = TextEditingController(
+      text: ref.read(userPreferencesProvider).zikrReminderText,
+    );
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Reminder zikr'),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(hintText: 'e.g. Sallu ala Nabi'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              ref
+                  .read(userPreferencesProvider.notifier)
+                  .setZikrReminderText(controller.text);
+              Navigator.pop(ctx);
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showArabicFontSelector(BuildContext context, WidgetRef ref) {
+    final current = ref.read(userPreferencesProvider).arabicFontFamily;
+    const options = ['Amiri', 'Benaiah'];
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Arabic font'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: options
+              .map(
+                (font) => ListTile(
+                  title: Text(font),
+                  trailing: current == font
+                      ? Icon(Icons.check_circle, color: AppColors.primary)
+                      : null,
+                  onTap: () {
+                    ref
+                        .read(userPreferencesProvider.notifier)
+                        .setArabicFontFamily(font);
+                    Navigator.pop(ctx);
+                  },
+                ),
+              )
+              .toList(),
+        ),
       ),
     );
   }

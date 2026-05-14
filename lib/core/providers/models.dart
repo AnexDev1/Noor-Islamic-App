@@ -225,34 +225,51 @@ class UserLocation {
 class UserPreferences {
   final String selectedMadhab;
   final bool prayerReminders;
+  final bool zikrRemindersEnabled;
+  final int zikrReminderIntervalMinutes;
+  final String zikrReminderText;
   final bool showArabic;
   final bool darkMode;
   final bool notificationsEnabled;
+  final String arabicFontFamily;
   final String lastAppUsage;
 
   const UserPreferences({
     required this.selectedMadhab,
     required this.prayerReminders,
+    required this.zikrRemindersEnabled,
+    required this.zikrReminderIntervalMinutes,
+    required this.zikrReminderText,
     required this.showArabic,
     required this.darkMode,
     required this.notificationsEnabled,
+    required this.arabicFontFamily,
     required this.lastAppUsage,
   });
 
   UserPreferences copyWith({
     String? selectedMadhab,
     bool? prayerReminders,
+    bool? zikrRemindersEnabled,
+    int? zikrReminderIntervalMinutes,
+    String? zikrReminderText,
     bool? showArabic,
     bool? darkMode,
     bool? notificationsEnabled,
+    String? arabicFontFamily,
     String? lastAppUsage,
   }) {
     return UserPreferences(
       selectedMadhab: selectedMadhab ?? this.selectedMadhab,
       prayerReminders: prayerReminders ?? this.prayerReminders,
+      zikrRemindersEnabled: zikrRemindersEnabled ?? this.zikrRemindersEnabled,
+      zikrReminderIntervalMinutes:
+          zikrReminderIntervalMinutes ?? this.zikrReminderIntervalMinutes,
+      zikrReminderText: zikrReminderText ?? this.zikrReminderText,
       showArabic: showArabic ?? this.showArabic,
       darkMode: darkMode ?? this.darkMode,
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
+      arabicFontFamily: arabicFontFamily ?? this.arabicFontFamily,
       lastAppUsage: lastAppUsage ?? this.lastAppUsage,
     );
   }
@@ -260,9 +277,13 @@ class UserPreferences {
   static const UserPreferences defaults = UserPreferences(
     selectedMadhab: 'Not set',
     prayerReminders: true,
+    zikrRemindersEnabled: false,
+    zikrReminderIntervalMinutes: 5,
+    zikrReminderText: 'Sallu ala Nabi',
     showArabic: true,
     darkMode: false,
     notificationsEnabled: true,
+    arabicFontFamily: 'Amiri',
     lastAppUsage: 'First time',
   );
 }
@@ -282,7 +303,8 @@ class RamadanCountdown {
 
   bool get isRamadanStarted {
     final now = DateTime.now();
-    return now.isAfter(ramadanStartDate) || now.isAtSameMomentAs(ramadanStartDate);
+    return now.isAfter(ramadanStartDate) ||
+        now.isAtSameMomentAs(ramadanStartDate);
   }
 
   bool get isCountdownZero {

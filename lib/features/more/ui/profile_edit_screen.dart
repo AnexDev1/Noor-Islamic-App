@@ -70,7 +70,10 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       AppHelpers.showSnackBar(context, 'Profile updated successfully!');
       Navigator.pop(context, true); // Return true to indicate success
     } catch (e) {
-      AppHelpers.showSnackBar(context, 'Error updating profile. Please try again.');
+      AppHelpers.showSnackBar(
+        context,
+        'Error updating profile. Please try again.',
+      );
     } finally {
       setState(() => _isLoading = false);
     }
@@ -151,13 +154,17 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
               // Advanced Options Toggle
               GestureDetector(
-                onTap: () => setState(() => _showAdvancedOptions = !_showAdvancedOptions),
+                onTap: () => setState(
+                  () => _showAdvancedOptions = !_showAdvancedOptions,
+                ),
                 child: CustomCard(
                   padding: const EdgeInsets.all(16),
                   child: Row(
                     children: [
                       Icon(
-                        _showAdvancedOptions ? Icons.expand_less : Icons.expand_more,
+                        _showAdvancedOptions
+                            ? Icons.expand_less
+                            : Icons.expand_more,
                         color: AppColors.primary,
                       ),
                       const SizedBox(width: 12),
@@ -194,10 +201,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                   keyboardType: TextInputType.phone,
                   hintText: '+1 234 567 8900',
                 ),
-
-                const SizedBox(height: 24),
-
-                _AccountActions(),
               ],
 
               const SizedBox(height: 32),
@@ -231,11 +234,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                   ),
                 ],
               ),
-              child: const Icon(
-                Icons.person,
-                size: 60,
-                color: Colors.white,
-              ),
+              child: const Icon(Icons.person, size: 60, color: Colors.white),
             ),
             Positioned(
               bottom: 0,
@@ -342,13 +341,9 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(
-                child: _GenderOption('Male', Icons.man),
-              ),
+              Expanded(child: _GenderOption('Male', Icons.man)),
               const SizedBox(width: 12),
-              Expanded(
-                child: _GenderOption('Female', Icons.woman),
-              ),
+              Expanded(child: _GenderOption('Female', Icons.woman)),
             ],
           ),
         ],
@@ -365,8 +360,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: isSelected
-            ? AppColors.primary.withOpacity(0.1)
-            : AppColors.surface,
+              ? AppColors.primary.withOpacity(0.1)
+              : AppColors.surface,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: isSelected ? AppColors.primary : Colors.transparent,
@@ -439,8 +434,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: isDestructive
-                ? Colors.red.withOpacity(0.1)
-                : AppColors.primary.withOpacity(0.1),
+                  ? Colors.red.withOpacity(0.1)
+                  : AppColors.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -484,9 +479,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
           children: [
             Icon(Icons.warning, color: Colors.red),

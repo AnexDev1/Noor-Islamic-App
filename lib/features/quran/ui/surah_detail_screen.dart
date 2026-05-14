@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import '../../../core/services/bookmark_service.dart';
 import '../data/amharic_translation_api.dart';
 import '../data/surah_api.dart';
 import '../data/reciters_api.dart';
-import '../domain/amharic_translation.dart';
 import '../domain/quran_enc_translation.dart';
 import '../domain/surah_detail.dart';
 import '../audio/audio_player_service.dart';
@@ -40,6 +40,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen>
   Map<String, String> _reciters = {};
   String? _recitersError;
   bool _showTranslation = true;
+  bool _isBookmarked = false;
 
   final Map<String, String> _translationOptions = {
     'amharic_zain': 'Amharic',
@@ -67,6 +68,18 @@ class _SurahDetailScreenState extends State<SurahDetailScreen>
     );
 
     _fadeController.forward();
+
+    BookmarkService.instance.initialize().then((_) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _isBookmarked = BookmarkService.instance.isBookmarked(
+          _bookmarkId,
+          BookmarkType.quran,
+        );
+      });
+    });
 
     _recitersFuture
         .then((reciters) {
@@ -136,6 +149,49 @@ class _SurahDetailScreenState extends State<SurahDetailScreen>
       onReciterChanged: _onReciterChanged,
       onShowTranslationChanged: _onShowTranslationChanged,
     );
+  }
+
+  String get _bookmarkId => 'quran-${widget.surahNo}';
+
+  Future<void> _toggleBookmark() async {
+    await BookmarkService.instance.initialize();
+
+    if (_isBookmarked) {
+      await BookmarkService.instance.removeBookmark(
+        _bookmarkId,
+        BookmarkType.quran,
+      );
+      if (!mounted) {
+        return;
+      }
+      setState(() => _isBookmarked = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Bookmark removed')));
+      return;
+    }
+
+    await BookmarkService.instance.addBookmark(
+      BookmarkItem(
+        id: _bookmarkId,
+        title: widget.surahName,
+        subtitle: 'Surah ${widget.surahNo}',
+        type: BookmarkType.quran,
+        metadata: <String, dynamic>{
+          'surahNo': widget.surahNo,
+          'surahName': widget.surahName,
+        },
+        timestamp: DateTime.now(),
+      ),
+    );
+
+    if (!mounted) {
+      return;
+    }
+    setState(() => _isBookmarked = true);
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Bookmark saved')));
   }
 
   @override
@@ -256,6 +312,21 @@ class _SurahDetailScreenState extends State<SurahDetailScreen>
         ),
       ),
       actions: [
+        IconButton(
+          onPressed: _toggleBookmark,
+          icon: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              _isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
         // Settings Icon
         IconButton(
           onPressed: _openSettings,

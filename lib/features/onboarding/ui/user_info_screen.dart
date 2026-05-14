@@ -1,37 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/providers/app_providers.dart';
 import '../../../core/utils/helpers.dart';
 import '../../../navigation/main_navigation.dart';
 
-class UserInfoScreen extends StatefulWidget {
+class UserInfoScreen extends ConsumerStatefulWidget {
   const UserInfoScreen({super.key});
 
   @override
-  State<UserInfoScreen> createState() => _UserInfoScreenState();
+  ConsumerState<UserInfoScreen> createState() => _UserInfoScreenState();
 }
 
-class _UserInfoScreenState extends State<UserInfoScreen>
+class _UserInfoScreenState extends ConsumerState<UserInfoScreen>
     with TickerProviderStateMixin {
   late PageController _pageController;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
 
   int _currentStep = 0;
-  final int _totalSteps = 4;
+  final int _totalSteps = 3;
   bool _isLoading = false;
 
   // Form controllers
   final _nameController = TextEditingController();
-  final _locationController = TextEditingController();
   final _emailController = TextEditingController();
+  bool _notificationsEnabled = true;
 
   String _selectedGender = 'Male';
   String _selectedLanguage = 'English';
-  bool _notificationsEnabled = true;
-
-  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -54,7 +53,6 @@ class _UserInfoScreenState extends State<UserInfoScreen>
     _pageController.dispose();
     _animationController.dispose();
     _nameController.dispose();
-    _locationController.dispose();
     _emailController.dispose();
     super.dispose();
   }
@@ -92,14 +90,8 @@ class _UserInfoScreenState extends State<UserInfoScreen>
         }
         return true;
       case 1:
-        if (_locationController.text.trim().isEmpty) {
-          AppHelpers.showSnackBar(context, 'Please enter your location');
-          return false;
-        }
-        return true;
-      case 2:
         return true; // Gender and language are pre-selected
-      case 3:
+      case 2:
         return true; // Final confirmation step
       default:
         return true;
@@ -111,15 +103,18 @@ class _UserInfoScreenState extends State<UserInfoScreen>
 
     try {
       final prefs = await SharedPreferences.getInstance();
+      final locale = _languageToLocale(_selectedLanguage);
 
       // Save user information
       await prefs.setString('user_name', _nameController.text.trim());
-      await prefs.setString('user_location', _locationController.text.trim());
       await prefs.setString('user_email', _emailController.text.trim());
       await prefs.setString('user_gender', _selectedGender);
       await prefs.setString('user_language', _selectedLanguage);
+      await prefs.setString('app_locale', locale.languageCode);
       await prefs.setBool('notifications_enabled', _notificationsEnabled);
       await prefs.setBool('onboarding_completed', true);
+
+      await ref.read(localeProvider.notifier).setLocale(locale);
 
       // Simulate processing time for better UX
       await Future.delayed(const Duration(milliseconds: 1500));
@@ -136,7 +131,10 @@ class _UserInfoScreenState extends State<UserInfoScreen>
       );
     } catch (e) {
       setState(() => _isLoading = false);
-      AppHelpers.showSnackBar(context, 'Error saving information. Please try again.');
+      AppHelpers.showSnackBar(
+        context,
+        'Error saving information. Please try again.',
+      );
     }
   }
 
@@ -144,6 +142,7 @@ class _UserInfoScreenState extends State<UserInfoScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -168,31 +167,37 @@ class _UserInfoScreenState extends State<UserInfoScreen>
           ),
         ],
       ),
-      body: Column(
-        children: [
-          // Progress Indicator
-          _buildProgressIndicator(),
+      body: AnimatedPadding(
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOut,
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.viewInsetsOf(context).bottom,
+        ),
+        child: Column(
+          children: [
+            // Progress Indicator
+            _buildProgressIndicator(),
 
-          // Content
-          Expanded(
-            child: FadeTransition(
-              opacity: _fadeAnimation,
-              child: PageView(
-                controller: _pageController,
-                physics: const NeverScrollableScrollPhysics(),
-                children: [
-                  _buildNameStep(),
-                  _buildLocationStep(),
-                  _buildPreferencesStep(),
-                  _buildConfirmationStep(),
-                ],
+            // Content
+            Expanded(
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: PageView(
+                  controller: _pageController,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    _buildNameStep(),
+                    _buildPreferencesStep(),
+                    _buildConfirmationStep(),
+                  ],
+                ),
               ),
             ),
-          ),
 
-          // Bottom Action Button
-          _buildBottomButton(),
-        ],
+            // Bottom Action Button
+            _buildBottomButton(),
+          ],
+        ),
       ),
     );
   }
@@ -233,13 +238,20 @@ class _UserInfoScreenState extends State<UserInfoScreen>
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [AppColors.primary.withOpacity(0.1), AppColors.primaryLight.withOpacity(0.05)],
+                colors: [
+                  AppColors.primary.withOpacity(0.1),
+                  AppColors.primaryLight.withOpacity(0.05),
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: const Icon(Icons.person_outline, size: 48, color: AppColors.primary),
+            child: const Icon(
+              Icons.person_outline,
+              size: 48,
+              color: AppColors.primary,
+            ),
           ),
           const SizedBox(height: 24),
           Text(
@@ -277,76 +289,6 @@ class _UserInfoScreenState extends State<UserInfoScreen>
     );
   }
 
-  Widget _buildLocationStep() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 40),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [AppColors.accent.withOpacity(0.1), AppColors.accentLight.withOpacity(0.05)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: const Icon(Icons.location_on_outlined, size: 48, color: AppColors.accent),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'Where are you located?',
-            style: AppTextStyles.displaySmall.copyWith(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'We need your location to provide accurate prayer times and Qibla direction.',
-            style: AppTextStyles.bodyMedium.copyWith(
-              color: AppColors.textSecondary,
-              height: 1.5,
-            ),
-          ),
-          const SizedBox(height: 32),
-          _buildTextField(
-            controller: _locationController,
-            label: 'City, Country',
-            hint: 'e.g., New York, USA',
-            icon: Icons.location_city,
-          ),
-          const SizedBox(height: 24),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.05),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.primary.withOpacity(0.1)),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.info_outline, color: AppColors.primary, size: 20),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    'This helps us calculate accurate prayer times for your area',
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.primary,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildPreferencesStep() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
@@ -358,7 +300,10 @@ class _UserInfoScreenState extends State<UserInfoScreen>
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [AppColors.secondary.withOpacity(0.1), AppColors.secondaryLight.withOpacity(0.05)],
+                colors: [
+                  AppColors.secondary.withOpacity(0.1),
+                  AppColors.secondaryLight.withOpacity(0.05),
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -424,13 +369,20 @@ class _UserInfoScreenState extends State<UserInfoScreen>
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [AppColors.success.withOpacity(0.1), AppColors.success.withOpacity(0.05)],
+                colors: [
+                  AppColors.success.withOpacity(0.1),
+                  AppColors.success.withOpacity(0.05),
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: const Icon(Icons.check_circle_outline, size: 48, color: AppColors.success),
+            child: const Icon(
+              Icons.check_circle_outline,
+              size: 48,
+              color: AppColors.success,
+            ),
           ),
           const SizedBox(height: 24),
           Text(
@@ -467,23 +419,29 @@ class _UserInfoScreenState extends State<UserInfoScreen>
             ),
             child: Column(
               children: [
-                _buildSummaryRow(Icons.person, 'Name', _nameController.text.trim()),
+                _buildSummaryRow(
+                  Icons.person,
+                  'Name',
+                  _nameController.text.trim(),
+                ),
                 if (_emailController.text.trim().isNotEmpty) ...[
                   const SizedBox(height: 16),
-                  _buildSummaryRow(Icons.email, 'Email', _emailController.text.trim()),
+                  _buildSummaryRow(
+                    Icons.email,
+                    'Email',
+                    _emailController.text.trim(),
+                  ),
                 ],
+
                 const SizedBox(height: 16),
-                _buildSummaryRow(Icons.location_on, 'Location', _locationController.text.trim()),
-                const SizedBox(height: 16),
-                _buildSummaryRow(Icons.person_outline, 'Gender', _selectedGender),
+                _buildSummaryRow(
+                  Icons.person_outline,
+                  'Gender',
+                  _selectedGender,
+                ),
                 const SizedBox(height: 16),
                 _buildSummaryRow(Icons.language, 'Language', _selectedLanguage),
                 const SizedBox(height: 16),
-                _buildSummaryRow(
-                  Icons.notifications,
-                  'Notifications',
-                  _notificationsEnabled ? 'Enabled' : 'Disabled',
-                ),
               ],
             ),
           ),
@@ -548,8 +506,12 @@ class _UserInfoScreenState extends State<UserInfoScreen>
           prefixIcon: Icon(icon, color: AppColors.primary),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.all(16),
-          labelStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
-          hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textTertiary),
+          labelStyle: AppTextStyles.bodyMedium.copyWith(
+            color: AppColors.textSecondary,
+          ),
+          hintStyle: AppTextStyles.bodyMedium.copyWith(
+            color: AppColors.textTertiary,
+          ),
         ),
       ),
     );
@@ -573,10 +535,14 @@ class _UserInfoScreenState extends State<UserInfoScreen>
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary.withOpacity(0.1) : AppColors.surface,
+          color: isSelected
+              ? AppColors.primary.withOpacity(0.1)
+              : AppColors.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.primary.withOpacity(0.1),
+            color: isSelected
+                ? AppColors.primary
+                : AppColors.primary.withOpacity(0.1),
             width: 2,
           ),
         ),
@@ -615,7 +581,7 @@ class _UserInfoScreenState extends State<UserInfoScreen>
           value: _selectedLanguage,
           isExpanded: true,
           icon: Icon(Icons.arrow_drop_down, color: AppColors.primary),
-          items: ['English', 'العربية', 'اردو'].map((String language) {
+          items: ['English', 'Amharic', 'Afan Oromo'].map((String language) {
             return DropdownMenuItem<String>(
               value: language,
               child: Text(language, style: AppTextStyles.bodyMedium),
@@ -624,11 +590,26 @@ class _UserInfoScreenState extends State<UserInfoScreen>
           onChanged: (String? newValue) {
             if (newValue != null) {
               setState(() => _selectedLanguage = newValue);
+              ref
+                  .read(localeProvider.notifier)
+                  .setLocale(_languageToLocale(newValue));
             }
           },
         ),
       ),
     );
+  }
+
+  Locale _languageToLocale(String language) {
+    switch (language) {
+      case 'Amharic':
+        return const Locale('am');
+      case 'Afan Oromo':
+        return const Locale('om');
+      case 'English':
+      default:
+        return const Locale('en');
+    }
   }
 
   Widget _buildNotificationToggle() {
@@ -641,20 +622,38 @@ class _UserInfoScreenState extends State<UserInfoScreen>
       ),
       child: Row(
         children: [
-          Icon(Icons.notifications_outlined, color: AppColors.primary, size: 20),
+          Icon(
+            Icons.notifications_outlined,
+            color: AppColors.primary,
+            size: 20,
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Prayer Time Notifications', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
-                Text('Get notified for prayer times', style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
+                Text(
+                  'Prayer Time Notifications',
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  'Get notified for prayer times',
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
               ],
             ),
           ),
           Switch(
             value: _notificationsEnabled,
-            onChanged: (value) => setState(() => _notificationsEnabled = value),
+            onChanged: (value) {
+              setState(() {
+                _notificationsEnabled = value;
+              });
+            },
             activeColor: AppColors.primary,
           ),
         ],
@@ -678,8 +677,18 @@ class _UserInfoScreenState extends State<UserInfoScreen>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
-              Text(value, style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
+              Text(
+                label,
+                style: AppTextStyles.bodySmall.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              Text(
+                value,
+                style: AppTextStyles.bodyMedium.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ],
           ),
         ),
@@ -717,7 +726,9 @@ class _UserInfoScreenState extends State<UserInfoScreen>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      _currentStep == _totalSteps - 1 ? 'Complete Setup' : 'Continue',
+                      _currentStep == _totalSteps - 1
+                          ? 'Complete Setup'
+                          : 'Continue',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -725,7 +736,9 @@ class _UserInfoScreenState extends State<UserInfoScreen>
                     ),
                     const SizedBox(width: 8),
                     Icon(
-                      _currentStep == _totalSteps - 1 ? Icons.check_rounded : Icons.arrow_forward_rounded,
+                      _currentStep == _totalSteps - 1
+                          ? Icons.check_rounded
+                          : Icons.arrow_forward_rounded,
                       size: 20,
                     ),
                   ],

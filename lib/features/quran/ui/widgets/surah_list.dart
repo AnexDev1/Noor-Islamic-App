@@ -5,11 +5,11 @@ import '../../audio/audio_player_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 
-class  SurahList extends StatelessWidget {
+class SurahList extends StatelessWidget {
   final List<SurahInfo> surahs;
   final SimpleQuranAudioPlayer audioService;
 
-  const  SurahList({
+  const SurahList({
     super.key,
     required this.surahs,
     required this.audioService,
@@ -23,7 +23,7 @@ class  SurahList extends StatelessWidget {
       itemCount: surahs.length,
       itemBuilder: (context, index) {
         final surah = surahs[index];
-        final surahNumber = index + 1;
+        final surahNumber = surah.surahNumber;
 
         return Container(
           margin: const EdgeInsets.only(bottom: 16),
@@ -62,10 +62,7 @@ class  SurahList extends StatelessWidget {
                     height: 50,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [
-                          AppColors.primary,
-                          AppColors.primaryLight,
-                        ],
+                        colors: [AppColors.primary, AppColors.primaryLight],
                       ),
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -164,11 +161,7 @@ class  SurahList extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 14,
-            color: color,
-          ),
+          Icon(icon, size: 14, color: color),
           const SizedBox(width: 4),
           Text(
             label,

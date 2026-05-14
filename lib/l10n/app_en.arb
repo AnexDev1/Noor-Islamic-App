@@ -201,7 +201,7 @@
   "unableToFindQibla": "Unable to Find Qibla",
   "unableToFetchQibla": "Unable to fetch Qibla direction. Please check your connection.",
   
-  "islamicVideos": "Islamic Hadith",
+  "islamicVideos": "Da'wah",
   "curatedIslamicContent": "Curated Islamic content & reminders",
   
   "ramadanCountdown": "Ramadan Countdown",
@@ -258,5 +258,27 @@
       "total": { "type": "int" },
       "percentage": { "type": "int" }
     }
-  }
+  },
+  "tajweedHifzMode": "Tajweed & Hifz Mode",
+  "tajweedHifzSubtitle": "Ayah-by-Ayah recitation and repetition",
+  "prayerMatMode": "Prayer Mat Mode",
+  "prayerMatSubtitle": "Distraction-free focus timer",
+  "noorWrap": "Noor Wrap",
+  "noorWrapSubtitle": "Your spiritual journey summary",
+  "tasbihSubtitle": "Counter, Nafas Dhikr & Bead Flow",
+  "learnIslamSubtitle": "Salah, Wudu, rules & video lessons",
+  "bookmarksSubtitle": "Saved Quran, Hadith & Azkhar items",
+  "listenQuranSubtitle": "Stream audio with background play",
+  "quranStreakSubtitle": "Track your daily Quran reading",
+  "reflectionsSubtitle": "Journal your prayer experiences",
+  "ayahCardSubtitle": "Beautiful shareable Quran cards",
+  "ramadanHabitsSubtitle": "30-day challenge board",
+  "zikrReminders": "Zikr Reminders",
+  "softZikrReminders": "Soft zikr reminders",
+  "reminderInterval": "Reminder interval",
+  "reminderZikr": "Reminder zikr",
+  "appearanceSettings": "Appearance",
+  "darkThemeTitle": "Dark theme",
+  "darkThemeSubtitle": "Use the darker color palette",
+  "arabicFontTitle": "Arabic font"
 }

@@ -21,35 +21,15 @@ import 'features/quran/audio/quran_audio_handler.dart';
 
 import 'features/ayah_card/services/ayah_notification_service.dart';
 
+import 'package:google_fonts/google_fonts.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Prevent Google Fonts from trying to download fonts when offline
+  GoogleFonts.config.allowRuntimeFetching = false;
+  
   await _ensureLocationPermission();
-
-  // Initialize Audio Service
-  globalAudioHandler = await AudioService.init(
-    builder: () => QuranAudioHandler(),
-    config: const AudioServiceConfig(
-      androidNotificationChannelId: 'com.anexon.noor.channel.audio',
-      androidNotificationChannelName: 'Quran Audio',
-      androidNotificationOngoing: true,
-    ),
-  );
-
-  // Initialize Firebase
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-  // Register background message handler
-  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-
-  // Initialize FCM service
-  await FcmService.initialize();
-
-  // Initialize notification service
-  await AdhanNotificationService.initialize();
-  await AdhanNotificationService.requestPermissions();
-
-  // Schedule Ayah Notifications (after Adhan service inits timezone)
-  await AyahNotificationService.scheduleUpcomingAyahs();
 
   // Initialize Hive for local storage
   await LocalStorageService.initialize();
@@ -65,6 +45,44 @@ void main() async {
       child: const MyApp(),
     ),
   );
+
+  // Initialize heavy services in background to prevent splash screen hang
+  _initializeBackgroundServices();
+}
+
+Future<void> _initializeBackgroundServices() async {
+  try {
+    // Initialize Audio Service
+    globalAudioHandler = await AudioService.init(
+      builder: () => QuranAudioHandler(),
+      config: const AudioServiceConfig(
+        androidNotificationChannelId: 'com.anexon.noor.channel.audio',
+        androidNotificationChannelName: 'Quran Audio',
+        androidNotificationOngoing: true,
+      ),
+    );
+
+    // Initialize Firebase
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+
+    // Register background message handler
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
+    // Initialize FCM service
+    await FcmService.initialize();
+
+    // Initialize notification service
+    await AdhanNotificationService.initialize();
+    await AdhanNotificationService.requestPermissions();
+
+    // Schedule Ayah Notifications (after Adhan service inits timezone)
+    await AyahNotificationService.scheduleUpcomingAyahs();
+  } catch (e) {
+    debugPrint('Background services init error: $e');
+  }
+
 }
 
 Future<void> _ensureLocationPermission() async {
@@ -88,7 +106,7 @@ class MyApp extends ConsumerWidget {
 
     return MaterialApp(
       key: ValueKey(locale.languageCode), // Force rebuild on locale change
-      title: AppLocalizations.of(context)?.appTitle ?? 'Noor - Islamic App',
+      title: '',
       theme: preferences.darkMode ? AppTheme.darkTheme : AppTheme.lightTheme,
       locale: locale,
       supportedLocales: AppLocalizations.supportedLocales,
