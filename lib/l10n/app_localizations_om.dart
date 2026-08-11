@@ -271,9 +271,6 @@ class AppLocalizationsOm extends AppLocalizations {
   String get undo => 'Undo';
 
   @override
-  String get aiChat => 'AI Chat';
-
-  @override
   String get madhabPreference => 'Madhab Preference';
 
   @override

@@ -4,11 +4,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../quran/domain/surah_detail.dart';
-import '../../quran/domain/surah_info.dart';
 import '../providers/tajweed_provider.dart';
 import '../services/tajweed_audio_service.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../quran/data/surah_api.dart';
+import '../../quran/ui/widgets/quran_visuals.dart';
 
 class TajweedPlayerScreen extends ConsumerStatefulWidget {
   final SurahDetail surahDetail;
@@ -29,6 +29,7 @@ class TajweedPlayerScreen extends ConsumerStatefulWidget {
 
 class _TajweedPlayerScreenState extends ConsumerState<TajweedPlayerScreen> {
   bool _isImageMode = false;
+  bool _hideVerses = false;
   final ScrollController _scrollController = ScrollController();
   int _lastAutoScrolledAyah = -1;
   late SurahDetail _currentSurahDetail;
@@ -68,7 +69,7 @@ class _TajweedPlayerScreenState extends ConsumerState<TajweedPlayerScreen> {
       surahName: _currentSurahDetail.surahName,
       startAyah: widget
           .startAyah, // Will only be respected on first load or needs adjustment
-      endAyah: _currentSurahDetail.totalAyah,
+      endAyah: widget.endAyah,
       folderName: notifier.currentReciter.folderName,
       repeatCount: state.repeatCount,
       loopEntireRange: state.loopRange,
@@ -194,6 +195,16 @@ class _TajweedPlayerScreenState extends ConsumerState<TajweedPlayerScreen> {
         centerTitle: true,
         actions: [
           IconButton(
+            tooltip: _hideVerses ? 'Reveal verses' : 'Hide verses for recall',
+            icon: Icon(
+              _hideVerses
+                  ? Icons.visibility_rounded
+                  : Icons.visibility_off_rounded,
+              color: AppColors.primary,
+            ),
+            onPressed: () => setState(() => _hideVerses = !_hideVerses),
+          ),
+          IconButton(
             icon: Icon(
               _isImageMode ? Icons.text_fields : Icons.image,
               color: AppColors.primary,
@@ -258,7 +269,10 @@ class _TajweedPlayerScreenState extends ConsumerState<TajweedPlayerScreen> {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.accent.withOpacity(0.3), width: 2),
+        border: Border.all(
+          color: AppColors.accent.withValues(alpha: 0.3),
+          width: 2,
+        ),
         boxShadow: [
           BoxShadow(
             color: AppColors.shadowLight,
@@ -297,74 +311,80 @@ class _TajweedPlayerScreenState extends ConsumerState<TajweedPlayerScreen> {
     return SingleChildScrollView(
       controller: _scrollController,
       padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: const Color(0xFFFCF8E8), // Warm authentic paper color
-          border: Border.all(color: AppColors.accent, width: 2.5),
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.15),
-              blurRadius: 15,
-              offset: const Offset(0, 8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: Column(
+          children: [
+            QuranSurahBanner(
+              arabicName: _currentSurahDetail.surahNameArabic,
+              name: _currentSurahDetail.surahName,
+              subtitle:
+                  'Hifz practice  •  Ayah $currentAyah of ${_currentSurahDetail.totalAyah}',
+              showBasmala: _currentSurahDetail.surahNo != 9,
             ),
-          ],
-        ),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: AppColors.accent.withOpacity(0.5),
-              width: 1.5,
-            ),
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: SelectableText.rich(
-            TextSpan(
-              children: _currentSurahDetail.arabic1.asMap().entries.map((
-                entry,
-              ) {
-                final index = entry.key;
-                final ayahNumber = index + 1;
-                final arabicText = entry.value;
-                final isHighlighted = currentAyah == ayahNumber;
+            const SizedBox(height: 14),
+            MushafSurface(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+              child: SelectableText.rich(
+                TextSpan(
+                  children: _currentSurahDetail.arabic1.asMap().entries.map((
+                    entry,
+                  ) {
+                    final index = entry.key;
+                    final ayahNumber = index + 1;
+                    final arabicText = entry.value;
+                    final isHighlighted = currentAyah == ayahNumber;
 
-                return TextSpan(
-                  children: [
-                    TextSpan(
-                      text: '${arabicText.trim()} ',
-                      style: AppTextStyles.arabicLarge.copyWith(
-                        fontSize:
-                            26, // Reduced font size for better readability
-                        height: 2.0,
-                        color: isHighlighted
-                            ? const Color(0xFFB8860B)
-                            : const Color(0xFF1A1D23),
-                        fontWeight: isHighlighted
-                            ? FontWeight.bold
-                            : FontWeight.w500,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '﴿${_toArabicNumber(ayahNumber)}﴾ ',
-                      style: AppTextStyles.arabicLarge.copyWith(
-                        fontSize: 20,
-                        color: isHighlighted
-                            ? const Color(0xFFB8860B)
-                            : AppColors.primary,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                );
-              }).toList(),
+                    return TextSpan(
+                      children: [
+                        TextSpan(
+                          text: _hideVerses && !isHighlighted
+                              ? 'ــــــــــــــــــــــ '
+                              : '${arabicText.trim()} ',
+                          style: AppTextStyles.arabicLarge.copyWith(
+                            fontSize:
+                                26, // Reduced font size for better readability
+                            height: 2.0,
+                            color: _hideVerses && !isHighlighted
+                                ? QuranVisuals.goldFor(
+                                    context,
+                                  ).withValues(alpha: 0.38)
+                                : isHighlighted
+                                ? const Color(0xFFB8860B)
+                                : const Color(0xFF1A1D23),
+                            fontWeight: isHighlighted
+                                ? FontWeight.bold
+                                : FontWeight.w500,
+                          ),
+                        ),
+                        TextSpan(
+                          text: '﴿${_toArabicNumber(ayahNumber)}﴾ ',
+                          style: AppTextStyles.arabicLarge.copyWith(
+                            fontSize: 20,
+                            color: isHighlighted
+                                ? const Color(0xFFB8860B)
+                                : AppColors.primary,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
+                textAlign: TextAlign.justify,
+                textDirection: TextDirection.rtl,
+              ),
             ),
-            textAlign: TextAlign
-                .justify, // Stretch words end-to-end like a physical Quran
-            textDirection: TextDirection.rtl,
-          ),
+            if (_hideVerses) ...[
+              const SizedBox(height: 12),
+              Text(
+                'Recall mode • only the current ayah is revealed',
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: QuranVisuals.goldFor(context),
+                ),
+              ),
+            ],
+          ],
         ),
       ),
     );

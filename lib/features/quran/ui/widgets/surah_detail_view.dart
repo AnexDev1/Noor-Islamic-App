@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
@@ -10,6 +11,7 @@ import '../../domain/quran_enc_translation.dart';
 import '../../audio/audio_player_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import 'quran_visuals.dart';
 
 class SurahDetailView extends StatefulWidget {
   final SurahDetail surahDetail;
@@ -18,6 +20,7 @@ class SurahDetailView extends StatefulWidget {
   final SimpleQuranAudioPlayer audioService;
   final String reciterName;
   final bool showTranslation;
+  final ScrollController scrollController;
 
   const SurahDetailView({
     super.key,
@@ -27,6 +30,7 @@ class SurahDetailView extends StatefulWidget {
     required this.audioService,
     required this.reciterName,
     this.showTranslation = true,
+    required this.scrollController,
   });
 
   @override
@@ -40,7 +44,8 @@ class _SurahDetailViewState extends State<SurahDetailView> {
   Map<int, String> _ayahAudioUrls = {};
   int? _playingAyahIndex;
   bool _isPlayingAyah = false;
-  bool _isLoadingAyahAudio = false;
+  final Set<int> _loadingAyahAudio = {};
+  int _visibleAyahCount = 20;
 
   @override
   void initState() {
@@ -60,7 +65,7 @@ class _SurahDetailViewState extends State<SurahDetailView> {
       });
     });
     _fetchAudioUrl();
-    _fetchAllAyahAudio();
+    widget.scrollController.addListener(_loadMoreAyahsIfNeeded);
   }
 
   @override
@@ -76,13 +81,15 @@ class _SurahDetailViewState extends State<SurahDetailView> {
           _isPlayingAyah = false;
         });
       }
-      _fetchAllAyahAudio();
+      _ayahAudioUrls = {};
+      _visibleAyahCount = 20;
     }
   }
 
   @override
   void dispose() {
     _ayahPlayerSubscription?.cancel();
+    widget.scrollController.removeListener(_loadMoreAyahsIfNeeded);
     _ayahAudioPlayer.dispose();
     super.dispose();
   }
@@ -133,46 +140,30 @@ class _SurahDetailViewState extends State<SurahDetailView> {
     }
   }
 
-  Future<void> _fetchAllAyahAudio() async {
-    if (!mounted) {
+  void _loadMoreAyahsIfNeeded() {
+    if (!widget.scrollController.hasClients ||
+        widget.scrollController.position.extentAfter > 900 ||
+        _visibleAyahCount >= widget.surahDetail.totalAyah) {
       return;
     }
-
     setState(() {
-      _isLoadingAyahAudio = true;
-    });
-
-    final ayahAudioUrls = <int, String>{};
-
-    for (int i = 0; i < widget.surahDetail.totalAyah; i++) {
-      final ayahNo = i + 1;
-      try {
-        final audioMap = await AudioApi.fetchAyahAudio(
-          widget.surahDetail.surahNo,
-          ayahNo,
-        );
-        final dynamic reciterAudio = audioMap[widget.reciterId];
-        if (reciterAudio is Map && reciterAudio['url'] != null) {
-          ayahAudioUrls[i] = reciterAudio['url'].toString();
-        } else {
-          ayahAudioUrls[i] = '';
-        }
-      } catch (_) {
-        ayahAudioUrls[i] = '';
-      }
-    }
-
-    if (!mounted) {
-      return;
-    }
-
-    setState(() {
-      _ayahAudioUrls = ayahAudioUrls;
-      _isLoadingAyahAudio = false;
+      _visibleAyahCount = math.min(
+        _visibleAyahCount + 20,
+        widget.surahDetail.totalAyah,
+      );
     });
   }
 
-  Widget _buildSurahHeader() {
+  Widget _buildSurahHeader() => QuranSurahBanner(
+    arabicName: widget.surahDetail.surahNameArabic,
+    name: widget.surahDetail.surahName,
+    subtitle:
+        '${widget.surahDetail.surahNameTranslation}  •  ${widget.surahDetail.revelationPlace}  •  ${widget.surahDetail.totalAyah} verses',
+    showBasmala: widget.surahDetail.surahNo != 9,
+  );
+
+  // ignore: unused_element
+  Widget _buildLegacySurahHeader() {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
@@ -289,8 +280,28 @@ class _SurahDetailViewState extends State<SurahDetailView> {
   }
 
   Future<void> _toggleAyahAudio(int index) async {
-    final url = _ayahAudioUrls[index];
-    if (url == null || url.isEmpty) {
+    var url = _ayahAudioUrls[index];
+    if (url == null) {
+      setState(() => _loadingAyahAudio.add(index));
+      try {
+        final audioMap = await AudioApi.fetchAyahAudio(
+          widget.surahDetail.surahNo,
+          index + 1,
+        );
+        final dynamic reciterAudio = audioMap[widget.reciterId];
+        url = reciterAudio is Map && reciterAudio['url'] != null
+            ? reciterAudio['url'].toString()
+            : '';
+      } catch (_) {
+        url = '';
+      }
+      if (!mounted) return;
+      setState(() {
+        _ayahAudioUrls[index] = url ?? '';
+        _loadingAyahAudio.remove(index);
+      });
+    }
+    if (url.isEmpty) {
       return;
     }
 
@@ -461,151 +472,145 @@ class _SurahDetailViewState extends State<SurahDetailView> {
 
         const SizedBox(height: 16),
 
-        ...List.generate(widget.surahDetail.totalAyah, (index) {
-          final translation = index < widget.translations.length
-              ? widget.translations[index]
-              : null;
-          final arabicText = translation?.arabicText?.isNotEmpty == true
-              ? translation!.arabicText!
-              : (index < widget.surahDetail.arabic1.length
-                    ? widget.surahDetail.arabic1[index]
-                    : '');
-          final audioUrl = _ayahAudioUrls[index] ?? '';
-
-          return Container(
-            margin: const EdgeInsets.only(bottom: 20),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.shadowLight,
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
+        ...List.generate(
+          math.min(_visibleAyahCount, widget.surahDetail.totalAyah),
+          (index) {
+            final translation = index < widget.translations.length
+                ? widget.translations[index]
+                : null;
+            final arabicText = translation?.arabicText?.isNotEmpty == true
+                ? translation!.arabicText!
+                : (index < widget.surahDetail.arabic1.length
+                      ? widget.surahDetail.arabic1[index]
+                      : '');
+            return Container(
+              margin: const EdgeInsets.only(bottom: 20),
+              decoration: BoxDecoration(
+                color: QuranVisuals.paperFor(context),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: QuranVisuals.goldFor(context).withValues(alpha: 0.3),
                 ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Verse Number Header
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 14,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.shadowLight,
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
                   ),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.05),
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Verse Number Header
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 14,
                     ),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 36,
-                        height: 36,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [AppColors.primary, AppColors.primaryLight],
-                          ),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Center(
-                          child: Text(
-                            '${index + 1}',
-                            style: AppTextStyles.labelLarge.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.05),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
                       ),
-                      const SizedBox(width: 12),
-                      Text(
-                        'Verse ${_toArabicNumber(index + 1)}',
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                      const Spacer(),
-                      if (audioUrl.isNotEmpty)
-                        IconButton(
-                          onPressed: () => _toggleAyahAudio(index),
-                          icon: Icon(
-                            _playingAyahIndex == index && _isPlayingAyah
-                                ? Icons.pause_circle_outline_rounded
-                                : Icons.play_circle_outline_rounded,
+                    ),
+                    child: Row(
+                      children: [
+                        AyahMedallion(number: index + 1),
+                        const SizedBox(width: 12),
+                        Text(
+                          'Verse ${_toArabicNumber(index + 1)}',
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            fontWeight: FontWeight.w600,
                             color: AppColors.primary,
-                            size: 26,
                           ),
+                        ),
+                        const Spacer(),
+                        IconButton(
+                          onPressed: _loadingAyahAudio.contains(index)
+                              ? null
+                              : () => _toggleAyahAudio(index),
+                          icon: _loadingAyahAudio.contains(index)
+                              ? const SizedBox.square(
+                                  dimension: 22,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Icon(
+                                  _playingAyahIndex == index && _isPlayingAyah
+                                      ? Icons.pause_circle_outline_rounded
+                                      : Icons.play_circle_outline_rounded,
+                                  color: AppColors.primary,
+                                  size: 26,
+                                ),
                           tooltip: _playingAyahIndex == index && _isPlayingAyah
                               ? 'Pause Ayah'
                               : 'Play Ayah',
                         ),
-                    ],
-                  ),
-                ),
-
-                // Content
-                Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      if (arabicText.isNotEmpty)
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: AppColors.accent.withValues(alpha: 0.04),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: AppColors.accent.withValues(alpha: 0.15),
-                            ),
-                          ),
-                          child: Text(
-                            arabicText,
-                            style: AppTextStyles.arabicLarge.copyWith(
-                              fontSize: 24,
-                              height: 2.0,
-                              color: AppColors.textPrimary,
-                            ),
-                            textAlign: TextAlign.right,
-                            textDirection: TextDirection.rtl,
-                          ),
-                        ),
-
-                      if (showTranslation &&
-                          translation != null &&
-                          translation.translation.isNotEmpty) ...[
-                        const SizedBox(height: 16),
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: AppColors.surfaceVariant.withValues(
-                              alpha: 0.5,
-                            ),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            translation.translation,
-                            style: AppTextStyles.bodyLarge.copyWith(
-                              height: 1.7,
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
-                        ),
                       ],
-                    ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          );
-        }),
+
+                  // Content
+                  Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (arabicText.isNotEmpty)
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: AppColors.accent.withValues(alpha: 0.04),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: AppColors.accent.withValues(alpha: 0.15),
+                              ),
+                            ),
+                            child: Text(
+                              arabicText,
+                              style: AppTextStyles.arabicLarge.copyWith(
+                                fontSize: 24,
+                                height: 2.0,
+                                color: QuranVisuals.inkFor(context),
+                              ),
+                              textAlign: TextAlign.right,
+                              textDirection: TextDirection.rtl,
+                            ),
+                          ),
+
+                        if (showTranslation &&
+                            translation != null &&
+                            translation.translation.isNotEmpty) ...[
+                          const SizedBox(height: 16),
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: AppColors.surfaceVariant.withValues(
+                                alpha: 0.5,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              translation.translation,
+                              style: AppTextStyles.bodyLarge.copyWith(
+                                height: 1.7,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
 
         const SizedBox(height: 40),
       ],

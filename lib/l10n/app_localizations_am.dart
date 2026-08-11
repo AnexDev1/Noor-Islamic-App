@@ -267,9 +267,6 @@ class AppLocalizationsAm extends AppLocalizations {
   String get undo => 'ቀልብስ';
 
   @override
-  String get aiChat => 'AI ውይይት';
-
-  @override
   String get madhabPreference => 'የመዝሀብ ምርጫ';
 
   @override

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import '../l10n/app_localizations.dart';
+
 import '../features/home/ui/home_screen.dart';
-import '../features/qibla/ui/qibla_screen.dart';
-import '../features/ai_chat/ui/ai_chat_screen.dart';
 import '../features/more/ui/more_screen.dart';
-import '../core/theme/app_colors.dart';
-import '../core/theme/app_text_styles.dart';
+import '../features/qibla/ui/qibla_screen.dart';
+import '../features/videos/ui/ustaz_list_screen.dart';
+import '../l10n/app_localizations.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
@@ -17,171 +16,45 @@ class MainNavigationScreen extends StatefulWidget {
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _currentIndex = 0;
 
-  final List<Widget> _screens = [
-    const HomeScreen(),
-    const QiblaScreen(),
-    const AiChatScreen(),
-    const MoreScreen(),
+  static const _screens = <Widget>[
+    HomeScreen(),
+    QiblaScreen(),
+    UstazListScreen(),
+    MoreScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final List<NavigationItem> navigationItems = [
-      NavigationItem(
-        icon: Image.asset(
-          'assets/masjid.png',
-          height: 24,
-          color: AppColors.textTertiary,
-        ),
-        activeIcon: Image.asset(
-          'assets/masjid.png',
-          height: 24,
-          color: AppColors.primary,
-        ),
-        label: l10n.home,
-      ),
-      NavigationItem(
-        icon: Image.asset(
-          'assets/qibla.png',
-          height: 24,
-          color: AppColors.textTertiary,
-        ),
-        activeIcon: Image.asset(
-          'assets/qibla.png',
-          height: 24,
-          color: AppColors.primary,
-        ),
-        label: l10n.qiblaDirection,
-      ),
-      NavigationItem(
-        icon: Image.asset(
-          'assets/chat.png',
-          height: 24,
-          color: AppColors.textTertiary,
-        ),
-        activeIcon: Image.asset(
-          'assets/chat.png',
-          height: 24,
-          color: AppColors.primary,
-        ),
-        label: l10n.aiChat,
-      ),
-      NavigationItem(
-        icon: Image.asset(
-          'assets/more.png',
-          height: 24,
-          color: AppColors.textTertiary,
-        ),
-        activeIcon: Image.asset(
-          'assets/more.png',
-          height: 24,
-          color: AppColors.primary,
-        ),
-        label: l10n.more,
-      ),
-    ];
 
     return Scaffold(
-      body: _screens[_currentIndex],
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.shadowMedium,
-              blurRadius: 20,
-              offset: const Offset(0, -5),
-            ),
-          ],
-        ),
-        child: SafeArea(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              children: navigationItems.asMap().entries.map((entry) {
-                final int index = entry.key;
-                final NavigationItem item = entry.value;
-                final bool isActive = _currentIndex == index;
-
-                return Expanded(
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _currentIndex = index;
-                      });
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            padding: const EdgeInsets.all(8),
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: isActive
-                                  ? AppColors.primary.withValues(alpha: 0.1)
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: SizedBox(
-                              width: 28,
-                              height: 28,
-                              child: Center(
-                                child:
-                                    item.icon is Widget ||
-                                        item.activeIcon is Widget
-                                    ? (isActive ? item.activeIcon : item.icon)
-                                    : Icon(
-                                        isActive ? item.activeIcon : item.icon,
-                                        size: 24,
-                                        color: isActive
-                                            ? AppColors.primary
-                                            : AppColors.textTertiary,
-                                      ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            item.label,
-                            textAlign: TextAlign.center,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: AppTextStyles.labelSmall.copyWith(
-                              color: isActive
-                                  ? AppColors.primary
-                                  : AppColors.textTertiary,
-                              fontWeight: isActive
-                                  ? FontWeight.w600
-                                  : FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
+      body: IndexedStack(index: _currentIndex, children: _screens),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _currentIndex,
+        onDestinationSelected: (index) => setState(() => _currentIndex = index),
+        destinations: [
+          NavigationDestination(
+            icon: const Icon(Icons.home_outlined),
+            selectedIcon: const Icon(Icons.home_rounded),
+            label: l10n.home,
           ),
-        ),
+          NavigationDestination(
+            icon: const Icon(Icons.explore_outlined),
+            selectedIcon: const Icon(Icons.explore_rounded),
+            label: l10n.qiblaDirection,
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.ondemand_video_outlined),
+            selectedIcon: const Icon(Icons.ondemand_video_rounded),
+            label: l10n.islamicVideos,
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.grid_view_outlined),
+            selectedIcon: const Icon(Icons.grid_view_rounded),
+            label: l10n.more,
+          ),
+        ],
       ),
     );
   }
-}
-
-class NavigationItem {
-  final dynamic icon; // IconData or Widget
-  final dynamic activeIcon; // IconData or Widget
-  final String label;
-
-  NavigationItem({
-    required this.icon,
-    required this.activeIcon,
-    required this.label,
-  });
 }

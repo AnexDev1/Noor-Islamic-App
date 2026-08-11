@@ -32,8 +32,8 @@ android {
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         // Use version info from pubspec.yaml via Flutter-generated local.properties
-        versionCode = (project.findProperty("flutter.versionCode") as String?)?.toIntOrNull() ?: 2
-        versionName = project.findProperty("flutter.versionName") as String? ?: "1.1.0"
+        versionCode = (project.findProperty("flutter.versionCode") as String?)?.toIntOrNull() ?: 4
+        versionName = project.findProperty("flutter.versionName") as String? ?: "2.5.0"
     }
 
     // Create a signing config named "release" and load credentials from a properties file

@@ -26,14 +26,12 @@ class SurahDetailScreen extends StatefulWidget {
   State<SurahDetailScreen> createState() => _SurahDetailScreenState();
 }
 
-class _SurahDetailScreenState extends State<SurahDetailScreen>
-    with TickerProviderStateMixin {
+class _SurahDetailScreenState extends State<SurahDetailScreen> {
   late Future<SurahDetail> _surahDetailFuture;
   late Future<List<QuranEncTranslation>> _translationFuture;
   late Future<Map<String, String>> _recitersFuture;
   final SimpleQuranAudioPlayer _audioService = SimpleQuranAudioPlayer.instance;
-  late AnimationController _fadeController;
-  late Animation<double> _fadeAnimation;
+  final ScrollController _scrollController = ScrollController();
 
   String _selectedTranslationKey = 'amharic_zain';
   String _selectedReciterId = '1';
@@ -57,17 +55,6 @@ class _SurahDetailScreenState extends State<SurahDetailScreen>
       widget.surahNo,
     );
     _recitersFuture = RecitersApi.fetchReciters();
-
-    _fadeController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
-
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
-    );
-
-    _fadeController.forward();
 
     BookmarkService.instance.initialize().then((_) {
       if (!mounted) {
@@ -100,7 +87,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen>
 
   @override
   void dispose() {
-    _fadeController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -200,85 +187,82 @@ class _SurahDetailScreenState extends State<SurahDetailScreen>
       backgroundColor: AppColors.background,
       body: Stack(
         children: [
-          FadeTransition(
-            opacity: _fadeAnimation,
-            child: CustomScrollView(
-              slivers: [
-                // Modern App Bar with Settings Icon
-                _buildModernAppBar(),
+          CustomScrollView(
+            controller: _scrollController,
+            slivers: [
+              // Modern App Bar with Settings Icon
+              _buildModernAppBar(),
 
-                // Main Content
-                SliverToBoxAdapter(
-                  child: FutureBuilder<SurahDetail>(
-                    future: _surahDetailFuture,
-                    builder: (context, surahSnapshot) {
-                      if (surahSnapshot.connectionState ==
-                          ConnectionState.waiting) {
-                        return const Padding(
-                          padding: EdgeInsets.all(40),
-                          child: Center(child: CircularProgressIndicator()),
-                        );
-                      } else if (surahSnapshot.hasError) {
-                        return _buildErrorWidget(
-                          'Error loading surah: ${AppHelpers.sanitizeError(surahSnapshot.error)}',
-                        );
-                      } else if (!surahSnapshot.hasData) {
-                        return _buildErrorWidget('No surah data found');
-                      }
+              // Main Content
+              SliverToBoxAdapter(
+                child: FutureBuilder<SurahDetail>(
+                  future: _surahDetailFuture,
+                  builder: (context, surahSnapshot) {
+                    if (surahSnapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      return const Padding(
+                        padding: EdgeInsets.all(40),
+                        child: Center(child: CircularProgressIndicator()),
+                      );
+                    } else if (surahSnapshot.hasError) {
+                      return _buildErrorWidget(
+                        'Error loading surah: ${AppHelpers.sanitizeError(surahSnapshot.error)}',
+                      );
+                    } else if (!surahSnapshot.hasData) {
+                      return _buildErrorWidget('No surah data found');
+                    }
 
-                      if (_showTranslation) {
-                        return FutureBuilder<List<QuranEncTranslation>>(
-                          future: _translationFuture,
-                          builder: (context, translationSnapshot) {
-                            if (translationSnapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const Padding(
-                                padding: EdgeInsets.all(40),
-                                child: Center(
-                                  child: CircularProgressIndicator(),
-                                ),
-                              );
-                            } else if (translationSnapshot.hasError) {
-                              return _buildErrorWidget(
-                                'Error loading translation: ${AppHelpers.sanitizeError(translationSnapshot.error)}',
-                              );
-                            } else if (!translationSnapshot.hasData) {
-                              return _buildErrorWidget('No translation found');
-                            }
-
-                            return SurahDetailView(
-                              surahDetail: surahSnapshot.data!,
-                              translations: translationSnapshot.data!,
-                              reciterId: _selectedReciterId,
-                              audioService: _audioService,
-                              reciterName:
-                                  _reciters[_selectedReciterId] ??
-                                  'Unknown Reciter',
-                              showTranslation: _showTranslation,
+                    if (_showTranslation) {
+                      return FutureBuilder<List<QuranEncTranslation>>(
+                        future: _translationFuture,
+                        builder: (context, translationSnapshot) {
+                          if (translationSnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Padding(
+                              padding: EdgeInsets.all(40),
+                              child: Center(child: CircularProgressIndicator()),
                             );
-                          },
-                        );
-                      } else {
-                        // Arabic only mode - pass empty translations
-                        return SurahDetailView(
-                          surahDetail: surahSnapshot.data!,
-                          translations: const [],
-                          reciterId: _selectedReciterId,
-                          audioService: _audioService,
-                          reciterName:
-                              _reciters[_selectedReciterId] ??
-                              'Unknown Reciter',
-                          showTranslation: _showTranslation,
-                        );
-                      }
-                    },
-                  ),
-                ),
+                          } else if (translationSnapshot.hasError) {
+                            return _buildErrorWidget(
+                              'Error loading translation: ${AppHelpers.sanitizeError(translationSnapshot.error)}',
+                            );
+                          } else if (!translationSnapshot.hasData) {
+                            return _buildErrorWidget('No translation found');
+                          }
 
-                // Bottom spacing for floating player
-                const SliverToBoxAdapter(child: SizedBox(height: 120)),
-              ],
-            ),
+                          return SurahDetailView(
+                            surahDetail: surahSnapshot.data!,
+                            translations: translationSnapshot.data!,
+                            reciterId: _selectedReciterId,
+                            audioService: _audioService,
+                            reciterName:
+                                _reciters[_selectedReciterId] ??
+                                'Unknown Reciter',
+                            showTranslation: _showTranslation,
+                            scrollController: _scrollController,
+                          );
+                        },
+                      );
+                    } else {
+                      // Arabic only mode - pass empty translations
+                      return SurahDetailView(
+                        surahDetail: surahSnapshot.data!,
+                        translations: const [],
+                        reciterId: _selectedReciterId,
+                        audioService: _audioService,
+                        reciterName:
+                            _reciters[_selectedReciterId] ?? 'Unknown Reciter',
+                        showTranslation: _showTranslation,
+                        scrollController: _scrollController,
+                      );
+                    }
+                  },
+                ),
+              ),
+
+              // Bottom spacing for floating player
+              const SliverToBoxAdapter(child: SizedBox(height: 120)),
+            ],
           ),
 
           // Floating Audio Player at bottom
@@ -305,7 +289,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen>
         icon: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.15),
+            color: Colors.white.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(12),
           ),
           child: const Icon(Icons.arrow_back, color: Colors.white),
@@ -317,7 +301,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen>
           icon: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
+              color: Colors.white.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
@@ -333,7 +317,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen>
           icon: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
+              color: Colors.white.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Icon(Icons.tune_rounded, color: Colors.white),
@@ -366,7 +350,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen>
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.15),
+                          color: Colors.white.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Text(
@@ -395,7 +379,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen>
                                 Text(
                                   'Chapter ${widget.surahNo}',
                                   style: AppTextStyles.bodyMedium.copyWith(
-                                    color: Colors.white.withOpacity(0.9),
+                                    color: Colors.white.withValues(alpha: 0.9),
                                   ),
                                 ),
                                 if (!_showTranslation) ...[
@@ -406,7 +390,9 @@ class _SurahDetailScreenState extends State<SurahDetailScreen>
                                       vertical: 2,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.2),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.2,
+                                      ),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
@@ -441,9 +427,9 @@ class _SurahDetailScreenState extends State<SurahDetailScreen>
         width: double.infinity,
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: AppColors.error.withOpacity(0.1),
+          color: AppColors.error.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.error.withOpacity(0.3)),
+          border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
         ),
         child: Column(
           children: [

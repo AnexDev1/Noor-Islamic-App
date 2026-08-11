@@ -6,7 +6,7 @@ import '../../../core/theme/app_text_styles.dart';
 import '../domain/ustaz.dart';
 import '../domain/video_item.dart';
 import '../providers/ustaz_providers.dart';
-import 'youtube_audio_player_screen.dart';
+import 'video_list_screen.dart';
 
 class UstazVideosScreen extends ConsumerWidget {
   final Ustaz ustaz;
@@ -20,12 +20,13 @@ class UstazVideosScreen extends ConsumerWidget {
     final notifier = ref.read(paginatedVideosProvider(ustaz).notifier);
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.backgroundDark : AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollInfo) {
           if (!notifier.isLoadingMore &&
               notifier.hasMore &&
-              scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent - 200) {
+              scrollInfo.metrics.pixels >=
+                  scrollInfo.metrics.maxScrollExtent - 200) {
             notifier.fetchNextBatch();
           }
           return false;
@@ -35,30 +36,55 @@ class UstazVideosScreen extends ConsumerWidget {
           slivers: [
             _buildAppBar(context, isDark),
             videosAsync.when(
-              data: (videos) => SliverPadding(
-                padding: const EdgeInsets.all(16),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      if (index == videos.length) {
-                        return Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(24.0),
-                            child: CircularProgressIndicator(color: AppColors.primary),
-                          ),
-                        );
-                      }
-                      return _VideoTile(video: videos[index]);
-                    },
-                    childCount: videos.length + (notifier.hasMore ? 1 : 0),
-                  ),
+              data: (videos) => videos.isEmpty
+                  ? const SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: _VideoState(
+                        icon: Icons.video_library_outlined,
+                        title: 'No videos available',
+                        message: 'New public lectures will appear here.',
+                      ),
+                    )
+                  : SliverPadding(
+                      padding: const EdgeInsets.all(16),
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            if (index == videos.length) {
+                              return Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(24.0),
+                                  child: CircularProgressIndicator(
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                              );
+                            }
+                            return _VideoTile(video: videos[index]);
+                          },
+                          childCount:
+                              videos.length + (notifier.hasMore ? 1 : 0),
+                        ),
+                      ),
+                    ),
+              loading: () => const SliverFillRemaining(
+                child: Center(
+                  child: CircularProgressIndicator(color: AppColors.primary),
                 ),
               ),
-              loading: () => const SliverFillRemaining(
-                child: Center(child: CircularProgressIndicator(color: AppColors.primary)),
-              ),
               error: (err, stack) => SliverFillRemaining(
-                child: Center(child: Text('Error: $err', style: const TextStyle(color: Colors.red))),
+                hasScrollBody: false,
+                child: _VideoState(
+                  icon: Icons.cloud_off_rounded,
+                  title: 'Couldn’t load videos',
+                  message: 'Check your connection and try again.',
+                  action: FilledButton.icon(
+                    onPressed: () =>
+                        ref.invalidate(paginatedVideosProvider(ustaz)),
+                    icon: const Icon(Icons.refresh_rounded),
+                    label: const Text('Try again'),
+                  ),
+                ),
               ),
             ),
             const SliverToBoxAdapter(child: SizedBox(height: 100)),
@@ -83,9 +109,7 @@ class UstazVideosScreen extends ConsumerWidget {
               child: CachedNetworkImage(
                 imageUrl: ustaz.imageUrl,
                 fit: BoxFit.cover,
-                httpHeaders: const {
-                  'User-Agent': 'Mozilla/5.0',
-                },
+                httpHeaders: const {'User-Agent': 'Mozilla/5.0'},
               ),
             ),
             Container(
@@ -95,7 +119,8 @@ class UstazVideosScreen extends ConsumerWidget {
                   end: Alignment.bottomCenter,
                   colors: [
                     Colors.transparent,
-                    (isDark ? AppColors.backgroundDark : AppColors.background).withOpacity(0.5),
+                    (isDark ? AppColors.backgroundDark : AppColors.background)
+                        .withValues(alpha: 0.5),
                     isDark ? AppColors.backgroundDark : AppColors.background,
                   ],
                   stops: const [0.4, 0.8, 1.0],
@@ -119,6 +144,38 @@ class UstazVideosScreen extends ConsumerWidget {
   }
 }
 
+class _VideoState extends StatelessWidget {
+  const _VideoState({
+    required this.icon,
+    required this.title,
+    required this.message,
+    this.action,
+  });
+
+  final IconData icon;
+  final String title;
+  final String message;
+  final Widget? action;
+
+  @override
+  Widget build(BuildContext context) => Center(
+    child: Padding(
+      padding: const EdgeInsets.all(32),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 52, color: Theme.of(context).colorScheme.outline),
+          const SizedBox(height: 16),
+          Text(title, style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 6),
+          Text(message, textAlign: TextAlign.center),
+          if (action != null) ...[const SizedBox(height: 20), action!],
+        ],
+      ),
+    ),
+  );
+}
+
 class _VideoTile extends StatelessWidget {
   final VideoItem video;
 
@@ -135,7 +192,9 @@ class _VideoTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: isDark ? Colors.black.withOpacity(0.2) : AppColors.primary.withOpacity(0.05),
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.2)
+                : AppColors.primary.withValues(alpha: 0.05),
             blurRadius: 15,
             offset: const Offset(0, 4),
           ),
@@ -150,14 +209,16 @@ class _VideoTile extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => YouTubeAudioPlayerScreen(video: video),
+                builder: (context) => VideoPlayerScreen(videoId: video.id),
               ),
             );
           },
           child: Row(
             children: [
               ClipRRect(
-                borderRadius: const BorderRadius.horizontal(left: Radius.circular(20)),
+                borderRadius: const BorderRadius.horizontal(
+                  left: Radius.circular(20),
+                ),
                 child: SizedBox(
                   width: 140,
                   height: 100,
@@ -168,17 +229,24 @@ class _VideoTile extends StatelessWidget {
                         imageUrl: video.thumbnailUrl,
                         fit: BoxFit.cover,
                         httpHeaders: const {'User-Agent': 'Mozilla/5.0'},
-                        placeholder: (context, url) => Container(color: isDark ? Colors.grey[800] : Colors.grey[200]),
-                        errorWidget: (context, url, error) => const Icon(Icons.video_library),
+                        placeholder: (context, url) => Container(
+                          color: isDark ? Colors.grey[800] : Colors.grey[200],
+                        ),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.video_library),
                       ),
                       Center(
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.5),
+                            color: Colors.black.withValues(alpha: 0.5),
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 24),
+                          child: const Icon(
+                            Icons.play_arrow_rounded,
+                            color: Colors.white,
+                            size: 24,
+                          ),
                         ),
                       ),
                     ],

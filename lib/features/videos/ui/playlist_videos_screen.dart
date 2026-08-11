@@ -7,18 +7,24 @@ import '../../../core/theme/app_text_styles.dart';
 import '../domain/ustaz.dart';
 import '../domain/video_item.dart';
 import '../providers/ustaz_providers.dart';
-import 'youtube_audio_player_screen.dart';
+import 'video_list_screen.dart';
 
 class PlaylistVideosScreen extends ConsumerWidget {
   final yt.Playlist playlist;
   final Ustaz ustaz;
 
-  const PlaylistVideosScreen({super.key, required this.playlist, required this.ustaz});
+  const PlaylistVideosScreen({
+    super.key,
+    required this.playlist,
+    required this.ustaz,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final videosAsync = ref.watch(playlistVideosProvider(playlist.id.value));
-    final notifier = ref.read(playlistVideosProvider(playlist.id.value).notifier);
+    final notifier = ref.read(
+      playlistVideosProvider(playlist.id.value).notifier,
+    );
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -27,7 +33,8 @@ class PlaylistVideosScreen extends ConsumerWidget {
         onNotification: (ScrollNotification scrollInfo) {
           if (!notifier.isLoadingMore &&
               notifier.hasMore &&
-              scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent - 200) {
+              scrollInfo.metrics.pixels >=
+                  scrollInfo.metrics.maxScrollExtent - 200) {
             notifier.fetchNextBatch();
           }
           return false;
@@ -40,27 +47,33 @@ class PlaylistVideosScreen extends ConsumerWidget {
               data: (videos) => SliverPadding(
                 padding: const EdgeInsets.all(16),
                 sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      if (index == videos.length) {
-                        return Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(24.0),
-                            child: CircularProgressIndicator(color: AppColors.primary),
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    if (index == videos.length) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: CircularProgressIndicator(
+                            color: AppColors.primary,
                           ),
-                        );
-                      }
-                      return _VideoTile(video: videos[index]);
-                    },
-                    childCount: videos.length + (notifier.hasMore ? 1 : 0),
-                  ),
+                        ),
+                      );
+                    }
+                    return _VideoTile(video: videos[index]);
+                  }, childCount: videos.length + (notifier.hasMore ? 1 : 0)),
                 ),
               ),
               loading: () => const SliverFillRemaining(
-                child: Center(child: CircularProgressIndicator(color: AppColors.primary)),
+                child: Center(
+                  child: CircularProgressIndicator(color: AppColors.primary),
+                ),
               ),
               error: (err, stack) => SliverFillRemaining(
-                child: Center(child: Text('Error: $err', style: const TextStyle(color: Colors.red))),
+                child: Center(
+                  child: Text(
+                    'Error: $err',
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ),
               ),
             ),
             const SliverToBoxAdapter(child: SizedBox(height: 100)),
@@ -103,7 +116,8 @@ class PlaylistVideosScreen extends ConsumerWidget {
                   end: Alignment.bottomCenter,
                   colors: [
                     Colors.transparent,
-                    (isDark ? AppColors.backgroundDark : AppColors.background).withOpacity(0.8),
+                    (isDark ? AppColors.backgroundDark : AppColors.background)
+                        .withOpacity(0.8),
                     isDark ? AppColors.backgroundDark : AppColors.background,
                   ],
                   stops: const [0.3, 0.7, 1.0],
@@ -142,7 +156,9 @@ class _VideoTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: isDark ? Colors.black.withOpacity(0.2) : AppColors.primary.withOpacity(0.05),
+            color: isDark
+                ? Colors.black.withOpacity(0.2)
+                : AppColors.primary.withOpacity(0.05),
             blurRadius: 15,
             offset: const Offset(0, 4),
           ),
@@ -157,14 +173,16 @@ class _VideoTile extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => YouTubeAudioPlayerScreen(video: video),
+                builder: (context) => VideoPlayerScreen(videoId: video.id),
               ),
             );
           },
           child: Row(
             children: [
               ClipRRect(
-                borderRadius: const BorderRadius.horizontal(left: Radius.circular(20)),
+                borderRadius: const BorderRadius.horizontal(
+                  left: Radius.circular(20),
+                ),
                 child: SizedBox(
                   width: 140,
                   height: 100,
@@ -175,8 +193,11 @@ class _VideoTile extends StatelessWidget {
                         imageUrl: video.thumbnailUrl,
                         fit: BoxFit.cover,
                         httpHeaders: const {'User-Agent': 'Mozilla/5.0'},
-                        placeholder: (context, url) => Container(color: isDark ? Colors.grey[800] : Colors.grey[200]),
-                        errorWidget: (context, url, error) => const Icon(Icons.video_library),
+                        placeholder: (context, url) => Container(
+                          color: isDark ? Colors.grey[800] : Colors.grey[200],
+                        ),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.video_library),
                       ),
                       Center(
                         child: Container(
@@ -185,7 +206,11 @@ class _VideoTile extends StatelessWidget {
                             color: Colors.black.withOpacity(0.5),
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 24),
+                          child: const Icon(
+                            Icons.play_arrow_rounded,
+                            color: Colors.white,
+                            size: 24,
+                          ),
                         ),
                       ),
                     ],

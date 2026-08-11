@@ -610,12 +610,6 @@ abstract class AppLocalizations {
   /// **'Undo'**
   String get undo;
 
-  /// No description provided for @aiChat.
-  ///
-  /// In en, this message translates to:
-  /// **'AI Chat'**
-  String get aiChat;
-
   /// No description provided for @madhabPreference.
   ///
   /// In en, this message translates to:

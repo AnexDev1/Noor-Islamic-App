@@ -50,9 +50,7 @@ class AppTheme {
         elevation: 2,
         shadowColor: AppColors.shadowLight,
         surfaceTintColor: AppColors.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         margin: const EdgeInsets.all(8),
         clipBehavior: Clip.antiAlias,
       ),
@@ -97,9 +95,7 @@ class AppTheme {
           textStyle: AppTextStyles.buttonMedium.copyWith(
             color: AppColors.primary,
           ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
       ),
@@ -118,6 +114,34 @@ class AppTheme {
         unselectedLabelStyle: AppTextStyles.labelMedium,
         showSelectedLabels: true,
         showUnselectedLabels: true,
+      ),
+
+      navigationBarTheme: NavigationBarThemeData(
+        height: 72,
+        elevation: 0,
+        backgroundColor: AppColors.surface,
+        indicatorColor: AppColors.primary.withValues(alpha: 0.12),
+        indicatorShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          return IconThemeData(
+            color: states.contains(WidgetState.selected)
+                ? AppColors.primary
+                : AppColors.textTertiary,
+            size: 25,
+          );
+        }),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          return AppTextStyles.labelSmall.copyWith(
+            color: states.contains(WidgetState.selected)
+                ? AppColors.primary
+                : AppColors.textTertiary,
+            fontWeight: states.contains(WidgetState.selected)
+                ? FontWeight.w700
+                : FontWeight.w500,
+          );
+        }),
       ),
 
       // Text Theme - Complete Typography System
@@ -163,7 +187,10 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.error, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
         hintStyle: AppTextStyles.bodyMedium.copyWith(
           color: AppColors.textTertiary,
         ),
@@ -180,9 +207,7 @@ class AppTheme {
         deleteIconColor: AppColors.textSecondary,
         labelStyle: AppTextStyles.labelMedium,
         side: BorderSide.none,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       ),
 
@@ -191,9 +216,7 @@ class AppTheme {
         backgroundColor: AppColors.accent,
         foregroundColor: AppColors.textOnAccent,
         elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
 
       // Divider Theme
@@ -206,9 +229,7 @@ class AppTheme {
       // List Tile Theme
       listTileTheme: ListTileThemeData(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         tileColor: Colors.transparent,
         selectedTileColor: AppColors.primaryLight.withValues(alpha: 0.1),
         iconColor: AppColors.textSecondary,
@@ -218,10 +239,7 @@ class AppTheme {
       ),
 
       // Icon Theme
-      iconTheme: const IconThemeData(
-        color: AppColors.textSecondary,
-        size: 24,
-      ),
+      iconTheme: const IconThemeData(color: AppColors.textSecondary, size: 24),
 
       // Primary Icon Theme
       primaryIconTheme: const IconThemeData(
@@ -236,7 +254,7 @@ class AppTheme {
       visualDensity: VisualDensity.adaptivePlatformDensity,
 
       // Material Tap Target Size
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      materialTapTargetSize: MaterialTapTargetSize.padded,
 
       // Splash Factory
       splashFactory: InkRipple.splashFactory,
@@ -257,7 +275,8 @@ class AppTheme {
         onPrimaryContainer: Colors.white,
         secondary: AppColors.accent,
         onSecondary: Colors.white,
-        secondaryContainer: AppColors.primaryDark, // Using primaryDark instead of non-existent accentDark
+        secondaryContainer: AppColors
+            .primaryDark, // Using primaryDark instead of non-existent accentDark
         onSecondaryContainer: Colors.white,
         tertiary: AppColors.secondary,
         onTertiary: Colors.white,
@@ -292,9 +311,7 @@ class AppTheme {
         elevation: 2,
         shadowColor: Colors.black54,
         surfaceTintColor: const Color(0xFF2D3748),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         margin: const EdgeInsets.all(8),
         clipBehavior: Clip.antiAlias,
       ),
@@ -323,7 +340,9 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          textStyle: AppTextStyles.buttonMedium.copyWith(color: AppColors.primary),
+          textStyle: AppTextStyles.buttonMedium.copyWith(
+            color: AppColors.primary,
+          ),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           minimumSize: const Size(88, 48),
         ),
@@ -332,10 +351,10 @@ class AppTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: AppColors.primary,
-          textStyle: AppTextStyles.buttonMedium.copyWith(color: AppColors.primary),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+          textStyle: AppTextStyles.buttonMedium.copyWith(
+            color: AppColors.primary,
           ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
       ),
@@ -356,12 +375,47 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: AppColors.primary, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        hintStyle: AppTextStyles.bodyMedium.copyWith(color: const Color(0xFF718096)),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
+        hintStyle: AppTextStyles.bodyMedium.copyWith(
+          color: const Color(0xFF718096),
+        ),
       ),
 
       // Scaffold Background
       scaffoldBackgroundColor: const Color(0xFF111418),
+
+      navigationBarTheme: NavigationBarThemeData(
+        height: 72,
+        elevation: 0,
+        backgroundColor: const Color(0xFF1A1D23),
+        indicatorColor: AppColors.primaryLight.withValues(alpha: 0.35),
+        indicatorShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          return IconThemeData(
+            color: states.contains(WidgetState.selected)
+                ? AppColors.accentLight
+                : const Color(0xFFA0AEC0),
+            size: 25,
+          );
+        }),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          return AppTextStyles.labelSmall.copyWith(
+            color: states.contains(WidgetState.selected)
+                ? AppColors.accentLight
+                : const Color(0xFFA0AEC0),
+            fontWeight: states.contains(WidgetState.selected)
+                ? FontWeight.w700
+                : FontWeight.w500,
+          );
+        }),
+      ),
+
+      materialTapTargetSize: MaterialTapTargetSize.padded,
     );
   }
 }
