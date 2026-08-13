@@ -413,17 +413,9 @@ class SettingsScreen extends ConsumerWidget {
                   : Icon(Icons.circle_outlined, color: AppColors.textSecondary),
               title: Text(lang['nativeName'] as String),
               subtitle: Text(lang['name'] as String),
-              onTap: () {
-                localeNotifier.setLocale(locale);
+              onTap: () async {
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      '${l10n.language} changed to ${lang['name']}',
-                    ),
-                    duration: const Duration(seconds: 2),
-                  ),
-                );
+                await localeNotifier.setLocale(locale);
               },
             );
           }).toList(),

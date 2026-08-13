@@ -55,7 +55,10 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
     // If full metadata isn't provided, fetch it lazily
     if (widget.videoInfo == null) {
+      _loadingRelated = true;
       _fetchMetadata();
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _ensureRelated());
     }
   }
 
@@ -94,10 +97,10 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
       if (mounted) {
         setState(() => _fetchedVideo = vid);
       }
-      // After fetching metadata, ensure related videos are fetched if needed
-      _ensureRelated();
+      await _fetchRelatedVideos();
     } catch (e) {
       debugPrint('Failed to fetch video metadata: $e');
+      if (mounted) setState(() => _loadingRelated = false);
     }
   }
 
@@ -293,14 +296,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                             null)
                           SliverToBoxAdapter(child: _buildDescriptionSection()),
 
-                        // Related Videos (from caller or fallback search)
-                        if ((widget.relatedVideos != null &&
-                                widget.relatedVideos!.isNotEmpty) ||
-                            _related.isNotEmpty ||
-                            _loadingRelated)
-                          SliverToBoxAdapter(
-                            child: _buildRelatedVideosSection(),
-                          ),
+                        // This section is permanent so the area below the
+                        // player always offers a useful next action.
+                        SliverToBoxAdapter(child: _buildRelatedVideosSection()),
                       ],
                     ),
                   ),
@@ -315,9 +313,10 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
   Widget _buildVideoInfoSection() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final video = _fetchedVideo ?? widget.videoInfo;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(18, 20, 18, 16),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF0F0F0F) : Colors.white,
       ),
@@ -326,10 +325,10 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
         children: [
           // Title
           Text(
-            _fetchedVideo?.title ?? widget.videoInfo?.title ?? 'Islamic Video',
+            video?.title ?? 'Islamic lecture',
             style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
               color: isDark ? Colors.white : Colors.black87,
               height: 1.4,
             ),
@@ -338,9 +337,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
           // Date only (views removed)
           Text(
-            widget.videoInfo != null
-                ? _formatDate(widget.videoInfo!.uploadDate)
-                : 'Islamic Content',
+            video != null ? _formatDate(video.uploadDate) : 'Da’wah',
             style: TextStyle(
               fontSize: 14,
               color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
@@ -353,10 +350,18 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
           // Channel Info with inline share icon
           Row(
             children: [
-              CircleAvatar(
-                radius: 20,
-                backgroundColor: AppColors.primary.withOpacity(0.15),
-                child: Icon(Icons.person, color: AppColors.primary, size: 24),
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: .1),
+                  borderRadius: BorderRadius.circular(13),
+                ),
+                child: const Icon(
+                  Icons.mic_none_rounded,
+                  color: AppColors.primary,
+                  size: 22,
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -364,7 +369,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.videoInfo?.author ?? 'Islamic Channel',
+                      video?.author ?? 'Islamic channel',
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
@@ -376,11 +381,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
               ),
 
               // Share icon placed beside channel name (icon-only)
-              IconButton(
-                icon: Icon(
-                  Icons.share_outlined,
-                  color: isDark ? Colors.white : Colors.black87,
-                ),
+              IconButton.filledTonal(
+                icon: const Icon(Icons.share_outlined, size: 20),
                 onPressed: () =>
                     _showShareSheetForVideo(_fetchedVideo ?? widget.videoInfo),
                 tooltip: 'Share',
@@ -450,11 +452,11 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     final description =
         _fetchedVideo?.description ?? widget.videoInfo?.description ?? '';
     return Container(
-      margin: const EdgeInsets.all(16),
+      margin: const EdgeInsets.fromLTRB(18, 0, 18, 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? Colors.grey.shade900 : Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(12),
+        color: isDark ? AppColors.surfaceDark : AppColors.surfaceVariant,
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -498,30 +500,59 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.all(16),
-          child: Text(
-            'Related Videos',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Colors.black87,
-            ),
+          padding: const EdgeInsets.fromLTRB(18, 22, 18, 12),
+          child: Row(
+            children: [
+              Container(width: 3, height: 30, color: AppColors.accent),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Continue learning',
+                      style: AppTextStyles.heading3.copyWith(
+                        color: isDark ? Colors.white : AppColors.textPrimary,
+                      ),
+                    ),
+                    Text(
+                      'More from this speaker and related channels',
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: isDark
+                            ? Colors.white60
+                            : AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
         // If initial load is ongoing and nothing to show yet, show spinner
         if (_loadingRelated && list.isEmpty)
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 8),
-            child: Center(child: CircularProgressIndicator()),
-          )
+          const _RelatedLoading()
         else if (list.isEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Text(
-              'No related videos available',
-              style: TextStyle(
-                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
-              ),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 18),
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: isDark ? AppColors.surfaceDark : AppColors.surfaceVariant,
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.travel_explore_rounded,
+                  color: AppColors.textTertiary,
+                ),
+                const SizedBox(width: 12),
+                const Expanded(child: Text('Couldn’t find more lectures yet.')),
+                TextButton(
+                  onPressed: _fetchRelatedVideos,
+                  child: const Text('Retry'),
+                ),
+              ],
             ),
           )
         else
@@ -530,7 +561,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
               ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 18),
                 itemCount: list.length,
                 itemBuilder: (context, index) {
                   final video = list[index];
@@ -821,6 +852,56 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
       return '${difference.inMinutes} minute${difference.inMinutes > 1 ? 's' : ''} ago';
     }
     return 'Just now';
+  }
+}
+
+class _RelatedLoading extends StatelessWidget {
+  const _RelatedLoading();
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 18),
+      child: Column(
+        children: List.generate(
+          3,
+          (_) => Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Row(
+              children: [
+                _ShimmerWidget(
+                  width: 136,
+                  height: 78,
+                  borderRadius: 12,
+                  isDark: isDark,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _ShimmerWidget(
+                        height: 14,
+                        borderRadius: 7,
+                        isDark: isDark,
+                      ),
+                      const SizedBox(height: 9),
+                      _ShimmerWidget(
+                        width: 110,
+                        height: 11,
+                        borderRadius: 6,
+                        isDark: isDark,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 

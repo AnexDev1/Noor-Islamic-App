@@ -46,8 +46,8 @@ class HadithBookList extends StatelessWidget {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          AppColors.primary,
-                          AppColors.primary.withValues(alpha: 0.7),
+                          AppColors.hadithCard,
+                          AppColors.primaryDark.withValues(alpha: .9),
                         ],
                       ),
                       borderRadius: BorderRadius.circular(16),
@@ -101,7 +101,7 @@ class HadithBookList extends StatelessWidget {
                               _buildStatChip(
                                 icon: Icons.format_list_numbered,
                                 label: '${book.chaptersCount} chapters',
-                                color: AppColors.primary,
+                                color: AppColors.hadithCard,
                               ),
                             if (book.hadithsCount != null)
                               _buildStatChip(
@@ -131,12 +131,12 @@ class HadithBookList extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.1),
+                      color: AppColors.hadithCard.withValues(alpha: .1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
                       Icons.arrow_forward_ios,
-                      color: AppColors.primary,
+                      color: AppColors.hadithCard,
                       size: 16,
                     ),
                   ),

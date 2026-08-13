@@ -80,7 +80,7 @@ class _FloatingAudioPlayerState extends State<FloatingAudioPlayer>
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [AppColors.primary, AppColors.primaryLight],
+                    colors: [AppColors.secondary, AppColors.quranCard],
                   ),
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [

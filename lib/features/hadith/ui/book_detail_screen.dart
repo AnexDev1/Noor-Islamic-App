@@ -163,7 +163,7 @@ class _BookDetailScreenState extends State<BookDetailScreen>
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [AppColors.primary, AppColors.primaryLight],
+              colors: [AppColors.hadithCard, AppColors.primaryDark],
             ),
             borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(32),

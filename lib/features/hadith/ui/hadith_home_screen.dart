@@ -158,19 +158,15 @@ class _HadithHomeScreenState extends State<HadithHomeScreen>
 
   Widget _buildModernAppBar() {
     return SliverAppBar(
-      expandedHeight: 120,
+      expandedHeight: 112,
       floating: false,
       pinned: true,
       elevation: 0,
       backgroundColor: Colors.transparent,
       flexibleSpace: FlexibleSpaceBar(
         background: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [AppColors.primary, AppColors.primaryLight],
-            ),
+          decoration: const BoxDecoration(
+            color: AppColors.hadithCard,
             borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(32),
               bottomRight: Radius.circular(32),

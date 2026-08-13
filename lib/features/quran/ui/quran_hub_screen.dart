@@ -1,125 +1,60 @@
 import 'package:flutter/material.dart';
+
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../quran/ui/quran_screen.dart';
-import '../../quran/ui/listen_quran_screen.dart';
 import '../../tajweed/ui/hifz_mode_screen.dart';
+import 'listen_quran_screen.dart';
+import 'quran_screen.dart';
 
 class QuranHubScreen extends StatelessWidget {
   const QuranHubScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: AppColors.primary),
-        title: Text(
-          l10n?.quran ?? 'Al Quran',
-          style: AppTextStyles.heading2.copyWith(
-            fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
+      body: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
+        slivers: [
+          SliverAppBar.large(
+            pinned: true,
+            backgroundColor: AppColors.background,
+            surfaceTintColor: AppColors.background,
+            title: Text(l10n.quran, style: AppTextStyles.displaySmall),
           ),
-        ),
-        centerTitle: true,
-      ),
-      body: Stack(
-        children: [
-          // Elegant subtle top background decoration
-          Positioned(
-            top: -100,
-            right: -80,
-            child: Opacity(
-              opacity: 0.03,
-              child: Icon(
-                Icons.menu_book_rounded,
-                size: 300,
-                color: AppColors.primary,
-              ),
-            ),
-          ),
-
-          SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.symmetric(
-              horizontal: 24.0,
-              vertical: 16.0,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(18, 4, 18, 32),
+            sliver: SliverList.list(
               children: [
-                const SizedBox(height: 16),
-                Text(
-                  l10n?.quranChapters ?? 'Holy Quran Chapters',
-                  style: AppTextStyles.heading1.copyWith(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.5,
-                  ),
+                const _ManuscriptHeader(),
+                const SizedBox(height: 24),
+                _QuranPathCard(
+                  eyebrow: 'READ',
+                  title: l10n.quranChapters,
+                  description: l10n.showTranslationDesc,
+                  icon: Icons.auto_stories_rounded,
+                  accent: AppColors.quranCard,
+                  onTap: () => _open(context, const QuranScreen()),
                 ),
                 const SizedBox(height: 12),
-                Text(
-                  l10n?.customizeQuranExperience ??
-                      'Customize your Quran reading experience',
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    color: AppColors.textSecondary,
-                    height: 1.6,
-                    fontSize: 16,
-                  ),
+                _QuranPathCard(
+                  eyebrow: 'LISTEN',
+                  title: l10n.listenQuran,
+                  description: l10n.customizeQuranExperience,
+                  icon: Icons.graphic_eq_rounded,
+                  accent: AppColors.primaryLight,
+                  onTap: () => _open(context, const ListenQuranScreen()),
                 ),
-                const SizedBox(height: 40),
-
-                // Read & Reflect Card
-                _buildProfessionalCard(
-                  context: context,
-                  title: l10n?.quran ?? 'Quran',
-                  subtitle:
-                      l10n?.showTranslationDesc ??
-                      'Multi-language translations, beautiful Uthmani script, and tafsir.',
-                  icon: Icons.menu_book_rounded,
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const QuranScreen()),
-                  ),
-                ),
-                const SizedBox(height: 20),
-
-                // Listen & Stream Card
-                _buildProfessionalCard(
-                  context: context,
-                  title: l10n?.listenQuran ?? 'Listen Quran',
-                  subtitle:
-                      l10n?.customizeQuranExperience ??
-                      'Continuous playback of full surahs by world-renowned reciters.',
-                  icon: Icons.headphones_rounded,
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const ListenQuranScreen(),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-
-                // Tajweed & Hifz Card
-                _buildProfessionalCard(
-                  context: context,
+                const SizedBox(height: 12),
+                _QuranPathCard(
+                  eyebrow: 'MEMORIZE',
                   title: 'Tajweed & Hifz',
-                  subtitle:
-                      l10n?.tipFocus ??
-                      'Ayah-by-Ayah visual sync, audio repetition, and Mus\'haf view.',
+                  description: l10n.tipFocus,
                   icon: Icons.repeat_one_rounded,
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const HifzModeScreen()),
-                  ),
+                  accent: AppColors.accent,
+                  onTap: () => _open(context, const HifzModeScreen()),
                 ),
-                const SizedBox(height: 40),
               ],
             ),
           ),
@@ -128,107 +63,128 @@ class QuranHubScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProfessionalCard({
-    required BuildContext context,
-    required String title,
-    required String subtitle,
-    required IconData icon,
-    required VoidCallback onTap,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surface, // Typically pure white in light mode
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: Colors.grey.withOpacity(0.1),
-          width: 1,
-        ), // Extremely delicate border
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withOpacity(
-              0.04,
-            ), // Very soft, tinted shadow
-            blurRadius: 24,
-            offset: const Offset(0, 12),
-          ),
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(24),
-          highlightColor: AppColors.primary.withOpacity(0.03),
-          splashColor: AppColors.primary.withOpacity(0.06),
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // Icon Container
-                Container(
-                  padding: const EdgeInsets.all(18),
-                  decoration: BoxDecoration(
-                    color:
-                        AppColors.background, // Slightly off-white background
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.grey.withOpacity(0.05)),
-                  ),
-                  child: Icon(icon, color: AppColors.primary, size: 28),
-                ),
-                const SizedBox(width: 20),
+  void _open(BuildContext context, Widget screen) =>
+      Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+}
 
-                // Text Content
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        title,
-                        style: AppTextStyles.heading3.copyWith(
-                          color: AppColors.textPrimary,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        subtitle,
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.textSecondary,
-                          height: 1.5,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+class _ManuscriptHeader extends StatelessWidget {
+  const _ManuscriptHeader();
 
-                // Subtle chevron
-                const SizedBox(width: 12),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.withOpacity(0.05),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    color: AppColors.textSecondary.withOpacity(0.4),
-                    size: 14,
-                  ),
-                ),
-              ],
-            ),
+  @override
+  Widget build(BuildContext context) => Container(
+    height: 190,
+    padding: const EdgeInsets.all(24),
+    decoration: BoxDecoration(
+      color: AppColors.secondary,
+      borderRadius: BorderRadius.circular(26),
+    ),
+    child: Stack(
+      children: [
+        PositionedDirectional(
+          end: -14,
+          top: -28,
+          child: Icon(
+            Icons.auto_stories_rounded,
+            size: 150,
+            color: Colors.white.withValues(alpha: .055),
           ),
         ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'القرآن الكريم',
+              textDirection: TextDirection.rtl,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 34,
+                fontWeight: FontWeight.w500,
+                height: 1.5,
+              ),
+            ),
+            const Spacer(),
+            Container(width: 38, height: 2, color: AppColors.accent),
+            const SizedBox(height: 10),
+            const Text(
+              'Read slowly. Listen closely. Return often.',
+              style: TextStyle(color: Color(0xFFD5DEEC), fontSize: 13),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
+class _QuranPathCard extends StatelessWidget {
+  const _QuranPathCard({
+    required this.eyebrow,
+    required this.title,
+    required this.description,
+    required this.icon,
+    required this.accent,
+    required this.onTap,
+  });
+
+  final String eyebrow;
+  final String title;
+  final String description;
+  final IconData icon;
+  final Color accent;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Material(
+    color: AppColors.surface,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(20),
+      side: const BorderSide(color: Color(0xFFDCE6E3)),
+    ),
+    clipBehavior: Clip.antiAlias,
+    child: InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Row(
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: accent.withValues(alpha: .11),
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Icon(icon, color: accent, size: 24),
+            ),
+            const SizedBox(width: 15),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    eyebrow,
+                    style: AppTextStyles.overline.copyWith(color: accent),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(title, style: AppTextStyles.heading3),
+                  const SizedBox(height: 3),
+                  Text(
+                    description,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.bodySmall,
+                  ),
+                ],
+              ),
+            ),
+            const Icon(
+              Icons.arrow_forward_rounded,
+              color: AppColors.textTertiary,
+              size: 20,
+            ),
+          ],
+        ),
       ),
-    );
-  }
+    ),
+  );
 }

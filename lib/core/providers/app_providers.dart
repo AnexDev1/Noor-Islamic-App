@@ -991,8 +991,12 @@ class LocaleNotifier extends StateNotifier<Locale> {
   }
 
   Future<void> setLocale(Locale locale) async {
-    state = locale;
+    if (state.languageCode == locale.languageCode) return;
     await _prefs.setString('app_locale', locale.languageCode);
+    // MyApp keys the complete MaterialApp from this value. Updating only after
+    // persistence intentionally disposes the current navigator and restarts
+    // the experience at SplashScreen in the selected language.
+    state = locale;
   }
 
   // Get display name for a locale

@@ -6,10 +6,7 @@ import '../../../../core/theme/app_text_styles.dart';
 class AudioPlayerWidget extends StatefulWidget {
   final SimpleQuranAudioPlayer audioService;
 
-  const AudioPlayerWidget({
-    super.key,
-    required this.audioService,
-  });
+  const AudioPlayerWidget({super.key, required this.audioService});
 
   @override
   State<AudioPlayerWidget> createState() => _AudioPlayerWidgetState();
@@ -28,13 +25,10 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget>
       vsync: this,
     );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, -1),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _slideController,
-      curve: Curves.easeOutCubic,
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, -1), end: Offset.zero).animate(
+          CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
+        );
 
     // Listen to audio service changes
     widget.audioService.isPlaying.addListener(_updatePlayerVisibility);
@@ -44,7 +38,9 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget>
   @override
   void dispose() {
     widget.audioService.isPlaying.removeListener(_updatePlayerVisibility);
-    widget.audioService.currentSurahName.removeListener(_updatePlayerVisibility);
+    widget.audioService.currentSurahName.removeListener(
+      _updatePlayerVisibility,
+    );
     _slideController.dispose();
     super.dispose();
   }
@@ -80,10 +76,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget>
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  AppColors.primary,
-                  AppColors.primaryLight,
-                ],
+                colors: [AppColors.secondary, AppColors.quranCard],
               ),
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
@@ -99,11 +92,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget>
                 // Top Row - Title and Close
                 Row(
                   children: [
-                    Icon(
-                      Icons.music_note,
-                      color: Colors.white,
-                      size: 20,
-                    ),
+                    Icon(Icons.music_note, color: Colors.white, size: 20),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -157,7 +146,9 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget>
                                 value: progress.clamp(0.0, 1.0),
                                 onChanged: (value) {
                                   final seekTo = Duration(
-                                    milliseconds: (duration.inMilliseconds * value).round(),
+                                    milliseconds:
+                                        (duration.inMilliseconds * value)
+                                            .round(),
                                   );
                                   widget.audioService.seek(seekTo);
                                 },
@@ -166,9 +157,12 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget>
 
                             // Time Labels
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     _formatDuration(position),

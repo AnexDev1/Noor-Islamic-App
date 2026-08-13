@@ -112,7 +112,7 @@ class _TasbihFlowScreenState extends State<TasbihFlowScreen>
     final dhikr = _dhikrList[_selectedDhikrIndex];
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0E1A),
+      backgroundColor: AppColors.primaryDark,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -173,9 +173,7 @@ class _TasbihFlowScreenState extends State<TasbihFlowScreen>
                       style: TextStyle(
                         fontSize: 56,
                         fontWeight: FontWeight.bold,
-                        color: _isCompleted
-                            ? const Color(0xFF4CAF50)
-                            : Colors.white,
+                        color: _isCompleted ? AppColors.success : Colors.white,
                       ),
                     ),
                   ),
@@ -243,20 +241,18 @@ class _TasbihFlowScreenState extends State<TasbihFlowScreen>
                               ),
                               decoration: BoxDecoration(
                                 color: isSelected
-                                    ? const Color(
-                                        0xFFD4AF37,
-                                      ).withValues(alpha: 0.3)
+                                    ? AppColors.accent.withValues(alpha: 0.18)
                                     : Colors.white.withValues(alpha: 0.08),
                                 borderRadius: BorderRadius.circular(16),
                                 border: isSelected
-                                    ? Border.all(color: const Color(0xFFD4AF37))
+                                    ? Border.all(color: AppColors.accent)
                                     : null,
                               ),
                               child: Text(
                                 _dhikrList[index]['arabic'],
                                 style: TextStyle(
                                   color: isSelected
-                                      ? const Color(0xFFD4AF37)
+                                      ? AppColors.accent
                                       : Colors.white60,
                                   fontSize: 12,
                                 ),
@@ -274,7 +270,7 @@ class _TasbihFlowScreenState extends State<TasbihFlowScreen>
                       icon: const Icon(Icons.arrow_forward),
                       label: const Text('Next Dhikr'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF4CAF50),
+                        backgroundColor: AppColors.success,
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
@@ -310,7 +306,7 @@ class _TasbihFlowScreenState extends State<TasbihFlowScreen>
               FadeTransition(
                 opacity: _completionController,
                 child: Container(
-                  color: const Color(0xFF4CAF50).withValues(alpha: 0.1),
+                  color: AppColors.success.withValues(alpha: 0.1),
                 ),
               ),
           ],

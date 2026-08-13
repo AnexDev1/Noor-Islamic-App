@@ -20,7 +20,7 @@ class FeatureCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 4,
+      elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppConstants.cardBorderRadius),
       ),
@@ -28,25 +28,22 @@ class FeatureCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(AppConstants.cardBorderRadius),
         child: Container(
-          padding: const EdgeInsets.all(AppConstants.smallPadding), // Reduced padding for compact card
+          padding: const EdgeInsets.all(AppConstants.smallPadding),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(AppConstants.cardBorderRadius),
+            border: Border.all(color: AppColors.surfaceVariant),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                icon,
-                size: 28, // Reduced icon size for compact card
-                color: iconColor ?? AppColors.primary,
-              ),
-              const SizedBox(height: 6), // Reduced spacing
+              Icon(icon, size: 28, color: iconColor ?? AppColors.primary),
+              const SizedBox(height: 6),
               Text(
                 title,
                 textAlign: TextAlign.center,
                 style: AppTextStyles.bodyMedium.copyWith(
                   fontWeight: FontWeight.w600,
-                  fontSize: 13, // Reduced font size for compact card
+                  fontSize: 13,
                 ),
               ),
             ],
@@ -62,12 +59,7 @@ class CustomCard extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final VoidCallback? onTap;
 
-  const CustomCard({
-    super.key,
-    required this.child,
-    this.padding,
-    this.onTap,
-  });
+  const CustomCard({super.key, required this.child, this.padding, this.onTap});
 
   @override
   Widget build(BuildContext context) {

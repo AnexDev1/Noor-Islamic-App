@@ -25,10 +25,10 @@ import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Prevent Google Fonts from trying to download fonts when offline
   GoogleFonts.config.allowRuntimeFetching = false;
-  
+
   await _ensureLocationPermission();
 
   // Initialize Hive for local storage
@@ -82,7 +82,6 @@ Future<void> _initializeBackgroundServices() async {
   } catch (e) {
     debugPrint('Background services init error: $e');
   }
-
 }
 
 Future<void> _ensureLocationPermission() async {
@@ -105,7 +104,9 @@ class MyApp extends ConsumerWidget {
     AppTextStyles.setLocale(locale.languageCode);
 
     return MaterialApp(
-      key: ValueKey(locale.languageCode), // Force rebuild on locale change
+      // A locale change is a deliberate app-shell restart: the old navigator
+      // is discarded and `home` begins again from SplashScreen.
+      key: ValueKey('noor-app-${locale.languageCode}'),
       title: '',
       theme: preferences.darkMode ? AppTheme.darkTheme : AppTheme.lightTheme,
       locale: locale,

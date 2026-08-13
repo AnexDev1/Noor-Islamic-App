@@ -26,17 +26,11 @@ class SurahList extends StatelessWidget {
         final surahNumber = surah.surahNumber;
 
         return Container(
-          margin: const EdgeInsets.only(bottom: 16),
+          margin: const EdgeInsets.only(bottom: 10),
           decoration: BoxDecoration(
             color: AppColors.surface,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.shadowLight,
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: const Color(0xFFDCE6E3)),
           ),
           child: InkWell(
             onTap: () {
@@ -51,33 +45,31 @@ class SurahList extends StatelessWidget {
                 ),
               );
             },
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(18),
             child: Padding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
               child: Row(
                 children: [
                   // Surah Number Circle
                   Container(
-                    width: 50,
-                    height: 50,
+                    width: 42,
+                    height: 42,
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [AppColors.primary, AppColors.primaryLight],
-                      ),
-                      borderRadius: BorderRadius.circular(12),
+                      color: AppColors.quranCard.withValues(alpha: .1),
+                      borderRadius: BorderRadius.circular(13),
                     ),
                     child: Center(
                       child: Text(
                         surahNumber.toString(),
                         style: AppTextStyles.heading4.copyWith(
-                          color: Colors.white,
+                          color: AppColors.quranCard,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
                   ),
 
-                  const SizedBox(width: 16),
+                  const SizedBox(width: 13),
 
                   // Surah Info
                   Expanded(
@@ -97,7 +89,7 @@ class SurahList extends StatelessWidget {
                               surah.surahNameArabic,
                               style: AppTextStyles.arabicMedium.copyWith(
                                 fontSize: 18,
-                                color: AppColors.primary,
+                                color: AppColors.quranCard,
                               ),
                               textDirection: TextDirection.rtl,
                             ),
@@ -115,7 +107,7 @@ class SurahList extends StatelessWidget {
                           ),
                         ),
 
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 7),
 
                         // Stats Row
                         Row(
@@ -155,8 +147,8 @@ class SurahList extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
+        color: color.withValues(alpha: .09),
+        borderRadius: BorderRadius.circular(9),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

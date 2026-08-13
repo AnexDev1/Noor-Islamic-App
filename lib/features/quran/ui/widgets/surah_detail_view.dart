@@ -172,12 +172,12 @@ class _SurahDetailViewState extends State<SurahDetailView> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.primary.withValues(alpha: 0.1),
+            AppColors.quranCard.withValues(alpha: 0.1),
             AppColors.accent.withValues(alpha: 0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
+        border: Border.all(color: AppColors.quranCard.withValues(alpha: 0.2)),
       ),
       child: Column(
         children: [
@@ -186,7 +186,7 @@ class _SurahDetailViewState extends State<SurahDetailView> {
             widget.surahDetail.surahNameArabic,
             style: AppTextStyles.arabicLarge.copyWith(
               fontSize: 32,
-              color: AppColors.primary,
+              color: AppColors.quranCard,
               fontWeight: FontWeight.w600,
             ),
             textAlign: TextAlign.center,
@@ -383,7 +383,7 @@ class _SurahDetailViewState extends State<SurahDetailView> {
                           AppColors.accent,
                           AppColors.accent.withValues(alpha: 0.8),
                         ]
-                      : [AppColors.primary, AppColors.primaryLight],
+                      : [AppColors.secondary, AppColors.quranCard],
                 ),
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [

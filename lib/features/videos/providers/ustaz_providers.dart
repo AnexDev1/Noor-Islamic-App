@@ -188,7 +188,10 @@ class UstazVideosNotifier extends StateNotifier<AsyncValue<List<VideoItem>>> {
   void _addVideos(Iterable<yt.Video> videos) {
     final existingIds = _videos.map((video) => video.id).toSet();
     for (final video in videos) {
-      if (existingIds.add(video.id.value)) {
+      // youtube_explode can occasionally return channel-upload shells without
+      // metadata. Do not let those suppress the Atom-feed fallback, which has
+      // the real public title and author.
+      if (video.title.trim().isNotEmpty && existingIds.add(video.id.value)) {
         _videos.add(VideoItem.fromYt(video));
       }
     }

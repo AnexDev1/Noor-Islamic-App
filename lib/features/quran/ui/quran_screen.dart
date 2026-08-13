@@ -162,7 +162,7 @@ class _QuranScreenState extends State<QuranScreen>
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [AppColors.primary, AppColors.primaryLight],
+          colors: [AppColors.secondary, AppColors.quranCard],
         ),
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(32),

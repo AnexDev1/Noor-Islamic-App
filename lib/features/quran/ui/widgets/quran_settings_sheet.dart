@@ -94,7 +94,7 @@ class QuranSettingsSheet extends StatelessWidget {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [AppColors.primary, AppColors.primaryLight],
+                      colors: [AppColors.secondary, AppColors.quranCard],
                     ),
                     borderRadius: BorderRadius.circular(14),
                   ),

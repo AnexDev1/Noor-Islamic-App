@@ -166,8 +166,8 @@ class _HadithListScreenState extends State<HadithListScreen>
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                AppColors.primaryLight,
-                AppColors.primaryDark.withOpacity(0.8),
+                AppColors.hadithCard,
+                AppColors.primaryDark.withValues(alpha: .9),
               ],
             ),
             borderRadius: const BorderRadius.only(
@@ -325,8 +325,8 @@ class _HadithListScreenState extends State<HadithListScreen>
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [
-                                AppColors.primaryLight,
-                                AppColors.primaryDark.withOpacity(0.8),
+                                AppColors.hadithCard,
+                                AppColors.primaryDark.withValues(alpha: .9),
                               ],
                             ),
                             borderRadius: BorderRadius.circular(20),

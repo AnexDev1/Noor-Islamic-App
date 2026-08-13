@@ -130,7 +130,7 @@ class _TasbihHubScreenState extends ConsumerState<TasbihHubScreen>
 
     return Scaffold(
       backgroundColor: hub.mode == TasbihMode.nafasDhikr
-          ? const Color(0xFF0A1A0A)
+          ? AppColors.primaryDark
           : AppColors.background,
       body: SafeArea(
         child: Column(
@@ -253,9 +253,7 @@ class _TasbihHubScreenState extends ConsumerState<TasbihHubScreen>
           duration: const Duration(milliseconds: 250),
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            color: isSelected
-                ? (isDark ? AppColors.primary : AppColors.primary)
-                : Colors.transparent,
+            color: isSelected ? AppColors.tasbihCard : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
@@ -313,7 +311,7 @@ class _TasbihHubScreenState extends ConsumerState<TasbihHubScreen>
           const SizedBox(height: 16),
           _buildDhikrTextCard(hub),
           const Spacer(),
-          _buildCircularCounter(hub, AppColors.primary),
+          _buildCircularCounter(hub, AppColors.tasbihCard),
           const Spacer(),
           _buildProgressBar(hub),
           const SizedBox(height: 12),
@@ -336,10 +334,10 @@ class _TasbihHubScreenState extends ConsumerState<TasbihHubScreen>
           final p = kDhikrPhrases[i];
           final selected = i == hub.selectedPhraseIndex;
           final colors = [
-            AppColors.primary,
-            AppColors.primaryLight,
-            AppColors.accent,
+            AppColors.tasbihCard,
             AppColors.secondary,
+            AppColors.azkharCard,
+            AppColors.quranCard,
             AppColors.success,
           ];
           return GestureDetector(
@@ -350,22 +348,20 @@ class _TasbihHubScreenState extends ConsumerState<TasbihHubScreen>
               margin: const EdgeInsets.only(right: 12),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [colors[i], colors[i].withValues(alpha: 0.75)],
-                ),
+                color: selected ? colors[i] : colors[i].withValues(alpha: .1),
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: selected
                     ? [
                         BoxShadow(
-                          color: colors[i].withValues(alpha: 0.4),
+                          color: colors[i].withValues(alpha: 0.22),
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         ),
                       ]
                     : [],
                 border: selected
-                    ? Border.all(color: Colors.white, width: 2)
-                    : null,
+                    ? Border.all(color: colors[i], width: 1)
+                    : Border.all(color: const Color(0xFFDCE6E3)),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -373,7 +369,7 @@ class _TasbihHubScreenState extends ConsumerState<TasbihHubScreen>
                   Text(
                     p.arabic,
                     style: AppTextStyles.arabicSmall.copyWith(
-                      color: Colors.white,
+                      color: selected ? Colors.white : colors[i],
                       fontWeight: FontWeight.w600,
                     ),
                     textDirection: TextDirection.rtl,

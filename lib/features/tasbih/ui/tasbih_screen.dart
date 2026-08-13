@@ -324,7 +324,7 @@ class _TasbihScreenState extends State<TasbihScreen>
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [AppColors.primary, AppColors.primaryLight],
+              colors: [AppColors.primaryDark, AppColors.tasbihCard],
             ),
             borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(32),

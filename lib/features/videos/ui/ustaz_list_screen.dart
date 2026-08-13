@@ -45,15 +45,27 @@ class _UstazListScreenState extends ConsumerState<UstazListScreen> {
           ),
           slivers: [
             _buildAppBar(context, isDark, l10n),
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(18, 18, 18, 2),
+                child: Text(
+                  'Choose a trusted voice',
+                  style: TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+            ),
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                padding: const EdgeInsets.fromLTRB(18, 10, 18, 12),
                 child: TextField(
                   controller: _searchController,
                   onChanged: (value) => setState(() => _searchQuery = value),
                   decoration: InputDecoration(
-                    hintText: 'Search speakers...',
-                    prefixIcon: const Icon(Icons.search),
+                    hintText: 'Search scholars and channels',
+                    prefixIcon: const Icon(Icons.search_rounded),
                     suffixIcon: _searchQuery.isNotEmpty
                         ? IconButton(
                             icon: const Icon(Icons.clear),
@@ -67,9 +79,9 @@ class _UstazListScreenState extends ConsumerState<UstazListScreen> {
                     fillColor: isDark
                         ? AppColors.surfaceDark
                         : AppColors.surface,
-                    border: OutlineInputBorder(
+                    enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide.none,
+                      borderSide: const BorderSide(color: Color(0xFFDCE6E3)),
                     ),
                   ),
                 ),
@@ -130,36 +142,38 @@ class _UstazListScreenState extends ConsumerState<UstazListScreen> {
     AppLocalizations l10n,
   ) {
     return SliverAppBar(
-      expandedHeight: 140,
+      expandedHeight: 188,
       pinned: true,
       elevation: 0,
-      backgroundColor: isDark ? AppColors.backgroundDark : AppColors.background,
+      backgroundColor: AppColors.primaryDark,
       flexibleSpace: FlexibleSpaceBar(
         title: Text(
           l10n.islamicVideos,
           style: AppTextStyles.heading2.copyWith(
-            color: isDark ? Colors.white : AppColors.textPrimary,
+            color: Colors.white,
             fontWeight: FontWeight.w800,
             letterSpacing: -0.5,
           ),
         ),
         centerTitle: false,
-        titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
+        titlePadding: const EdgeInsetsDirectional.only(start: 20, bottom: 18),
         background: Stack(
           children: [
-            Positioned(
-              right: -50,
-              top: -50,
-              child: Opacity(
-                opacity: isDark ? 0.05 : 0.05,
-                child: Image.asset(
-                  'assets/images/islamic_pattern.png',
-                  width: 300,
-                  height: 300,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const SizedBox(),
-                ),
+            PositionedDirectional(
+              end: -28,
+              top: 22,
+              child: Icon(
+                Icons.spatial_audio_off_rounded,
+                size: 150,
+                color: Colors.white.withValues(alpha: .055),
+              ),
+            ),
+            const PositionedDirectional(
+              start: 20,
+              bottom: 54,
+              child: Text(
+                'Knowledge, one lesson at a time',
+                style: TextStyle(color: Color(0xFFB8CAC8), fontSize: 12),
               ),
             ),
           ],
@@ -252,25 +266,19 @@ class _PremiumUstazCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
         color: isDark ? AppColors.surfaceDark : AppColors.surface,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: isDark
-                ? Colors.black.withValues(alpha: 0.3)
-                : AppColors.primary.withValues(alpha: 0.08),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isDark ? Colors.white10 : const Color(0xFFDCE6E3),
+        ),
       ),
       child: Material(
         color: Colors.transparent,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(20),
         child: InkWell(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(20),
           onTap: () {
             Navigator.push(
               context,
@@ -301,21 +309,14 @@ class _PremiumUstazCard extends StatelessWidget {
                 Hero(
                   tag: 'ustaz_avatar_${ustaz.id}',
                   child: Container(
-                    width: 80,
-                    height: 80,
+                    width: 72,
+                    height: 72,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: AppColors.primary.withValues(alpha: 0.3),
-                        width: 2,
+                        color: AppColors.accent.withValues(alpha: .55),
+                        width: 1.5,
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.2),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
                     ),
                     child: ClipOval(
                       child: CachedNetworkImage(
@@ -365,11 +366,11 @@ class _PremiumUstazCard extends StatelessWidget {
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.primary.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(20),
+                          color: AppColors.primary.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(9),
                         ),
                         child: Text(
-                          'View Lectures & Playlists',
+                          'Open channel',
                           style: AppTextStyles.labelSmall.copyWith(
                             color: AppColors.primary,
                             fontWeight: FontWeight.w600,
@@ -380,7 +381,7 @@ class _PremiumUstazCard extends StatelessWidget {
                   ),
                 ),
                 Icon(
-                  Icons.arrow_forward_ios_rounded,
+                  Icons.arrow_forward_rounded,
                   color: isDark ? Colors.white54 : Colors.black26,
                   size: 20,
                 ),

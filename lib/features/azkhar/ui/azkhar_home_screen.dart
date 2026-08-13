@@ -156,19 +156,15 @@ class _AzkharHomeScreenState extends State<AzkharHomeScreen>
 
   Widget _buildModernAppBar() {
     return SliverAppBar(
-      expandedHeight: 120,
+      expandedHeight: 112,
       floating: false,
       pinned: true,
       elevation: 0,
       backgroundColor: Colors.transparent,
       flexibleSpace: FlexibleSpaceBar(
         background: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [AppColors.primary, AppColors.primaryLight],
-            ),
+          decoration: const BoxDecoration(
+            color: AppColors.azkharCard,
             borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(32),
               bottomRight: Radius.circular(32),
@@ -190,7 +186,7 @@ class _AzkharHomeScreenState extends State<AzkharHomeScreen>
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: const Icon(
-                          Icons.favorite,
+                          Icons.wb_twilight_rounded,
                           color: Colors.white,
                           size: 28,
                         ),

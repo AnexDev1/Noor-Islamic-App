@@ -12,7 +12,7 @@ class AppTheme {
       colorScheme: ColorScheme.light(
         primary: AppColors.primary,
         onPrimary: AppColors.textOnPrimary,
-        primaryContainer: AppColors.primaryLight,
+        primaryContainer: AppColors.surfaceVariant,
         onPrimaryContainer: AppColors.textOnPrimary,
         secondary: AppColors.accent,
         onSecondary: AppColors.textOnAccent,
@@ -27,7 +27,7 @@ class AppTheme {
         onSurfaceVariant: AppColors.textSecondary,
         error: AppColors.error,
         onError: Colors.white,
-        outline: AppColors.textTertiary,
+        outline: const Color(0xFFB7C7C4),
         shadow: AppColors.shadowMedium,
       ),
 
@@ -36,22 +36,25 @@ class AppTheme {
         backgroundColor: Colors.transparent,
         foregroundColor: AppColors.textPrimary,
         elevation: 0,
-        scrolledUnderElevation: 1,
+        scrolledUnderElevation: 0,
         surfaceTintColor: AppColors.surface,
         systemOverlayStyle: SystemUiOverlayStyle.dark,
         titleTextStyle: AppTextStyles.heading2,
         centerTitle: false,
-        titleSpacing: 0,
+        titleSpacing: 20,
       ),
 
       // Card Theme - Premium Card Design
       cardTheme: CardThemeData(
         color: AppColors.surface,
-        elevation: 2,
+        elevation: 0,
         shadowColor: AppColors.shadowLight,
         surfaceTintColor: AppColors.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        margin: const EdgeInsets.all(8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(color: Color(0xFFDCE6E3)),
+        ),
+        margin: EdgeInsets.zero,
         clipBehavior: Clip.antiAlias,
       ),
 
@@ -60,14 +63,14 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: AppColors.textOnPrimary,
-          elevation: 2,
+          elevation: 0,
           shadowColor: AppColors.shadowMedium,
           surfaceTintColor: AppColors.primaryLight,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
           ),
           textStyle: AppTextStyles.buttonMedium,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
           minimumSize: const Size(88, 48),
         ),
       ),
@@ -117,17 +120,17 @@ class AppTheme {
       ),
 
       navigationBarTheme: NavigationBarThemeData(
-        height: 72,
+        height: 76,
         elevation: 0,
         backgroundColor: AppColors.surface,
-        indicatorColor: AppColors.primary.withValues(alpha: 0.12),
+        indicatorColor: AppColors.primary,
         indicatorShape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(14),
         ),
         iconTheme: WidgetStateProperty.resolveWith((states) {
           return IconThemeData(
             color: states.contains(WidgetState.selected)
-                ? AppColors.primary
+                ? AppColors.textOnPrimary
                 : AppColors.textTertiary,
             size: 25,
           );
@@ -207,7 +210,7 @@ class AppTheme {
         deleteIconColor: AppColors.textSecondary,
         labelStyle: AppTextStyles.labelMedium,
         side: BorderSide.none,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       ),
 
@@ -216,7 +219,7 @@ class AppTheme {
         backgroundColor: AppColors.accent,
         foregroundColor: AppColors.textOnAccent,
         elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: const CircleBorder(),
       ),
 
       // Divider Theme

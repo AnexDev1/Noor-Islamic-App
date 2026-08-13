@@ -14,12 +14,12 @@ class AppTextStyles {
   // Font Families
   static String get primaryFont => _fontFamily ?? 'sans-serif';
   static String get arabicFont => _arabicFontFamily;
-  static String get displayFont => _fontFamily ?? 'sans-serif';
+  static String get displayFont => 'Benaiah';
 
   // Display Styles - Large Headers
   static TextStyle get displayLarge => TextStyle(
-    fontFamily: _fontFamily,
-    fontSize: 36,
+    fontFamily: displayFont,
+    fontSize: 40,
     fontWeight: FontWeight.w700,
     color: const Color(0xFF1A1D23),
     height: 1.2,
@@ -27,8 +27,8 @@ class AppTextStyles {
   );
 
   static TextStyle get displayMedium => TextStyle(
-    fontFamily: _fontFamily,
-    fontSize: 28,
+    fontFamily: displayFont,
+    fontSize: 30,
     fontWeight: FontWeight.w600,
     color: const Color(0xFF1A1D23),
     height: 1.3,
@@ -36,7 +36,7 @@ class AppTextStyles {
   );
 
   static TextStyle get displaySmall => TextStyle(
-    fontFamily: _fontFamily,
+    fontFamily: displayFont,
     fontSize: 24,
     fontWeight: FontWeight.w600,
     color: const Color(0xFF1A1D23),

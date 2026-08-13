@@ -197,15 +197,8 @@ class _HadithDetailScreenState extends State<HadithDetailScreen>
       ],
       flexibleSpace: FlexibleSpaceBar(
         background: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                AppColors.primaryLight,
-                AppColors.primaryDark.withOpacity(0.8),
-              ],
-            ),
+          decoration: const BoxDecoration(
+            color: AppColors.hadithCard,
             borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(32),
               bottomRight: Radius.circular(32),
@@ -254,13 +247,7 @@ class _HadithDetailScreenState extends State<HadithDetailScreen>
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadowLight,
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: const Color(0xFFDCE6E3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

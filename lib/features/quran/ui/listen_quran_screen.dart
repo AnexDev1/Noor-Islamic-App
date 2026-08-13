@@ -199,7 +199,7 @@ class _ListenQuranScreenState extends ConsumerState<ListenQuranScreen> {
                                   });
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primary,
+                                  backgroundColor: AppColors.quranCard,
                                   foregroundColor: Colors.white,
                                 ),
                                 child: const Icon(Icons.refresh),
@@ -616,7 +616,7 @@ class _ListenQuranScreenState extends ConsumerState<ListenQuranScreen> {
             ),
             Container(
               decoration: BoxDecoration(
-                color: AppColors.primary,
+                color: AppColors.quranCard,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(

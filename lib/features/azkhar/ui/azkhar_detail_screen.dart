@@ -588,7 +588,7 @@ class _AzkharDetailScreenState extends State<AzkharDetailScreen>
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [AppColors.primary, AppColors.primaryLight],
+              colors: [AppColors.azkharCard, AppColors.primaryDark],
             ),
             borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(32),

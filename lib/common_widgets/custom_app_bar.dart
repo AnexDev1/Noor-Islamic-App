@@ -21,13 +21,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text(
-        title,
-        style: AppTextStyles.heading3.copyWith(color: Colors.white),
-      ),
+      title: Text(title, style: AppTextStyles.heading2),
       centerTitle: centerTitle,
-      backgroundColor: backgroundColor ?? AppColors.primary,
-      foregroundColor: Colors.white,
+      backgroundColor: backgroundColor ?? AppColors.background,
+      foregroundColor: AppColors.textPrimary,
       elevation: 0,
       actions: actions,
       leading: leading,
@@ -58,10 +55,7 @@ class ProfileHeader extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            AppColors.primary,
-            AppColors.primary.withOpacity(0.8),
-          ],
+          colors: [AppColors.primary, AppColors.primary.withOpacity(0.8)],
         ),
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(24),
@@ -78,11 +72,7 @@ class ProfileHeader extends StatelessWidget {
                   ? NetworkImage(profileImageUrl!)
                   : null,
               child: profileImageUrl == null
-                  ? const Icon(
-                      Icons.person,
-                      size: 30,
-                      color: Colors.white,
-                    )
+                  ? const Icon(Icons.person, size: 30, color: Colors.white)
                   : null,
             ),
             const SizedBox(width: 16),
@@ -99,9 +89,7 @@ class ProfileHeader extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     userName,
-                    style: AppTextStyles.heading3.copyWith(
-                      color: Colors.white,
-                    ),
+                    style: AppTextStyles.heading3.copyWith(color: Colors.white),
                   ),
                 ],
               ),
@@ -110,10 +98,7 @@ class ProfileHeader extends StatelessWidget {
               onPressed: () {
                 // TODO: Navigate to profile settings
               },
-              icon: const Icon(
-                Icons.settings,
-                color: Colors.white,
-              ),
+              icon: const Icon(Icons.settings, color: Colors.white),
             ),
           ],
         ),

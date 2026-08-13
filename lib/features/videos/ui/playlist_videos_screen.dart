@@ -45,7 +45,7 @@ class PlaylistVideosScreen extends ConsumerWidget {
             _buildAppBar(context, isDark),
             videosAsync.when(
               data: (videos) => SliverPadding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.fromLTRB(18, 14, 18, 28),
                 sliver: SliverList(
                   delegate: SliverChildBuilderDelegate((context, index) {
                     if (index == videos.length) {
@@ -53,7 +53,7 @@ class PlaylistVideosScreen extends ConsumerWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(24.0),
                           child: CircularProgressIndicator(
-                            color: AppColors.primary,
+                            color: AppColors.accent,
                           ),
                         ),
                       );
@@ -64,7 +64,7 @@ class PlaylistVideosScreen extends ConsumerWidget {
               ),
               loading: () => const SliverFillRemaining(
                 child: Center(
-                  child: CircularProgressIndicator(color: AppColors.primary),
+                  child: CircularProgressIndicator(color: AppColors.accent),
                 ),
               ),
               error: (err, stack) => SliverFillRemaining(
@@ -148,27 +148,24 @@ class _VideoTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final title = video.title.trim().isEmpty
+        ? 'Lecture from ${video.author}'
+        : video.title.trim();
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
         color: isDark ? AppColors.surfaceDark : AppColors.surface,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: isDark
-                ? Colors.black.withOpacity(0.2)
-                : AppColors.primary.withOpacity(0.05),
-            blurRadius: 15,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: isDark ? Colors.white10 : const Color(0xFFDCE6E3),
+        ),
       ),
       child: Material(
         color: Colors.transparent,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(18),
         child: InkWell(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(18),
           onTap: () {
             Navigator.push(
               context,
@@ -181,11 +178,11 @@ class _VideoTile extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: const BorderRadius.horizontal(
-                  left: Radius.circular(20),
+                  left: Radius.circular(18),
                 ),
                 child: SizedBox(
-                  width: 140,
-                  height: 100,
+                  width: 132,
+                  height: 92,
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
@@ -225,7 +222,7 @@ class _VideoTile extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        video.title,
+                        title,
                         style: AppTextStyles.bodyMedium.copyWith(
                           fontWeight: FontWeight.bold,
                           color: isDark ? Colors.white : AppColors.textPrimary,
@@ -238,7 +235,7 @@ class _VideoTile extends StatelessWidget {
                       Text(
                         video.author,
                         style: AppTextStyles.labelSmall.copyWith(
-                          color: AppColors.primary,
+                          color: AppColors.primaryLight,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
